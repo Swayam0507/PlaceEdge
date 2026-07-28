@@ -4941,50 +4941,7 @@ body {
 .eligibility-issues { display: flex; flex-direction: column; gap: 4px; }
 .issue-chip { font-size: 0.8rem; color: var(--warning-light); }
 
-/* ==================== Bookmarks ==================== */
-.bookmarks-page { padding: 24px; max-width: 800px; margin: 0 auto; }
-.bookmarks-container { display: flex; flex-direction: column; gap: 24px; }
-.bookmarks-header h1 { font-size: 1.8rem; font-weight: 800; }
-.bookmarks-header p { color: var(--text-secondary); }
 
-.bookmark-card {
-  padding: 20px; background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: var(--radius-md); transition: all var(--transition-fast);
-}
-
-.bookmark-card:hover { border-color: rgba(99, 102, 241, 0.3); }
-.bookmark-card-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
-.bookmark-meta { display: flex; gap: 8px; }
-.bookmark-category { font-size: 0.75rem; padding: 2px 10px; background: rgba(99, 102, 241, 0.08); border-radius: 50px; color: var(--primary-light); }
-.bookmark-difficulty { font-size: 0.75rem; font-weight: 600; }
-.remove-bookmark-btn { background: none; border: none; color: var(--text-muted); font-size: 1rem; cursor: pointer; }
-.remove-bookmark-btn:hover { color: var(--danger); }
-.bookmark-question { font-size: 1rem; font-weight: 600; margin-bottom: 16px; line-height: 1.5; }
-
-.bookmark-options { display: flex; flex-direction: column; gap: 8px; }
-.bookmark-option {
-  display: flex; align-items: center; gap: 10px; padding: 10px 14px;
-  background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm);
-  font-size: 0.9rem; transition: all var(--transition-fast);
-}
-
-.bookmark-option.correct { border-color: var(--success); background: rgba(16, 185, 129, 0.08); }
-.bookmark-option.faded { opacity: 0.5; }
-.correct-icon { margin-left: auto; }
-
-.bookmark-actions { margin-top: 12px; }
-.reveal-btn {
-  padding: 6px 16px; background: var(--bg-tertiary); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.85rem; cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.reveal-btn:hover { border-color: var(--primary); }
-
-.bookmark-explanation {
-  margin-top: 12px; padding: 12px 16px; background: rgba(99, 102, 241, 0.05);
-  border-radius: var(--radius-sm); font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;
-}
 
 /* ==================== Certificates ==================== */
 .certificates-page { padding: 24px; max-width: 900px; margin: 0 auto; }
