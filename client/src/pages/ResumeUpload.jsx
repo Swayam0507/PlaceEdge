@@ -131,6 +131,17 @@ const ResumeBuilder = () => {
   const downloadPDF = useReactToPrint({
     contentRef: resumeRef,
     documentTitle: `${resumeData.personal.name || 'Student'}_Resume`,
+    pageStyle: `
+      @page {
+        size: A4;
+        margin: 0;
+      }
+      @media print {
+        body {
+          -webkit-print-color-adjust: exact;
+        }
+      }
+    `,
     onBeforeGetContent: () => {
       setIsGenerating(true);
       if (resumeRef.current) {
