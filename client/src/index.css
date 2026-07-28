@@ -6124,3 +6124,37 @@ body {
 .journey-node-group:nth-child(3) { animation-delay: 0.5s; }
 .journey-node-group:nth-child(4) { animation-delay: 0.7s; }
 .journey-node-group:nth-child(5) { animation-delay: 0.9s; }
+
+/* ==================== Print Styles ==================== */
+@media print {
+  /* Hide the entire app by default */
+  body * {
+    visibility: hidden;
+  }
+  
+  /* Show only the resume container */
+  #resume-preview-container, 
+  #resume-preview-container * {
+    visibility: visible;
+  }
+  
+  /* Break it out of the layout and position it at the top-left */
+  #resume-preview-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 210mm !important;
+    min-height: 297mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: white !important;
+    box-shadow: none !important;
+    border: none !important;
+    transform: none !important;
+  }
+  
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+}

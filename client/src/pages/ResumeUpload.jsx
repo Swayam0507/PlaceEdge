@@ -1,6 +1,5 @@
 import React, { useState, useRef } from "react";
 import { FiDownload, FiPlus, FiTrash2, FiUser, FiBook, FiBriefcase, FiCode, FiAward, FiFileText, FiLinkedin, FiGithub, FiZap, FiMail, FiPhone, FiGlobe } from "react-icons/fi";
-import { useReactToPrint } from "react-to-print";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useAuth } from "../context/AuthContext";
@@ -128,37 +127,12 @@ const ResumeBuilder = () => {
     });
   };
 
-  const downloadPDF = useReactToPrint({
-    contentRef: resumeRef,
-    documentTitle: `${resumeData.personal.name || 'Student'}_Resume`,
-    pageStyle: `
-      @page {
-        size: A4;
-        margin: 0;
-      }
-      @media print {
-        body {
-          -webkit-print-color-adjust: exact;
-        }
-      }
-    `,
-    onBeforeGetContent: () => {
-      setIsGenerating(true);
-      if (resumeRef.current) {
-        resumeRef.current.style.width = "210mm"; 
-      }
-      return Promise.resolve();
-    },
-    onAfterPrint: () => {
-      if (resumeRef.current) {
-        resumeRef.current.style.width = "100%";
-      }
-      setIsGenerating(false);
-    },
-    onPrintError: () => {
-      setIsGenerating(false);
-    }
-  });
+  const downloadPDF = () => {
+    // The @media print CSS in index.css will automatically hide everything else
+    // and correctly position the #resume-preview-container for a perfect print.
+    // Native printing preserves <a href="..."> clickable links!
+    window.print();
+  };
 
   const formatUrl = (url, type) => {
     if (!url) return "";
@@ -934,7 +908,7 @@ const ResumeBuilder = () => {
         {/* RIGHT PANEL: LIVE PREVIEW CANVAS */}
         <div className="flex-1 bg-surface-hover overflow-y-auto custom-scrollbar flex items-start justify-center p-8 lg:p-12">
           {/* This wrapper gives the illusion of a floating piece of paper */}
-          <div className="relative shadow-2xl shadow-ink/20 w-full max-w-[794px] transition-all duration-300 origin-top bg-white border border-line rounded-sm" style={{ minHeight: "1123px" }}>
+          <div id="resume-preview-container" className="relative shadow-2xl shadow-ink/20 w-full max-w-[794px] transition-all duration-300 origin-top bg-white border border-line rounded-sm" style={{ minHeight: "1123px" }}>
             {renderTemplate()}
           </div>
         </div>
