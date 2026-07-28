@@ -541,18 +541,36 @@ const ResumeBuilder = () => {
       <div className="bg-white p-12" ref={resumeRef} style={{ minHeight: "297mm", fontFamily: "'Times New Roman', Times, serif", color: "#000" }}>
         <div className="text-center mb-4">
           <h1 className="text-3xl font-normal mb-1">{data.personal.name || "Your Name"}</h1>
-          <div className="text-[12px] flex justify-center items-center flex-wrap">
+          <div className="text-[12px] flex justify-center items-center flex-wrap mt-1">
             {data.personal.email && (
-              <span><a href={`mailto:${data.personal.email}`} className="hover:underline">{data.personal.email}</a></span>
+              <span className="flex items-center gap-1">
+                <FiMail size={11} />
+                <a href={`mailto:${data.personal.email}`} className="hover:underline">{data.personal.email}</a>
+              </span>
             )}
             {data.personal.phone && (
-              <span className="before:content-['|'] before:mx-2 before:text-gray-400">{data.personal.phone}</span>
+              <span className="flex items-center gap-1 before:content-['|'] before:mx-2 before:text-gray-400">
+                <FiPhone size={11} />
+                {data.personal.phone}
+              </span>
             )}
             {data.personal.linkedin && (
-              <span className="before:content-['|'] before:mx-2 before:text-gray-400"><a href={getValidUrl(data.personal.linkedin)} className="hover:underline">{formatUrl(data.personal.linkedin, 'linkedin')}</a></span>
+              <span className="flex items-center gap-1 before:content-['|'] before:mx-2 before:text-gray-400">
+                <FiLinkedin size={11} />
+                <a href={getValidUrl(data.personal.linkedin)} className="hover:underline">{formatUrl(data.personal.linkedin, 'linkedin')}</a>
+              </span>
             )}
             {data.personal.github && (
-              <span className="before:content-['|'] before:mx-2 before:text-gray-400"><a href={getValidUrl(data.personal.github)} className="hover:underline">{formatUrl(data.personal.github, 'github')}</a></span>
+              <span className="flex items-center gap-1 before:content-['|'] before:mx-2 before:text-gray-400">
+                <FiGithub size={11} />
+                <a href={getValidUrl(data.personal.github)} className="hover:underline">{formatUrl(data.personal.github, 'github')}</a>
+              </span>
+            )}
+            {data.personal.portfolio && (
+              <span className="flex items-center gap-1 before:content-['|'] before:mx-2 before:text-gray-400">
+                <FiGlobe size={11} />
+                <a href={getValidUrl(data.personal.portfolio)} className="hover:underline">{formatUrl(data.personal.portfolio, 'portfolio')}</a>
+              </span>
             )}
           </div>
         </div>
