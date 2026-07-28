@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { FiDownload, FiPlus, FiTrash2, FiUser, FiBook, FiBriefcase, FiCode, FiAward, FiFileText, FiLinkedin, FiGithub, FiZap, FiMail } from "react-icons/fi";
+import { FiDownload, FiPlus, FiTrash2, FiUser, FiBook, FiBriefcase, FiCode, FiAward, FiFileText, FiLinkedin, FiGithub, FiZap, FiMail, FiPhone, FiGlobe } from "react-icons/fi";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useAuth } from "../context/AuthContext";
