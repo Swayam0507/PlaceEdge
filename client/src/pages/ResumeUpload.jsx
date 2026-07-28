@@ -340,7 +340,9 @@ const ResumeBuilder = () => {
                       <div className="space-y-2">
                         {data.certifications.map((cert, i) => (
                           <div key={i} className="text-[13px]">
-                            <strong className="text-slate-900 block">{cert.title}</strong>
+                            <strong className="text-slate-900 block">
+                              {cert.link ? <a href={getValidUrl(cert.link)} target="_blank" rel="noreferrer" className="hover:underline hover:text-slate-600 transition-colors">{cert.title}</a> : cert.title}
+                            </strong>
                             <span className="text-slate-500">{cert.issuer} • {cert.year}</span>
                           </div>
                         ))}
@@ -515,7 +517,9 @@ const ResumeBuilder = () => {
                 <div className="grid grid-cols-2 gap-4">
                   {data.certifications.map((cert, i) => (
                     <div key={i} className="p-3 rounded-lg border border-slate-100 bg-slate-50/50">
-                      <div className="font-bold text-slate-900 text-[13px] mb-0.5">{cert.title}</div>
+                      <div className="font-bold text-slate-900 text-[13px] mb-0.5">
+                        {cert.link ? <a href={getValidUrl(cert.link)} target="_blank" rel="noreferrer" className="hover:text-amber-600 hover:underline transition-colors">{cert.title}</a> : cert.title}
+                      </div>
                       <div className="text-[11px] font-medium text-slate-500 flex justify-between">
                         <span>{cert.issuer}</span>
                         <span>{cert.year}</span>
@@ -624,7 +628,12 @@ const ResumeBuilder = () => {
               {data.certifications.length > 0 && (
                 <div>
                   <strong>Certifications: </strong>
-                  {data.certifications.map((c, i) => `${c.title} (${c.issuer})${i !== data.certifications.length - 1 ? ', ' : ''}`)}
+                  {data.certifications.map((c, i) => (
+                    <React.Fragment key={i}>
+                      {c.link ? <a href={getValidUrl(c.link)} target="_blank" rel="noreferrer" className="hover:underline">{c.title}</a> : c.title}
+                      {` (${c.issuer})${i !== data.certifications.length - 1 ? ', ' : ''}`}
+                    </React.Fragment>
+                  ))}
                 </div>
               )}
             </div>
