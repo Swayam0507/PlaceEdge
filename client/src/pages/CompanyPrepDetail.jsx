@@ -155,7 +155,7 @@ const CompanyPrepDetail = () => {
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="font-display text-lg font-bold text-ink group-hover:text-indigo-700 transition-colors">{topic.name}</h3>
                       <span className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-line text-xs font-bold text-ink-soft shadow-sm group-hover:bg-indigo-50 group-hover:text-indigo-700 group-hover:border-indigo-200 transition-all">
-                        {topic.count} questions
+                        Asked {topic.count}+ times
                       </span>
                     </div>
                     {topic.questions && topic.questions.length > 0 ? (
