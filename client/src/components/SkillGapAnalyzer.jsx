@@ -106,7 +106,10 @@ const SkillGapAnalyzer = ({ requiredSkills, userSkills }) => {
         {/* Call to Action */}
         {missingSkills.length > 0 && (
           <div className="flex-shrink-0 w-full md:w-auto flex flex-col gap-2">
-            <button className="flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-accent hover:opacity-90 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-all shadow-lg shadow-primary/20">
+            <button 
+              onClick={() => window.location.href = '/practice'}
+              className="flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-accent hover:opacity-90 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-all shadow-lg shadow-primary/20"
+            >
               <FaBookOpen /> Prepare Module
             </button>
             <p className="text-xs text-gray-400 text-center">Estimated Prep: 3 days</p>
