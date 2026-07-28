@@ -572,102 +572,110 @@ const ResumeBuilder = () => {
   };
 
   // -------------------------------------------------------------
-  // RENDER LEFT PANEL FORMS
+  // RENDER IMMERSIVE WORKSPACE
   return (
-    <div className="mx-auto max-w-[1440px] px-4 py-8 animate-fade-in">
-      <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="flex flex-col h-[calc(100vh-64px)] bg-surface overflow-hidden animate-fade-in">
+      
+      {/* STICKY GLASSMORPHISM HEADER */}
+      <header className="shrink-0 flex items-center justify-between px-6 py-4 bg-paper/80 backdrop-blur-xl border-b border-line z-10">
         <div>
-          <h1 className="font-display text-3xl font-bold text-ink flex items-center gap-3">
-            <FiFileText className="text-amber-deep" /> Resume Builder
+          <h1 className="font-display text-2xl font-bold text-ink flex items-center gap-3">
+            <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg"><FiFileText size={20} /></div>
+            Resume Workspace
           </h1>
-          <p className="font-body text-muted mt-2">Fill in your details, choose a template, and download an ATS-friendly PDF.</p>
+          <p className="font-body text-muted text-sm mt-1">Design, edit, and export your ATS-friendly resume.</p>
         </div>
+        
         <div className="flex items-center gap-4">
-          <select
-            className="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer"
-            value={template}
-            onChange={(e) => setTemplate(e.target.value)}
-          >
-            <option value="modern">Modern Sidebar</option>
-            <option value="minimalist">Minimalist</option>
-            <option value="professional">Professional Serif</option>
-          </select>
+          <div className="flex items-center bg-paper-raised p-1 rounded-xl border border-line">
+            {["modern", "minimalist", "professional"].map(tmp => (
+              <button 
+                key={tmp}
+                onClick={() => setTemplate(tmp)}
+                className={`px-4 py-2 text-sm font-semibold rounded-lg capitalize transition-all ${template === tmp ? 'bg-white shadow-sm text-ink ring-1 ring-line' : 'text-muted hover:text-ink hover:bg-slate-50'}`}
+              >
+                {tmp}
+              </button>
+            ))}
+          </div>
+
           <button
             onClick={loadSampleData}
-            className="flex items-center gap-2 px-4 py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-lg font-medium transition-colors shadow-sm"
+            className="flex items-center gap-2 px-4 py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-deep border border-amber/20 rounded-xl font-semibold transition-all hover:-translate-y-0.5"
           >
-            <FiZap /> Load Demo
+            <FiZap /> Demo Data
           </button>
           <button
             onClick={downloadPDF}
             disabled={isGenerating}
-            className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors shadow-sm disabled:opacity-70"
+            className="flex items-center gap-2 px-6 py-2.5 bg-ink hover:bg-ink-soft text-white rounded-xl font-semibold transition-all hover:-translate-y-0.5 disabled:opacity-70 disabled:hover:translate-y-0 shadow-lg shadow-ink/10"
           >
-            <FiDownload /> {isGenerating ? "Generating..." : "Download PDF"}
+            <FiDownload /> {isGenerating ? "Exporting..." : "Export PDF"}
           </button>
         </div>
-      </div>
+      </header>
 
-      <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-200px)] min-h-[800px]">
-        {/* LEFT PANEL - FORMS */}
-        <div className="w-full lg:w-[45%] xl:w-[40%] bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
-          {/* Tabs */}
-          <div className="flex overflow-x-auto p-2.5 bg-slate-100/70 shrink-0 gap-2 border-b border-slate-200 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      {/* WORKSPACE AREA */}
+      <div className="flex-1 flex overflow-hidden">
+        
+        {/* LEFT PANEL: EDITOR */}
+        <div className="w-[450px] shrink-0 bg-paper border-r border-line flex flex-col z-10 shadow-2xl shadow-ink/5">
+          {/* Editor Tabs (Vertical or segmented) */}
+          <div className="flex overflow-x-auto p-3 bg-paper-raised border-b border-line gap-2 shrink-0 custom-scrollbar">
             {[
-              { id: "personal", icon: FiUser, label: "Personal" },
-              { id: "education", icon: FiBook, label: "Education" },
-              { id: "experience", icon: FiBriefcase, label: "Experience" },
+              { id: "personal", icon: FiUser, label: "Info" },
+              { id: "education", icon: FiBook, label: "Edu" },
+              { id: "experience", icon: FiBriefcase, label: "Exp" },
               { id: "projects", icon: FiCode, label: "Projects" },
               { id: "skills", icon: FiAward, label: "Skills" },
             ].map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 ${activeTab === tab.id ? 'bg-white text-indigo-700 shadow-sm ring-1 ring-slate-200' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'}`}
+                className={`flex flex-col items-center justify-center gap-1.5 px-4 py-3 rounded-xl min-w-[80px] transition-all ${activeTab === tab.id ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-line' : 'text-muted hover:text-ink hover:bg-white/50'}`}
               >
-                <tab.icon size={16} className={activeTab === tab.id ? 'text-indigo-600' : 'text-slate-400'} /> {tab.label}
+                <tab.icon size={18} className={activeTab === tab.id ? 'text-indigo-600' : 'text-muted'} />
+                <span className="text-xs font-bold">{tab.label}</span>
               </button>
             ))}
           </div>
 
           {/* Form Content */}
-          <div className="p-8 overflow-y-auto flex-1 custom-scrollbar bg-white">
-
+          <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-paper">
+            
             {/* PERSONAL INFO */}
             {activeTab === "personal" && (
-              <div className="space-y-6 animate-fadeIn">
-                <div>
-                  <h3 className="text-xl font-bold text-slate-900">Personal Details</h3>
-                  <p className="text-sm text-slate-500 mt-1">Provide your basic contact information and professional summary.</p>
-                </div>
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="col-span-2">
-                    <label className="block text-xs font-bold text-slate-600 uppercase mb-2 tracking-wider">Full Name</label>
-                    <input type="text" name="name" value={resumeData.personal.name} onChange={handlePersonalChange} className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 bg-slate-50 hover:bg-slate-100/50 transition-all text-slate-800 text-sm" placeholder="John Doe" />
+              <div className="space-y-6 animate-fade-in">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-ink-soft uppercase mb-2 tracking-widest">Full Name</label>
+                    <input type="text" name="name" value={resumeData.personal.name} onChange={handlePersonalChange} className="w-full px-4 py-3 bg-paper-raised border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-ink text-sm font-medium" placeholder="John Doe" />
                   </div>
-                  <div className="col-span-1">
-                    <label className="block text-xs font-bold text-slate-600 uppercase mb-2 tracking-wider">Email</label>
-                    <input type="email" name="email" value={resumeData.personal.email} onChange={handlePersonalChange} className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 bg-slate-50 hover:bg-slate-100/50 transition-all text-slate-800 text-sm" placeholder="john@example.com" />
+                  <div>
+                    <label className="block text-xs font-bold text-ink-soft uppercase mb-2 tracking-widest">Email</label>
+                    <input type="email" name="email" value={resumeData.personal.email} onChange={handlePersonalChange} className="w-full px-4 py-3 bg-paper-raised border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-ink text-sm font-medium" placeholder="john@example.com" />
                   </div>
-                  <div className="col-span-1">
-                    <label className="block text-xs font-bold text-slate-600 uppercase mb-2 tracking-wider">Phone</label>
-                    <input type="text" name="phone" value={resumeData.personal.phone} onChange={handlePersonalChange} className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 bg-slate-50 hover:bg-slate-100/50 transition-all text-slate-800 text-sm" placeholder="+91 98765 43210" />
+                  <div>
+                    <label className="block text-xs font-bold text-ink-soft uppercase mb-2 tracking-widest">Phone</label>
+                    <input type="text" name="phone" value={resumeData.personal.phone} onChange={handlePersonalChange} className="w-full px-4 py-3 bg-paper-raised border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-ink text-sm font-medium" placeholder="+91 98765 43210" />
                   </div>
-                  <div className="col-span-1">
-                    <label className="block text-xs font-bold text-slate-600 uppercase mb-2 tracking-wider">LinkedIn</label>
-                    <input type="text" name="linkedin" value={resumeData.personal.linkedin} onChange={handlePersonalChange} className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 bg-slate-50 hover:bg-slate-100/50 transition-all text-slate-800 text-sm" placeholder="linkedin.com/in/johndoe" />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-ink-soft uppercase mb-2 tracking-widest">LinkedIn</label>
+                      <input type="text" name="linkedin" value={resumeData.personal.linkedin} onChange={handlePersonalChange} className="w-full px-4 py-3 bg-paper-raised border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-ink text-sm font-medium" placeholder="in/johndoe" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-ink-soft uppercase mb-2 tracking-widest">GitHub</label>
+                      <input type="text" name="github" value={resumeData.personal.github} onChange={handlePersonalChange} className="w-full px-4 py-3 bg-paper-raised border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-ink text-sm font-medium" placeholder="github/johndoe" />
+                    </div>
                   </div>
-                  <div className="col-span-1">
-                    <label className="block text-xs font-bold text-slate-600 uppercase mb-2 tracking-wider">GitHub</label>
-                    <input type="text" name="github" value={resumeData.personal.github} onChange={handlePersonalChange} className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 bg-slate-50 hover:bg-slate-100/50 transition-all text-slate-800 text-sm" placeholder="github.com/johndoe" />
+                  <div>
+                    <label className="block text-xs font-bold text-ink-soft uppercase mb-2 tracking-widest">Portfolio / Website</label>
+                    <input type="text" name="portfolio" value={resumeData.personal.portfolio} onChange={handlePersonalChange} className="w-full px-4 py-3 bg-paper-raised border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-ink text-sm font-medium" placeholder="johndoe.com" />
                   </div>
-                  <div className="col-span-2">
-                    <label className="block text-xs font-bold text-slate-600 uppercase mb-2 tracking-wider">Portfolio / Website</label>
-                    <input type="text" name="portfolio" value={resumeData.personal.portfolio} onChange={handlePersonalChange} className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 bg-slate-50 hover:bg-slate-100/50 transition-all text-slate-800 text-sm" placeholder="johndoe.com" />
-                  </div>
-                  <div className="col-span-2">
-                    <label className="block text-xs font-bold text-slate-600 uppercase mb-2 tracking-wider">Professional Summary</label>
-                    <textarea name="summary" value={resumeData.personal.summary} onChange={handlePersonalChange} rows="4" className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 bg-slate-50 hover:bg-slate-100/50 transition-all text-slate-800 text-sm resize-none custom-scrollbar" placeholder="Passionate software engineering student with experience in React and Node.js..."></textarea>
+                  <div>
+                    <label className="block text-xs font-bold text-ink-soft uppercase mb-2 tracking-widest">Professional Summary</label>
+                    <textarea name="summary" value={resumeData.personal.summary} onChange={handlePersonalChange} rows="5" className="w-full px-4 py-3 bg-paper-raised border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-ink text-sm font-medium resize-none custom-scrollbar" placeholder="Passionate software engineering student with experience in React and Node.js..."></textarea>
                   </div>
                 </div>
               </div>
@@ -675,177 +683,202 @@ const ResumeBuilder = () => {
 
             {/* EDUCATION */}
             {activeTab === "education" && (
-              <div className="animate-fadeIn">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-bold text-slate-800">Education</h3>
-                  <button onClick={() => addField("education", { degree: "", college: "", year: "", gpa: "" })} className="text-sm flex items-center gap-1.5 text-indigo-600 font-bold bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors">
-                    <FiPlus /> Add Education
-                  </button>
-                </div>
-
-                {resumeData.education.length === 0 && <p className="text-sm text-slate-500 italic text-center py-8 border-2 border-dashed border-slate-200 rounded-xl">No education added. Click 'Add Education' to start.</p>}
-
-                <div className="space-y-4">
-                  {resumeData.education.map((edu, i) => (
-                    <div key={i} className="p-5 border border-slate-200 rounded-xl bg-white shadow-sm relative group">
-                      <button onClick={() => removeField("education", i)} className="absolute top-3 right-3 p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Remove"><FiTrash2 size={16} /></button>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="col-span-2 pr-6">
-                          <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">Degree / Course</label>
-                          <input type="text" value={edu.degree} onChange={e => updateField("education", i, "degree", e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. B.Tech Computer Science" />
-                        </div>
-                        <div className="col-span-2">
-                          <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">University / College</label>
-                          <input type="text" value={edu.college} onChange={e => updateField("education", i, "college", e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. ABC University" />
-                        </div>
-                        <div>
-                          <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">Passing Year</label>
-                          <input type="text" value={edu.year} onChange={e => updateField("education", i, "year", e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. 2024" />
-                        </div>
-                        <div>
-                          <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">CGPA / %</label>
-                          <input type="text" value={edu.gpa} onChange={e => updateField("education", i, "gpa", e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. 8.5" />
+              <div className="animate-fade-in space-y-4">
+                {resumeData.education.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center p-10 border-2 border-dashed border-line rounded-2xl bg-paper-raised/50">
+                    <div className="w-16 h-16 bg-indigo-50 text-indigo-500 rounded-full flex items-center justify-center mb-4"><FiBook size={28} /></div>
+                    <p className="text-ink font-semibold mb-1">No Education Added</p>
+                    <p className="text-muted text-sm text-center mb-6">Add your degrees and schools to build your profile.</p>
+                    <button onClick={() => addField("education", { degree: "", college: "", year: "", gpa: "" })} className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl font-semibold shadow-md hover:bg-indigo-700 transition-colors flex items-center gap-2">
+                      <FiPlus /> Add Education
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    {resumeData.education.map((edu, i) => (
+                      <div key={i} className="p-5 border border-line rounded-2xl bg-paper shadow-sm relative group hover:border-indigo-200 transition-colors">
+                        <button onClick={() => removeField("education", i)} className="absolute top-4 right-4 p-2 text-muted hover:text-coral hover:bg-coral/10 rounded-lg transition-colors"><FiTrash2 size={16} /></button>
+                        <div className="space-y-4 pr-10">
+                          <div>
+                            <label className="block text-[10px] font-bold text-ink-soft uppercase mb-1.5 tracking-wider">Degree / Course</label>
+                            <input type="text" value={edu.degree} onChange={e => updateField("education", i, "degree", e.target.value)} className="w-full px-3 py-2 text-sm bg-paper-raised border border-line rounded-lg focus:outline-none focus:border-indigo-400 font-medium" placeholder="B.Tech Computer Science" />
+                          </div>
+                          <div>
+                            <label className="block text-[10px] font-bold text-ink-soft uppercase mb-1.5 tracking-wider">University / College</label>
+                            <input type="text" value={edu.college} onChange={e => updateField("education", i, "college", e.target.value)} className="w-full px-3 py-2 text-sm bg-paper-raised border border-line rounded-lg focus:outline-none focus:border-indigo-400 font-medium" placeholder="ABC University" />
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="block text-[10px] font-bold text-ink-soft uppercase mb-1.5 tracking-wider">Year</label>
+                              <input type="text" value={edu.year} onChange={e => updateField("education", i, "year", e.target.value)} className="w-full px-3 py-2 text-sm bg-paper-raised border border-line rounded-lg focus:outline-none focus:border-indigo-400 font-medium" placeholder="2024" />
+                            </div>
+                            <div>
+                              <label className="block text-[10px] font-bold text-ink-soft uppercase mb-1.5 tracking-wider">CGPA / %</label>
+                              <input type="text" value={edu.gpa} onChange={e => updateField("education", i, "gpa", e.target.value)} className="w-full px-3 py-2 text-sm bg-paper-raised border border-line rounded-lg focus:outline-none focus:border-indigo-400 font-medium" placeholder="8.5" />
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                    <button onClick={() => addField("education", { degree: "", college: "", year: "", gpa: "" })} className="w-full py-3 border-2 border-dashed border-line text-indigo-600 rounded-xl font-bold hover:bg-indigo-50 transition-colors flex items-center justify-center gap-2">
+                      <FiPlus /> Add Another
+                    </button>
+                  </>
+                )}
               </div>
             )}
 
             {/* EXPERIENCE */}
             {activeTab === "experience" && (
-              <div className="animate-fadeIn">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-bold text-slate-800">Experience</h3>
-                  <button onClick={() => addField("experience", { role: "", company: "", duration: "", description: "" })} className="text-sm flex items-center gap-1.5 text-indigo-600 font-bold bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors">
-                    <FiPlus /> Add Experience
-                  </button>
-                </div>
-
-                {resumeData.experience.length === 0 && <p className="text-sm text-slate-500 italic text-center py-8 border-2 border-dashed border-slate-200 rounded-xl">No experience added.</p>}
-
-                <div className="space-y-4">
-                  {resumeData.experience.map((exp, i) => (
-                    <div key={i} className="p-5 border border-slate-200 rounded-xl bg-white shadow-sm relative group">
-                      <button onClick={() => removeField("experience", i)} className="absolute top-3 right-3 p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"><FiTrash2 size={16} /></button>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="col-span-2 pr-6">
-                          <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">Job Role / Title</label>
-                          <input type="text" value={exp.role} onChange={e => updateField("experience", i, "role", e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. Software Engineer Intern" />
-                        </div>
-                        <div>
-                          <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">Company</label>
-                          <input type="text" value={exp.company} onChange={e => updateField("experience", i, "company", e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. Google" />
-                        </div>
-                        <div>
-                          <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">Duration</label>
-                          <input type="text" value={exp.duration} onChange={e => updateField("experience", i, "duration", e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. Jan 2023 - Present" />
-                        </div>
-                        <div className="col-span-2">
-                          <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">Description (Bullet points recommended)</label>
-                          <textarea value={exp.description} onChange={e => updateField("experience", i, "description", e.target.value)} rows="4" className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="• Developed a new feature using React that increased user engagement by 20%&#10;• Optimized database queries..."></textarea>
+              <div className="animate-fade-in space-y-4">
+                {resumeData.experience.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center p-10 border-2 border-dashed border-line rounded-2xl bg-paper-raised/50">
+                    <div className="w-16 h-16 bg-amber/10 text-amber-deep rounded-full flex items-center justify-center mb-4"><FiBriefcase size={28} /></div>
+                    <p className="text-ink font-semibold mb-1">No Experience Added</p>
+                    <p className="text-muted text-sm text-center mb-6">List your past internships or full-time roles here.</p>
+                    <button onClick={() => addField("experience", { role: "", company: "", duration: "", description: "" })} className="px-5 py-2.5 bg-amber-deep text-white rounded-xl font-semibold shadow-md hover:bg-amber transition-colors flex items-center gap-2">
+                      <FiPlus /> Add Experience
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    {resumeData.experience.map((exp, i) => (
+                      <div key={i} className="p-5 border border-line rounded-2xl bg-paper shadow-sm relative group hover:border-amber-300 transition-colors">
+                        <button onClick={() => removeField("experience", i)} className="absolute top-4 right-4 p-2 text-muted hover:text-coral hover:bg-coral/10 rounded-lg transition-colors"><FiTrash2 size={16} /></button>
+                        <div className="space-y-4 pr-10">
+                          <div>
+                            <label className="block text-[10px] font-bold text-ink-soft uppercase mb-1.5 tracking-wider">Job Role</label>
+                            <input type="text" value={exp.role} onChange={e => updateField("experience", i, "role", e.target.value)} className="w-full px-3 py-2 text-sm bg-paper-raised border border-line rounded-lg focus:outline-none focus:border-amber font-medium" placeholder="Software Engineer Intern" />
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="block text-[10px] font-bold text-ink-soft uppercase mb-1.5 tracking-wider">Company</label>
+                              <input type="text" value={exp.company} onChange={e => updateField("experience", i, "company", e.target.value)} className="w-full px-3 py-2 text-sm bg-paper-raised border border-line rounded-lg focus:outline-none focus:border-amber font-medium" placeholder="Google" />
+                            </div>
+                            <div>
+                              <label className="block text-[10px] font-bold text-ink-soft uppercase mb-1.5 tracking-wider">Duration</label>
+                              <input type="text" value={exp.duration} onChange={e => updateField("experience", i, "duration", e.target.value)} className="w-full px-3 py-2 text-sm bg-paper-raised border border-line rounded-lg focus:outline-none focus:border-amber font-medium" placeholder="Jan 2023 - Present" />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-[10px] font-bold text-ink-soft uppercase mb-1.5 tracking-wider">Description (Bullets)</label>
+                            <textarea value={exp.description} onChange={e => updateField("experience", i, "description", e.target.value)} rows="4" className="w-full px-3 py-2 text-sm bg-paper-raised border border-line rounded-lg focus:outline-none focus:border-amber font-medium custom-scrollbar resize-none" placeholder="• Developed a new feature using React..."></textarea>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                    <button onClick={() => addField("experience", { role: "", company: "", duration: "", description: "" })} className="w-full py-3 border-2 border-dashed border-line text-amber-deep rounded-xl font-bold hover:bg-amber/10 transition-colors flex items-center justify-center gap-2">
+                      <FiPlus /> Add Another
+                    </button>
+                  </>
+                )}
               </div>
             )}
 
             {/* PROJECTS */}
             {activeTab === "projects" && (
-              <div className="animate-fadeIn">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-bold text-slate-800">Projects</h3>
-                  <button onClick={() => addField("projects", { title: "", techStack: "", link: "", description: "" })} className="text-sm flex items-center gap-1.5 text-indigo-600 font-bold bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors">
-                    <FiPlus /> Add Project
-                  </button>
-                </div>
-
-                {resumeData.projects.length === 0 && <p className="text-sm text-slate-500 italic text-center py-8 border-2 border-dashed border-slate-200 rounded-xl">No projects added.</p>}
-
-                <div className="space-y-4">
-                  {resumeData.projects.map((proj, i) => (
-                    <div key={i} className="p-5 border border-slate-200 rounded-xl bg-white shadow-sm relative group">
-                      <button onClick={() => removeField("projects", i)} className="absolute top-3 right-3 p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"><FiTrash2 size={16} /></button>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="col-span-2 pr-6">
-                          <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">Project Title</label>
-                          <input type="text" value={proj.title} onChange={e => updateField("projects", i, "title", e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. E-Commerce Platform" />
-                        </div>
-                        <div className="col-span-1">
-                          <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">Link (Optional)</label>
-                          <input type="text" value={proj.link} onChange={e => updateField("projects", i, "link", e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. github.com/repo" />
-                        </div>
-                        <div className="col-span-1">
-                          <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">Tech Stack</label>
-                          <input type="text" value={proj.techStack} onChange={e => updateField("projects", i, "techStack", e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. MERN, Tailwind" />
-                        </div>
-                        <div className="col-span-2">
-                          <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">Description</label>
-                          <textarea value={proj.description} onChange={e => updateField("projects", i, "description", e.target.value)} rows="4" className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="• Built a full-stack platform using..."></textarea>
+              <div className="animate-fade-in space-y-4">
+                {resumeData.projects.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center p-10 border-2 border-dashed border-line rounded-2xl bg-paper-raised/50">
+                    <div className="w-16 h-16 bg-emerald/10 text-emerald rounded-full flex items-center justify-center mb-4"><FiCode size={28} /></div>
+                    <p className="text-ink font-semibold mb-1">No Projects Added</p>
+                    <p className="text-muted text-sm text-center mb-6">Showcase your best development work.</p>
+                    <button onClick={() => addField("projects", { title: "", techStack: "", link: "", description: "" })} className="px-5 py-2.5 bg-emerald text-white rounded-xl font-semibold shadow-md hover:bg-emerald-soft transition-colors flex items-center gap-2">
+                      <FiPlus /> Add Project
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    {resumeData.projects.map((proj, i) => (
+                      <div key={i} className="p-5 border border-line rounded-2xl bg-paper shadow-sm relative group hover:border-emerald/50 transition-colors">
+                        <button onClick={() => removeField("projects", i)} className="absolute top-4 right-4 p-2 text-muted hover:text-coral hover:bg-coral/10 rounded-lg transition-colors"><FiTrash2 size={16} /></button>
+                        <div className="space-y-4 pr-10">
+                          <div>
+                            <label className="block text-[10px] font-bold text-ink-soft uppercase mb-1.5 tracking-wider">Project Title</label>
+                            <input type="text" value={proj.title} onChange={e => updateField("projects", i, "title", e.target.value)} className="w-full px-3 py-2 text-sm bg-paper-raised border border-line rounded-lg focus:outline-none focus:border-emerald font-medium" placeholder="E-commerce Platform" />
+                          </div>
+                          <div>
+                            <label className="block text-[10px] font-bold text-ink-soft uppercase mb-1.5 tracking-wider">Tech Stack</label>
+                            <input type="text" value={proj.techStack} onChange={e => updateField("projects", i, "techStack", e.target.value)} className="w-full px-3 py-2 text-sm bg-paper-raised border border-line rounded-lg focus:outline-none focus:border-emerald font-medium" placeholder="MERN, Tailwind" />
+                          </div>
+                          <div>
+                            <label className="block text-[10px] font-bold text-ink-soft uppercase mb-1.5 tracking-wider">Link</label>
+                            <input type="text" value={proj.link} onChange={e => updateField("projects", i, "link", e.target.value)} className="w-full px-3 py-2 text-sm bg-paper-raised border border-line rounded-lg focus:outline-none focus:border-emerald font-medium" placeholder="github.com/project" />
+                          </div>
+                          <div>
+                            <label className="block text-[10px] font-bold text-ink-soft uppercase mb-1.5 tracking-wider">Description (Bullets)</label>
+                            <textarea value={proj.description} onChange={e => updateField("projects", i, "description", e.target.value)} rows="4" className="w-full px-3 py-2 text-sm bg-paper-raised border border-line rounded-lg focus:outline-none focus:border-emerald font-medium custom-scrollbar resize-none" placeholder="• Built a full-stack platform..."></textarea>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                    <button onClick={() => addField("projects", { title: "", techStack: "", link: "", description: "" })} className="w-full py-3 border-2 border-dashed border-line text-emerald rounded-xl font-bold hover:bg-emerald/10 transition-colors flex items-center justify-center gap-2">
+                      <FiPlus /> Add Another
+                    </button>
+                  </>
+                )}
               </div>
             )}
 
             {/* SKILLS */}
             {activeTab === "skills" && (
-              <div className="space-y-8 animate-fadeIn">
+              <div className="animate-fade-in space-y-6">
                 <div>
-                  <h3 className="text-lg font-bold text-slate-800 mb-4">Skills</h3>
-                  <div className="space-y-4">
+                  <h3 className="text-xl font-bold text-ink mb-1">Skills & Certifications</h3>
+                  <p className="text-sm text-muted mb-6">List your technical competencies and soft skills.</p>
+                  
+                  <div className="space-y-6">
                     <div>
-                      <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">Technical Skills</label>
-                      <textarea name="technical" value={resumeData.skills.technical} onChange={handleSkillsChange} rows="3" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white" placeholder="JavaScript, React, Node.js, Python, SQL..."></textarea>
+                      <label className="block text-[10px] font-bold text-ink-soft uppercase mb-2 tracking-wider flex items-center gap-2"><FiCode /> Technical Skills</label>
+                      <textarea name="technical" value={resumeData.skills.technical} onChange={handleSkillsChange} rows="5" className="w-full px-4 py-3 bg-paper-raised border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-sm font-medium resize-none custom-scrollbar" placeholder="Languages: JavaScript, Python...&#10;Frameworks: React, Node..."></textarea>
                     </div>
                     <div>
-                      <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">Soft Skills</label>
-                      <textarea name="soft" value={resumeData.skills.soft} onChange={handleSkillsChange} rows="2" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white" placeholder="Leadership, Agile, Communication..."></textarea>
+                      <label className="block text-[10px] font-bold text-ink-soft uppercase mb-2 tracking-wider flex items-center gap-2"><FiAward /> Soft Skills</label>
+                      <textarea name="soft" value={resumeData.skills.soft} onChange={handleSkillsChange} rows="3" className="w-full px-4 py-3 bg-paper-raised border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-sm font-medium resize-none custom-scrollbar" placeholder="Leadership, Communication, Agile..."></textarea>
                     </div>
                   </div>
                 </div>
 
-                <div className="border-t border-slate-200 pt-6">
+                <div className="pt-6 border-t border-line">
                   <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold text-slate-800">Certifications</h3>
-                    <button onClick={() => addField("certifications", { title: "", issuer: "", year: "", link: "" })} className="text-sm flex items-center gap-1.5 text-indigo-600 font-bold bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors">
-                      <FiPlus /> Add
-                    </button>
+                    <label className="block text-[10px] font-bold text-ink-soft uppercase tracking-wider">Certifications</label>
+                    <button onClick={() => addField("certifications", { title: "", issuer: "", year: "", link: "" })} className="text-xs font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1"><FiPlus /> Add</button>
                   </div>
+                  
                   <div className="space-y-3">
                     {resumeData.certifications.map((cert, i) => (
-                      <div key={i} className="flex flex-col gap-2 bg-white p-3 rounded-lg border border-slate-200">
-                        <div className="flex gap-2 items-center">
-                          <input type="text" value={cert.title} onChange={e => updateField("certifications", i, "title", e.target.value)} placeholder="Title (e.g. AWS Cloud Practitioner)" className="flex-1 px-3 py-2 text-sm border border-transparent hover:border-slate-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:bg-white bg-slate-50" />
-                          <button onClick={() => removeField("certifications", i)} className="p-2 text-slate-400 hover:text-red-500 rounded-lg hover:bg-red-50"><FiTrash2 size={16} /></button>
-                        </div>
-                        <div className="flex gap-2 items-center">
-                          <input type="text" value={cert.issuer} onChange={e => updateField("certifications", i, "issuer", e.target.value)} placeholder="Issuer (e.g. Amazon)" className="w-1/3 px-3 py-2 text-sm border border-transparent hover:border-slate-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:bg-white bg-slate-50" />
-                          <input type="text" value={cert.year} onChange={e => updateField("certifications", i, "year", e.target.value)} placeholder="Year" className="w-24 px-3 py-2 text-sm border border-transparent hover:border-slate-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:bg-white bg-slate-50 text-center" />
-                          <input type="text" value={cert.link} onChange={e => updateField("certifications", i, "link", e.target.value)} placeholder="Credential URL (Optional)" className="flex-1 px-3 py-2 text-sm border border-transparent hover:border-slate-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:bg-white bg-slate-50" />
+                      <div key={i} className="p-4 border border-line rounded-xl bg-paper shadow-sm relative group hover:border-indigo-200">
+                        <button onClick={() => removeField("certifications", i)} className="absolute top-3 right-3 p-1.5 text-muted hover:text-coral hover:bg-coral/10 rounded-lg"><FiTrash2 size={14} /></button>
+                        <div className="grid grid-cols-2 gap-3 pr-8">
+                          <div className="col-span-2">
+                            <input type="text" value={cert.title} onChange={e => updateField("certifications", i, "title", e.target.value)} className="w-full px-3 py-2 text-sm bg-paper-raised border border-line rounded-lg focus:outline-none focus:border-indigo-400 font-medium" placeholder="AWS Cloud Practitioner" />
+                          </div>
+                          <div>
+                            <input type="text" value={cert.issuer} onChange={e => updateField("certifications", i, "issuer", e.target.value)} className="w-full px-3 py-2 text-sm bg-paper-raised border border-line rounded-lg focus:outline-none focus:border-indigo-400 font-medium" placeholder="Amazon" />
+                          </div>
+                          <div>
+                            <input type="text" value={cert.year} onChange={e => updateField("certifications", i, "year", e.target.value)} className="w-full px-3 py-2 text-sm bg-paper-raised border border-line rounded-lg focus:outline-none focus:border-indigo-400 font-medium" placeholder="2023" />
+                          </div>
                         </div>
                       </div>
                     ))}
-                    {resumeData.certifications.length === 0 && <p className="text-sm text-slate-500 italic py-2">No certifications added.</p>}
+                    {resumeData.certifications.length === 0 && <p className="text-sm text-muted italic py-2">No certifications added.</p>}
                   </div>
                 </div>
+
               </div>
             )}
           </div>
         </div>
 
-        {/* RIGHT PANEL - PREVIEW */}
-        <div className="w-full lg:w-[55%] xl:w-[60%] bg-slate-300/50 rounded-2xl overflow-hidden relative flex justify-center items-start pt-8 pb-8 custom-scrollbar shadow-inner border border-slate-200" style={{ overflowY: "auto" }}>
-          {/* Wrapper with fixed A4 aspect ratio using absolute pixel width to ensure html2canvas captures it perfectly */}
-          <div className="bg-white shadow-2xl resume-preview-wrapper transition-all duration-300 transform origin-top hover:scale-[1.02]" style={{ width: "210mm", minHeight: "297mm", margin: "0 auto" }}>
+        {/* RIGHT PANEL: LIVE PREVIEW CANVAS */}
+        <div className="flex-1 bg-surface-hover overflow-y-auto custom-scrollbar flex items-start justify-center p-8 lg:p-12">
+          {/* This wrapper gives the illusion of a floating piece of paper */}
+          <div className="relative shadow-2xl shadow-ink/20 w-full max-w-[794px] transition-all duration-300 origin-top bg-white border border-line rounded-sm" style={{ minHeight: "1123px" }}>
             {renderTemplate()}
           </div>
         </div>
+
       </div>
     </div>
   );
