@@ -545,37 +545,44 @@ const ResumeBuilder = () => {
       <div className="bg-white p-12" ref={resumeRef} style={{ minHeight: "297mm", fontFamily: "'Times New Roman', Times, serif", color: "#000" }}>
         <div className="text-center mb-4">
           <h1 className="text-3xl font-normal mb-1">{data.personal.name || "Your Name"}</h1>
-          <div className="text-[12px] flex justify-center items-center flex-wrap mt-1">
-            {data.personal.email && (
-              <span className="flex items-center gap-1">
-                <FiMail size={11} />
-                <a href={`mailto:${data.personal.email}`} className="hover:underline">{data.personal.email}</a>
-              </span>
-            )}
-            {data.personal.phone && (
-              <span className="flex items-center gap-1 before:content-['|'] before:mx-2 before:text-gray-400">
-                <FiPhone size={11} />
-                {data.personal.phone}
-              </span>
-            )}
-            {data.personal.linkedin && (
-              <span className="flex items-center gap-1 before:content-['|'] before:mx-2 before:text-gray-400">
-                <FiLinkedin size={11} />
-                <a href={getValidUrl(data.personal.linkedin)} className="hover:underline">{formatUrl(data.personal.linkedin, 'linkedin')}</a>
-              </span>
-            )}
-            {data.personal.github && (
-              <span className="flex items-center gap-1 before:content-['|'] before:mx-2 before:text-gray-400">
-                <FiGithub size={11} />
-                <a href={getValidUrl(data.personal.github)} className="hover:underline">{formatUrl(data.personal.github, 'github')}</a>
-              </span>
-            )}
-            {data.personal.portfolio && (
-              <span className="flex items-center gap-1 before:content-['|'] before:mx-2 before:text-gray-400">
-                <FiGlobe size={11} />
-                <a href={getValidUrl(data.personal.portfolio)} className="hover:underline">{formatUrl(data.personal.portfolio, 'portfolio')}</a>
-              </span>
-            )}
+          <div className="text-[12px] flex justify-center items-center flex-wrap mt-1 gap-y-1">
+            {[
+              data.personal.email && (
+                <span key="email" className="inline-flex items-center">
+                  <FiMail size={11} className="mr-1 relative" style={{top: "-1px"}} />
+                  <a href={`mailto:${data.personal.email}`} className="hover:underline">{data.personal.email}</a>
+                </span>
+              ),
+              data.personal.phone && (
+                <span key="phone" className="inline-flex items-center">
+                  <FiPhone size={11} className="mr-1 relative" style={{top: "-1px"}} />
+                  {data.personal.phone}
+                </span>
+              ),
+              data.personal.linkedin && (
+                <span key="linkedin" className="inline-flex items-center">
+                  <FiLinkedin size={11} className="mr-1 relative" style={{top: "-1px"}} />
+                  <a href={getValidUrl(data.personal.linkedin)} className="hover:underline">{formatUrl(data.personal.linkedin, 'linkedin')}</a>
+                </span>
+              ),
+              data.personal.github && (
+                <span key="github" className="inline-flex items-center">
+                  <FiGithub size={11} className="mr-1 relative" style={{top: "-1px"}} />
+                  <a href={getValidUrl(data.personal.github)} className="hover:underline">{formatUrl(data.personal.github, 'github')}</a>
+                </span>
+              ),
+              data.personal.portfolio && (
+                <span key="portfolio" className="inline-flex items-center">
+                  <FiGlobe size={11} className="mr-1 relative" style={{top: "-1px"}} />
+                  <a href={getValidUrl(data.personal.portfolio)} className="hover:underline">{formatUrl(data.personal.portfolio, 'portfolio')}</a>
+                </span>
+              )
+            ].filter(Boolean).map((item, index, arr) => (
+              <React.Fragment key={index}>
+                {item}
+                {index < arr.length - 1 && <span className="text-gray-400 mx-2">|</span>}
+              </React.Fragment>
+            ))}
           </div>
         </div>
 
