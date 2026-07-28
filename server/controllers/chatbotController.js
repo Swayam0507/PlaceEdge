@@ -365,6 +365,17 @@ The JSON object must perfectly match this structure:
   ],
   "topQuestions": [
     { "title": "<question title>", "difficulty": "<Easy/Medium/Hard>", "leetcodeUrl": "<optional url or empty string>" }
+  ],
+  "roadmap": [
+    { "week": "Week 1", "title": "<focus title>", "description": "<brief description of what to study>" },
+    { "week": "Week 2", "title": "<focus title>", "description": "<brief description of what to study>" },
+    { "week": "Week 3", "title": "<focus title>", "description": "<brief description of what to study>" },
+    { "week": "Week 4", "title": "<focus title>", "description": "<brief description of what to study>" }
+  ],
+  "proTips": [
+    "<specific insider tip 1 for ${companyName}>",
+    "<specific insider tip 2 for ${companyName}>",
+    "<specific insider tip 3 for ${companyName}>"
   ]
 }
 Make sure the percentages in difficulty add up to 100.
