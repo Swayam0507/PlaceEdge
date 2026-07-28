@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Loader2, ExternalLink, TrendingUp, Target, Map, CheckCircle2, Lightbulb, PlayCircle, BookOpen } from "lucide-react";
 import api from "../services/api";
+import MockAnswerForm from "../components/MockAnswerForm";
 
 const CompanyPrepDetail = () => {
   const { companyName } = useParams();
   const [prepData, setPrepData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [activeQuestionId, setActiveQuestionId] = useState(null);
 
   useEffect(() => {
     const fetchPrepData = async () => {
@@ -157,13 +159,26 @@ const CompanyPrepDetail = () => {
                       </span>
                     </div>
                     {topic.questions && topic.questions.length > 0 ? (
-                      <ul className="space-y-2">
-                        {topic.questions.map((q, j) => (
-                          <li key={j} className="flex items-start gap-3 text-sm text-ink-soft">
-                            <div className="mt-2 h-1.5 w-1.5 rounded-full bg-indigo-300 shrink-0"></div>
-                            <span className="leading-relaxed">{q}</span>
-                          </li>
-                        ))}
+                      <ul className="space-y-3 pt-2 border-t border-line/50">
+                        {topic.questions.map((q, j) => {
+                          const qId = `topic-${i}-q-${j}`;
+                          const isActive = activeQuestionId === qId;
+                          return (
+                            <li key={j} className="flex flex-col gap-3">
+                              <button 
+                                onClick={() => setActiveQuestionId(isActive ? null : qId)}
+                                className="group/btn flex items-start gap-3 text-sm text-left hover:text-indigo-700 transition-colors w-full"
+                              >
+                                <div className={`mt-2 h-1.5 w-1.5 rounded-full shrink-0 transition-colors ${isActive ? 'bg-indigo-600' : 'bg-indigo-300 group-hover/btn:bg-indigo-500'}`}></div>
+                                <span className={`leading-relaxed font-medium transition-colors ${isActive ? 'text-indigo-900' : 'text-ink-soft'}`}>{q}</span>
+                              </button>
+                              
+                              <div className={`overflow-hidden transition-all duration-300 ${isActive ? 'block' : 'hidden'}`}>
+                                <MockAnswerForm question={q} />
+                              </div>
+                            </li>
+                          );
+                        })}
                       </ul>
                     ) : (
                       <p className="text-sm text-muted italic">Ask Gemini in Practice Hub for specific questions on this topic.</p>
