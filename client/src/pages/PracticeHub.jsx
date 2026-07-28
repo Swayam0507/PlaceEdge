@@ -39,7 +39,7 @@ const PracticeHub = () => {
 
   return (
     <div className="min-h-screen bg-surface pb-20 animate-fade-in">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-[1440px] mx-auto px-4 py-8">
         
         {/* Header Section */}
         <div className="mb-10 text-center md:text-left">

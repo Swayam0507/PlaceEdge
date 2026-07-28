@@ -65,7 +65,7 @@ const LandingPage = () => {
       
       {/* Navbar Minimal */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        <div className="max-w-[1440px] mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
               <Sparkles size={20} />
@@ -88,7 +88,7 @@ const LandingPage = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-violet-400 blur-[100px] rounded-full mix-blend-multiply"></div>
         </div>
 
-        <div className="max-w-7xl mx-auto text-center relative z-10">
+        <div className="max-w-[1440px] mx-auto text-center relative z-10">
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -135,7 +135,7 @@ const LandingPage = () => {
 
       {/* Stats Section */}
       <section className="py-10 border-y border-slate-100 bg-slate-50/50">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-[1440px] mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-slate-200">
             {STATS.map((stat, i) => (
               <div key={i} className="text-center px-4">
@@ -151,7 +151,7 @@ const LandingPage = () => {
 
       {/* Features Section */}
       <section className="py-24 px-6 relative">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-[1440px] mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4">Everything you need to succeed</h2>
             <p className="text-lg text-slate-500">A comprehensive suite of professional tools designed to maximize your placement readiness.</p>
@@ -184,7 +184,7 @@ const LandingPage = () => {
 
       {/* Steps Section */}
       <section className="py-24 px-6 bg-slate-900 text-white rounded-t-[3rem] lg:rounded-t-[5rem]">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-[1440px] mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl lg:text-5xl font-bold mb-6">Your path to placement</h2>
             <p className="text-lg text-slate-400">Follow our structured methodology to land your dream job.</p>
@@ -215,7 +215,7 @@ const LandingPage = () => {
       
       {/* CTA Footer */}
       <section className="bg-slate-900 pb-10">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-[1440px] mx-auto px-6">
           <div className="bg-gradient-to-r from-blue-600 to-violet-600 rounded-[2rem] p-10 md:p-16 text-center text-white relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
             <h2 className="text-3xl md:text-5xl font-bold mb-6 relative z-10">Ready to accelerate your career?</h2>

@@ -35,7 +35,7 @@ const TopNav = ({ onOpenCommandPalette }) => {
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm" role="navigation" aria-label="Main navigation">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+      <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-4 sm:px-6">
         
         {/* Left: Branding */}
         <div className="flex-1 flex justify-start">

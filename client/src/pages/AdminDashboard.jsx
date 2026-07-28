@@ -334,7 +334,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in">
+    <div className="max-w-[1440px] mx-auto px-4 py-8 animate-fade-in">
       <div className="flex flex-col space-y-8">
 
         {/* Welcome Section */}

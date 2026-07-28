@@ -34,7 +34,7 @@ const AppLayout = ({ children }) => {
             onToggle={() => setSidebarCollapsed(c => !c)}
           />
         )}
-        <main className={`flex-1 w-full pb-20 md:pb-8 pt-6 ${isAdmin ? 'px-4' : 'max-w-7xl mx-auto px-4 sm:px-6'}`}>
+        <main className={`flex-1 w-full pb-20 md:pb-8 pt-6 ${isAdmin ? 'px-4' : 'max-w-[1440px] mx-auto px-4 sm:px-6'}`}>
           {children}
         </main>
       </div>

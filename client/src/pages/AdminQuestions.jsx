@@ -160,7 +160,7 @@ const AdminQuestions = () => {
   }], null, 2);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in">
+    <div className="max-w-[1440px] mx-auto px-4 py-8 animate-fade-in">
       <div className="flex flex-col space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>

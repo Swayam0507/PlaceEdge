@@ -574,7 +574,7 @@ const ResumeBuilder = () => {
   // -------------------------------------------------------------
   // RENDER LEFT PANEL FORMS
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 animate-fade-in">
+    <div className="mx-auto max-w-[1440px] px-4 py-8 animate-fade-in">
       <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl font-bold text-ink flex items-center gap-3">

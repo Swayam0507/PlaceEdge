@@ -53,7 +53,7 @@ const JobBoard = () => {
 
   return (
     <div className="min-h-screen bg-paper p-6 md:p-10 font-sans animate-fade-in">
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-[1440px]">
         
         {/* Header Section */}
         <div className="mb-10 text-center">

@@ -46,7 +46,7 @@ const SECTIONS = [
 
 const CareerHub = () => {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in">
+    <div className="max-w-[1440px] mx-auto px-4 py-8 animate-fade-in">
       <div className="mb-10 text-center md:text-left">
         <h1 className="font-bold text-3xl md:text-4xl text-slate-900 tracking-tight">Career Hub</h1>
         <p className="text-slate-500 mt-3 text-lg font-medium max-w-2xl">Manage your placement journey — resume, jobs, predictions, and certifications.</p>
