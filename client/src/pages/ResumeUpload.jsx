@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { FiDownload, FiPlus, FiTrash2, FiUser, FiBook, FiBriefcase, FiCode, FiAward, FiFileText, FiLinkedin, FiGithub, FiZap, FiMail, FiPhone, FiGlobe } from "react-icons/fi";
+import { useReactToPrint } from "react-to-print";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useAuth } from "../context/AuthContext";
@@ -127,79 +128,26 @@ const ResumeBuilder = () => {
     });
   };
 
-  const downloadPDF = async () => {
-    const element = resumeRef.current;
-    if (!element) return;
-
-    const originalWidth = element.style.width;
-    element.style.width = "794px";
-
-    setIsGenerating(true);
-
-    try {
-      // Capture the full content without constraining height
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        windowWidth: 794,
-      });
-
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4"
-      });
-
-      const pdfWidth = pdf.internal.pageSize.getWidth();   // 210mm
-      const pdfPageHeight = pdf.internal.pageSize.getHeight(); // 297mm
-      const imgWidth = pdfWidth;
-      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
-
-      // Scale to fit on a single A4 page
-      let finalWidth = imgWidth;
-      let finalHeight = imgHeight;
-      if (imgHeight > pdfPageHeight) {
-        const scaleFactor = pdfPageHeight / imgHeight;
-        finalWidth = imgWidth * scaleFactor;
-        finalHeight = pdfPageHeight;
+  const downloadPDF = useReactToPrint({
+    content: () => resumeRef.current,
+    documentTitle: `${resumeData.personal.name || 'Student'}_Resume`,
+    onBeforeGetContent: () => {
+      setIsGenerating(true);
+      if (resumeRef.current) {
+        resumeRef.current.style.width = "210mm"; 
       }
-      const xOffset = (pdfWidth - finalWidth) / 2;
-
-      pdf.addImage(imgData, "PNG", xOffset, 0, finalWidth, finalHeight);
-
-      // Add clickable link annotations over the image
-      const links = element.querySelectorAll('a[href]');
-      const elRect = element.getBoundingClientRect();
-
-      links.forEach(link => {
-        const href = link.getAttribute('href');
-        if (!href || href === '#') return;
-
-        const linkRect = link.getBoundingClientRect();
-        const relX = (linkRect.left - elRect.left) / elRect.width;
-        const relY = (linkRect.top - elRect.top) / elRect.height;
-        const relW = linkRect.width / elRect.width;
-        const relH = linkRect.height / elRect.height;
-
-        const pdfX = xOffset + relX * finalWidth;
-        const pdfY = relY * finalHeight;
-        const pdfW = relW * finalWidth;
-        const pdfH = relH * finalHeight;
-
-        const fullUrl = href.startsWith('http') || href.startsWith('mailto') ? href : `https://${href}`;
-        pdf.link(pdfX, pdfY, pdfW, pdfH, { url: fullUrl });
-      });
-
-      pdf.save(`${resumeData.personal.name || 'Student'}_Resume.pdf`);
-    } catch (err) {
-      console.error("Error generating PDF", err);
-    } finally {
-      element.style.width = originalWidth;
+      return Promise.resolve();
+    },
+    onAfterPrint: () => {
+      if (resumeRef.current) {
+        resumeRef.current.style.width = "100%";
+      }
+      setIsGenerating(false);
+    },
+    onPrintError: () => {
       setIsGenerating(false);
     }
-  };
+  });
 
   const formatUrl = (url, type) => {
     if (!url) return "";
