@@ -361,7 +361,11 @@ The JSON object must perfectly match this structure:
   "totalQuestions": <approximate number of recent interview questions, e.g. 150>,
   "difficulty": { "easy": <percentage>, "medium": <percentage>, "hard": <percentage> },
   "mostAskedTopics": [
-    { "name": "<topic name, e.g. Arrays, System Design, HR>", "count": <approximate frequency> }
+    { 
+      "name": "<topic name, e.g. Arrays, System Design, HR>", 
+      "count": <approximate frequency>,
+      "questions": ["<question 1>", "<question 2>", "<question 3>"]
+    }
   ],
   "topQuestions": [
     { "title": "<question title>", "difficulty": "<Easy/Medium/Hard>", "leetcodeUrl": "<optional url or empty string>" }

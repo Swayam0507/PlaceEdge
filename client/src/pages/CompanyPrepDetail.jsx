@@ -59,9 +59,9 @@ const CompanyPrepDetail = () => {
     );
   }
 
-  const easyPct = prepData?.difficulty?.easy || 30;
-  const medPct = prepData?.difficulty?.medium || 50;
-  const hardPct = prepData?.difficulty?.hard || 20;
+  const easyPct = parseFloat(prepData?.difficulty?.easy) || 30;
+  const medPct = parseFloat(prepData?.difficulty?.medium) || 50;
+  const hardPct = parseFloat(prepData?.difficulty?.hard) || 20;
 
   return (
     <div className="min-h-screen bg-surface font-body pb-16 animate-fade-in">
@@ -147,13 +147,27 @@ const CompanyPrepDetail = () => {
                 <div className="p-2 bg-blue-50 text-blue-600 rounded-xl"><TrendingUp size={20} strokeWidth={2.5} /></div>
                 <h2 className="font-display text-xl font-bold text-ink tracking-tight">Most Asked Topics</h2>
               </div>
-              <div className="flex flex-wrap gap-3">
+              <div className="space-y-4">
                 {prepData?.mostAskedTopics?.map((topic, i) => (
-                  <div key={i} className="group flex items-center gap-2 rounded-xl border border-indigo-100 bg-indigo-50/50 hover:bg-indigo-50 px-4 py-2.5 transition-all hover:-translate-y-0.5 hover:shadow-sm cursor-default">
-                    <span className="text-sm font-bold text-indigo-900">{topic.name}</span>
-                    <span className="flex items-center justify-center min-w-[24px] h-6 rounded-lg bg-white border border-indigo-200 text-[11px] font-bold text-indigo-600 shadow-sm px-1.5 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 transition-colors">
-                      {topic.count}
-                    </span>
+                  <div key={i} className="group rounded-2xl border border-line bg-slate-50/50 p-5 transition-all hover:border-indigo-200 hover:shadow-sm hover:bg-white">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="font-display text-lg font-bold text-ink group-hover:text-indigo-700 transition-colors">{topic.name}</h3>
+                      <span className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-line text-xs font-bold text-ink-soft shadow-sm group-hover:bg-indigo-50 group-hover:text-indigo-700 group-hover:border-indigo-200 transition-all">
+                        {topic.count} questions
+                      </span>
+                    </div>
+                    {topic.questions && topic.questions.length > 0 ? (
+                      <ul className="space-y-2">
+                        {topic.questions.map((q, j) => (
+                          <li key={j} className="flex items-start gap-3 text-sm text-ink-soft">
+                            <div className="mt-2 h-1.5 w-1.5 rounded-full bg-indigo-300 shrink-0"></div>
+                            <span className="leading-relaxed">{q}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-muted italic">Ask Gemini in Practice Hub for specific questions on this topic.</p>
+                    )}
                   </div>
                 ))}
               </div>
