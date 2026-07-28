@@ -265,3 +265,63 @@ Respond ONLY with the valid JSON object.`;
         res.status(500).json({ success: false, message: "Failed to generate career advice." });
     }
 };
+
+exports.atsCheck = async (req, res) => {
+    try {
+        const { jobDescription } = req.body;
+        if (!jobDescription) {
+            return res.status(400).json({ success: false, message: "Job description is required." });
+        }
+
+        let fileText = "";
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: "Resume file is required." });
+        }
+
+        const mimeType = req.file.mimetype;
+        if (mimeType === "application/pdf") {
+            const pdfData = await pdfParse(req.file.buffer);
+            fileText = pdfData.text;
+        } else if (
+            mimeType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || 
+            req.file.originalname.endsWith(".docx")
+        ) {
+            const result = await mammoth.extractRawText({ buffer: req.file.buffer });
+            fileText = result.value;
+        } else {
+            return res.status(400).json({ success: false, message: "Unsupported file type. Please upload a PDF or DOCX file." });
+        }
+
+        const prompt = `You are an expert ATS (Applicant Tracking System) used by top tech companies. 
+Evaluate the following resume against the given job description. 
+Provide highly actionable, constructive feedback in markdown format. Include sections for:
+1. Overall Match Assessment
+2. Key Strengths
+3. Missing Keywords / Skills
+4. Formatting & Impact Suggestions
+
+Job Description:
+${jobDescription}
+
+Resume:
+${fileText}
+`;
+
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+            config: {
+                temperature: 0.2,
+            }
+        });
+
+        return res.status(200).json({ 
+            success: true, 
+            feedback: response.text 
+        });
+
+    } catch (error) {
+        console.error("ATS Check Error:", error);
+        res.status(500).json({ success: false, message: "Failed to perform ATS check." });
+    }
+};
