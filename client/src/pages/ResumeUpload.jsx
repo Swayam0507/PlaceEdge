@@ -370,16 +370,16 @@ const ResumeBuilder = () => {
 
             <div className="space-y-3 text-[13px] text-slate-600 font-medium">
               {data.personal.email && (
-                <div className="flex items-center gap-3"><div className="w-6 h-6 rounded bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0"><FiMail size={12}/></div> <span className="truncate">{data.personal.email}</span></div>
+                <div className="flex items-center gap-3"><div className="w-6 h-6 rounded bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0"><FiMail size={12}/></div> <span className="break-all">{data.personal.email}</span></div>
               )}
               {data.personal.phone && (
                 <div className="flex items-center gap-3"><div className="w-6 h-6 rounded bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0"><FiPhone size={12}/></div> {data.personal.phone}</div>
               )}
               {data.personal.linkedin && (
-                <div className="flex items-center gap-3"><div className="w-6 h-6 rounded bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0"><FiLinkedin size={12}/></div> <span className="truncate">{formatUrl(data.personal.linkedin, 'linkedin')}</span></div>
+                <div className="flex items-center gap-3"><div className="w-6 h-6 rounded bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0"><FiLinkedin size={12}/></div> <span className="break-all">{formatUrl(data.personal.linkedin, 'linkedin')}</span></div>
               )}
               {data.personal.github && (
-                <div className="flex items-center gap-3"><div className="w-6 h-6 rounded bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0"><FiGithub size={12}/></div> <span className="truncate">{formatUrl(data.personal.github, 'github')}</span></div>
+                <div className="flex items-center gap-3"><div className="w-6 h-6 rounded bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0"><FiGithub size={12}/></div> <span className="break-all">{formatUrl(data.personal.github, 'github')}</span></div>
               )}
             </div>
 
@@ -410,7 +410,7 @@ const ResumeBuilder = () => {
                   <div className="mb-3">
                     <strong className="block text-[11px] uppercase tracking-wider text-slate-500 mb-1.5">Technical</strong>
                     <div className="flex flex-wrap gap-1.5">
-                      {data.skills.technical.split(/[,\\n]+/).map((skill, idx) => {
+                      {data.skills.technical.split(/[,\n]+/).map((skill, idx) => {
                         const s = skill.trim();
                         if(!s) return null;
                         return <span key={idx} className="bg-white border border-slate-200 text-slate-700 px-2 py-1 rounded text-[11px] font-semibold">{s}</span>
