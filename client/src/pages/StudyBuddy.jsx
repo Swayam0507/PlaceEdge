@@ -93,13 +93,13 @@ const StudyBuddy = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-120px)] bg-surface font-body animate-fade-in flex flex-col relative overflow-hidden rounded-2xl">
+    <div className="w-full bg-surface font-body animate-fade-in p-4 sm:p-6 lg:p-8">
       
       {/* Background Decor */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/4 pointer-events-none"></div>
 
-      <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col relative z-10 p-4 sm:p-6 lg:p-8 min-h-0">
+      <div className="max-w-5xl mx-auto w-full flex flex-col relative z-10">
         
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 shrink-0">
@@ -141,7 +141,7 @@ const StudyBuddy = () => {
         </div>
 
         {/* Chat Window */}
-        <div className="flex-1 min-h-0 bg-white/80 backdrop-blur-xl border border-white rounded-3xl shadow-xl flex flex-col overflow-hidden relative">
+        <div className="h-[600px] md:h-[700px] bg-white/80 backdrop-blur-xl border border-white rounded-3xl shadow-xl flex flex-col overflow-hidden relative">
 
           
           {/* Messages Area */}
