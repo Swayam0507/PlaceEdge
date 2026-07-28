@@ -67,92 +67,86 @@ const Register = () => {
   const displayError = localError || error;
 
   return (
-    <div className="auth-page">
-      {/* Animated background elements */}
-      <div className="auth-bg-elements">
-        <div className="bg-circle circle-1"></div>
-        <div className="bg-circle circle-2"></div>
-        <div className="bg-circle circle-3"></div>
-      </div>
-
-      <div className="auth-container">
-        {/* Left panel - Branding */}
-        <div className="auth-branding">
-          <div className="branding-content">
-            <div className="branding-icon">
-              <svg
-                width="48"
-                height="48"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              >
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                <path d="M6 12v5c3 3 9 3 12 0v-5" />
-              </svg>
-            </div>
-            <h1>Join PlaceEdge</h1>
-            <p>Start your journey towards your dream placement. Track progress, practice skills, and get AI-powered insights.</p>
-            <div className="branding-features">
-              <div className="feature-item">
-                <div className="feature-icon">📊</div>
-                <span>AI-Powered Analytics</span>
-              </div>
-              <div className="feature-item">
-                <div className="feature-icon">🎯</div>
-                <span>Personalized Roadmap</span>
-              </div>
-              <div className="feature-item">
-                <div className="feature-icon">📚</div>
-                <span>Curated Resources</span>
-              </div>
-            </div>
+    <div className="min-h-screen flex bg-paper animate-fade-in">
+      {/* Left panel - Branding */}
+      <div className="hidden lg:flex flex-col justify-between w-1/2 bg-ink p-12 text-paper relative overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[30rem] h-[30rem] bg-emerald/10 rounded-full blur-3xl"></div>
+        
+        <div className="relative z-10">
+          <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mb-8 backdrop-blur-sm border border-white/10">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg>
           </div>
+          <h1 className="font-display font-bold text-5xl leading-tight mb-4">Join PlaceEdge</h1>
+          <p className="text-white/70 text-lg max-w-md">
+            Start your journey towards your dream placement. Track progress, practice skills, and get AI-powered insights.
+          </p>
         </div>
 
-        {/* Right panel - Form */}
-        <div className="auth-form-panel">
-          <div className="auth-form-container">
-            <div className="auth-header">
-              <h2>Create Account</h2>
-              <p>Fill in your details to get started</p>
-            </div>
+        <div className="grid grid-cols-1 gap-6 relative z-10 pt-8 mt-12">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-xl">📊</div>
+            <span className="font-semibold text-lg">AI-Powered Analytics</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-xl">🎯</div>
+            <span className="font-semibold text-lg">Personalized Roadmap</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-xl">📚</div>
+            <span className="font-semibold text-lg">Curated Resources</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Right panel - Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 overflow-y-auto">
+        <div className="w-full max-w-md">
+          <div className="mb-8 text-center lg:text-left">
+            <h2 className="font-display font-bold text-3xl text-ink mb-2">Create Account</h2>
+            <p className="text-muted">Fill in your details to get started</p>
+          </div>
 
             {/* Step indicator */}
-            <div className="step-indicator">
-              <div className={`step ${step >= 1 ? "active" : ""}`}>
-                <div className="step-dot">1</div>
-                <span>Account</span>
+            <div className="flex items-center justify-between mb-8">
+              <div className={`flex flex-col items-center gap-2 ${step >= 1 ? "text-ink" : "text-muted"}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${step >= 1 ? "bg-ink text-paper" : "bg-gray-200 text-muted"}`}>1</div>
+                <span className="text-xs font-semibold uppercase tracking-wider">Account</span>
               </div>
-              <div className="step-line"></div>
-              <div className={`step ${step >= 2 ? "active" : ""}`}>
-                <div className="step-dot">2</div>
-                <span>Academic</span>
+              <div className={`h-1 flex-1 mx-4 rounded-full ${step >= 2 ? "bg-ink" : "bg-gray-200"}`}></div>
+              <div className={`flex flex-col items-center gap-2 ${step >= 2 ? "text-ink" : "text-muted"}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${step >= 2 ? "bg-ink text-paper" : "bg-gray-200 text-muted"}`}>2</div>
+                <span className="text-xs font-semibold uppercase tracking-wider">Academic</span>
               </div>
             </div>
 
             {displayError && (
-              <div className="error-alert">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <div className="bg-coral/10 border border-coral text-coral px-4 py-3 rounded-xl mb-6 flex items-center gap-3">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="10" />
                   <line x1="15" y1="9" x2="9" y2="15" />
                   <line x1="9" y1="9" x2="15" y2="15" />
                 </svg>
-                {displayError}
+                <span className="font-medium text-sm">{displayError}</span>
               </div>
             )}
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="space-y-5">
               {step === 1 && (
-                <div className="form-step">
-                  <div className="form-group">
-                    <label htmlFor="name">Full Name</label>
-                    <div className="input-wrapper">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                        <circle cx="12" cy="7" r="4" />
-                      </svg>
+                <div className="space-y-5 animate-fade-in">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-bold text-ink mb-2">Full Name</label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                          <circle cx="12" cy="7" r="4" />
+                        </svg>
+                      </div>
                       <input
                         type="text"
                         id="name"
@@ -161,17 +155,20 @@ const Register = () => {
                         value={formData.name}
                         onChange={handleChange}
                         required
+                        className="w-full pl-11 pr-4 py-3 rounded-xl border border-line bg-white text-ink focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink transition-all"
                       />
                     </div>
                   </div>
 
-                  <div className="form-group">
-                    <label htmlFor="email">Email Address</label>
-                    <div className="input-wrapper">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <rect width="20" height="16" x="2" y="4" rx="2" />
-                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                      </svg>
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-bold text-ink mb-2">Email Address</label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect width="20" height="16" x="2" y="4" rx="2" />
+                          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                        </svg>
+                      </div>
                       <input
                         type="email"
                         id="email"
@@ -180,17 +177,20 @@ const Register = () => {
                         value={formData.email}
                         onChange={handleChange}
                         required
+                        className="w-full pl-11 pr-4 py-3 rounded-xl border border-line bg-white text-ink focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink transition-all"
                       />
                     </div>
                   </div>
 
-                  <div className="form-group">
-                    <label htmlFor="password">Password</label>
-                    <div className="input-wrapper">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                      </svg>
+                  <div>
+                    <label htmlFor="password" className="block text-sm font-bold text-ink mb-2">Password</label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                      </div>
                       <input
                         type="password"
                         id="password"
@@ -200,17 +200,20 @@ const Register = () => {
                         onChange={handleChange}
                         required
                         minLength={6}
+                        className="w-full pl-11 pr-4 py-3 rounded-xl border border-line bg-white text-ink focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink transition-all"
                       />
                     </div>
                   </div>
 
-                  <div className="form-group">
-                    <label htmlFor="confirmPassword">Confirm Password</label>
-                    <div className="input-wrapper">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                      </svg>
+                  <div>
+                    <label htmlFor="confirmPassword" className="block text-sm font-bold text-ink mb-2">Confirm Password</label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                      </div>
                       <input
                         type="password"
                         id="confirmPassword"
@@ -219,11 +222,16 @@ const Register = () => {
                         value={formData.confirmPassword}
                         onChange={handleChange}
                         required
+                        className="w-full pl-11 pr-4 py-3 rounded-xl border border-line bg-white text-ink focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink transition-all"
                       />
                     </div>
                   </div>
 
-                  <button type="button" className="btn-primary" onClick={handleNext}>
+                  <button 
+                    type="button" 
+                    className="w-full flex justify-center items-center gap-2 bg-ink text-paper py-3.5 rounded-xl font-bold shadow-sm hover:bg-ink-soft transition-colors mt-6"
+                    onClick={handleNext}
+                  >
                     Continue
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <line x1="5" y1="12" x2="19" y2="12" />
@@ -234,18 +242,21 @@ const Register = () => {
               )}
 
               {step === 2 && (
-                <div className="form-step">
-                  <div className="form-group">
-                    <label htmlFor="branch">Branch / Department</label>
-                    <div className="input-wrapper">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
-                      </svg>
+                <div className="space-y-5 animate-fade-in">
+                  <div>
+                    <label htmlFor="branch" className="block text-sm font-bold text-ink mb-2">Branch / Department</label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+                        </svg>
+                      </div>
                       <select
                         id="branch"
                         name="branch"
                         value={formData.branch}
                         onChange={handleChange}
+                        className="w-full pl-11 pr-4 py-3 rounded-xl border border-line bg-white text-ink focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink transition-all appearance-none"
                       >
                         <option value="">Select your branch</option>
                         {BRANCHES.map((b) => (
@@ -257,21 +268,24 @@ const Register = () => {
                     </div>
                   </div>
 
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label htmlFor="semester">Semester</label>
-                      <div className="input-wrapper">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
-                          <line x1="16" y1="2" x2="16" y2="6" />
-                          <line x1="8" y1="2" x2="8" y2="6" />
-                          <line x1="3" y1="10" x2="21" y2="10" />
-                        </svg>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="semester" className="block text-sm font-bold text-ink mb-2">Semester</label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+                            <line x1="16" y1="2" x2="16" y2="6" />
+                            <line x1="8" y1="2" x2="8" y2="6" />
+                            <line x1="3" y1="10" x2="21" y2="10" />
+                          </svg>
+                        </div>
                         <select
                           id="semester"
                           name="semester"
                           value={formData.semester}
                           onChange={handleChange}
+                          className="w-full pl-11 pr-4 py-3 rounded-xl border border-line bg-white text-ink focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink transition-all appearance-none"
                         >
                           {SEMESTERS.map((s) => (
                             <option key={s} value={s}>
@@ -282,12 +296,14 @@ const Register = () => {
                       </div>
                     </div>
 
-                    <div className="form-group">
-                      <label htmlFor="cgpa">CGPA</label>
-                      <div className="input-wrapper">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                        </svg>
+                    <div>
+                      <label htmlFor="cgpa" className="block text-sm font-bold text-ink mb-2">CGPA</label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                          </svg>
+                        </div>
                         <input
                           type="number"
                           id="cgpa"
@@ -298,39 +314,33 @@ const Register = () => {
                           step="0.01"
                           min="0"
                           max="10"
+                          className="w-full pl-11 pr-4 py-3 rounded-xl border border-line bg-white text-ink focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink transition-all"
                         />
                       </div>
                     </div>
                   </div>
 
-                  <div className="form-actions">
+                  <div className="flex items-center gap-4 mt-6">
                     <button
                       type="button"
-                      className="btn-secondary"
+                      className="w-1/3 flex justify-center items-center gap-2 bg-gray-100 text-ink py-3.5 rounded-xl font-bold hover:bg-gray-200 transition-colors"
                       onClick={() => setStep(1)}
                     >
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <line x1="19" y1="12" x2="5" y2="12" />
-                        <polyline points="12 19 5 12 12 5" />
-                      </svg>
                       Back
                     </button>
                     <button
                       type="submit"
-                      className="btn-primary"
+                      className="w-2/3 flex justify-center items-center gap-2 bg-ink text-paper py-3.5 rounded-xl font-bold shadow-sm hover:bg-ink-soft transition-colors disabled:opacity-70"
                       disabled={submitting}
                     >
                       {submitting ? (
                         <>
-                          <span className="btn-spinner"></span>
-                          Creating Account...
+                          <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                          Creating...
                         </>
                       ) : (
                         <>
                           Create Account
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
                         </>
                       )}
                     </button>
@@ -339,10 +349,10 @@ const Register = () => {
               )}
             </form>
 
-            <div className="auth-footer">
+            <div className="mt-8 text-center text-sm text-muted">
               <p>
                 Already have an account?{" "}
-                <Link to="/login" className="auth-link">
+                <Link to="/login" className="font-bold text-ink hover:underline">
                   Sign in
                 </Link>
               </p>
@@ -350,7 +360,6 @@ const Register = () => {
           </div>
         </div>
       </div>
-    </div>
   );
 };
 

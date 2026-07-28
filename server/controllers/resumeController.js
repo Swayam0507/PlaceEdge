@@ -1,6 +1,7 @@
 const Resume = require("../models/Resume");
 const path = require("path");
 const fs = require("fs");
+const pdf = require("pdf-parse");
 
 // Simple keyword-based resume skill extraction
 const SKILL_KEYWORDS = [
@@ -42,6 +43,22 @@ const extractSkills = (text) => {
 };
 
 /**
+ * Extract basic education info using Regex
+ */
+const extractEducation = (text) => {
+  if (!text) return "";
+  const match = text.match(/(b\.?tech|b\.?s|b\.?a|m\.?tech|m\.?s|mba|bachelor|master).{0,50}(university|college|institute)/i);
+  if (match) {
+    // Return a cleaned up version of the matched sentence/phrase
+    return match[0].replace(/\n/g, " ").trim();
+  }
+  // Fallback check
+  const basicMatch = text.match(/(b\.?tech|bachelor|master|mba)[\s\w,.-]{0,40}/i);
+  if (basicMatch) return basicMatch[0].replace(/\n/g, " ").trim();
+  return "";
+};
+
+/**
  * @desc    Upload resume
  * @route   POST /api/resume/upload
  * @access  Private
@@ -55,15 +72,32 @@ const uploadResume = async (req, res) => {
       });
     }
 
-    const { skills, education } = req.body;
+    // We will parse the PDF text
+    let parsedSkills = [];
+    let parsedEducation = "";
+    let rawText = "";
 
-    // Parse skills from comma-separated input or empty
-    let skillsList = [];
-    if (skills) {
-      skillsList = skills
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean);
+    try {
+      if (req.file.mimetype === 'application/pdf') {
+        const dataBuffer = fs.readFileSync(req.file.path);
+        const pdfData = await pdf(dataBuffer);
+        rawText = pdfData.text;
+        
+        parsedSkills = extractSkills(rawText);
+        parsedEducation = extractEducation(rawText);
+      }
+    } catch (parseErr) {
+      console.error("PDF Parse Error:", parseErr);
+      // We continue even if parsing fails, just without auto-detected fields
+    }
+
+    // Calculate dynamic mock ATS score based on extracted skills
+    let calculatedAtsScore = 0;
+    if (parsedSkills.length > 0) {
+      calculatedAtsScore = Math.min(98, 40 + (parsedSkills.length * 6));
+    } else {
+      // Base score for simply having a PDF
+      calculatedAtsScore = 35;
     }
 
     const resume = await Resume.create({
@@ -72,9 +106,10 @@ const uploadResume = async (req, res) => {
       originalName: req.file.originalname,
       filePath: req.file.path,
       fileSize: req.file.size,
-      skills: skillsList,
-      education: education || "",
-      parsed: skillsList.length > 0,
+      skills: parsedSkills,
+      education: parsedEducation || "",
+      atsScore: calculatedAtsScore,
+      parsed: parsedSkills.length > 0,
     });
 
     res.status(201).json({
@@ -141,7 +176,11 @@ const deleteResume = async (req, res) => {
 
     // Delete file from disk
     if (fs.existsSync(resume.filePath)) {
-      fs.unlinkSync(resume.filePath);
+      try {
+        fs.unlinkSync(resume.filePath);
+      } catch (unlinkErr) {
+        console.error("Failed to delete file from disk:", unlinkErr);
+      }
     }
 
     await Resume.deleteOne({ _id: resume._id });

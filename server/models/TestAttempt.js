@@ -11,7 +11,6 @@ const testAttemptSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
-      enum: ["quantitative", "logical", "technical", "mixed"],
     },
     score: {
       type: Number,

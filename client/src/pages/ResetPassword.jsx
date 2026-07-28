@@ -38,19 +38,19 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="auth-page">
-      <div className="auth-card" style={{ maxWidth: "400px", margin: "80px auto", padding: "40px 30px", background: "var(--bg-card)", borderRadius: "var(--radius-lg)", border: "1px solid var(--border)", textAlign: "center" }}>
-        <h2 style={{ marginBottom: "10px", fontSize: "1.8rem" }}>Reset Password</h2>
-        <p style={{ color: "var(--text-secondary)", marginBottom: "24px", fontSize: "0.9rem" }}>
+    <div className="min-h-screen flex items-center justify-center bg-paper animate-fade-in p-4">
+      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-sm border border-line">
+        <h2 className="font-display font-bold text-2xl text-ink mb-2 text-center">Reset Password</h2>
+        <p className="text-muted text-sm text-center mb-8">
           Enter your new password below.
         </p>
 
-        {message && <div className="alert-success" style={{ background: "rgba(16, 185, 129, 0.1)", color: "var(--success)", padding: "12px", borderRadius: "8px", marginBottom: "20px" }}>{message}</div>}
-        {error && <div className="alert-error" style={{ background: "rgba(239, 68, 68, 0.1)", color: "var(--danger)", padding: "12px", borderRadius: "8px", marginBottom: "20px" }}>{error}</div>}
+        {message && <div className="bg-emerald-soft border border-emerald/50 text-emerald px-4 py-3 rounded-xl mb-6 text-sm font-medium text-center">{message}</div>}
+        {error && <div className="bg-coral/10 border border-coral/50 text-coral px-4 py-3 rounded-xl mb-6 text-sm font-medium text-center">{error}</div>}
 
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px", textAlign: "left" }}>
-          <div className="form-group">
-            <label style={{ display: "block", marginBottom: "6px", fontSize: "0.85rem", color: "var(--text-secondary)" }}>New Password</label>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-bold text-ink mb-2">New Password</label>
             <input
               type="password"
               placeholder="••••••••"
@@ -58,11 +58,11 @@ const ResetPassword = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              style={{ width: "100%", padding: "12px", background: "var(--bg-input)", border: "1px solid var(--border)", borderRadius: "8px", color: "var(--text-primary)" }}
+              className="w-full px-4 py-3 rounded-xl border border-line bg-white text-ink focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink transition-all"
             />
           </div>
-          <div className="form-group">
-            <label style={{ display: "block", marginBottom: "6px", fontSize: "0.85rem", color: "var(--text-secondary)" }}>Confirm New Password</label>
+          <div>
+            <label className="block text-sm font-bold text-ink mb-2">Confirm New Password</label>
             <input
               type="password"
               placeholder="••••••••"
@@ -70,10 +70,10 @@ const ResetPassword = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               minLength={6}
-              style={{ width: "100%", padding: "12px", background: "var(--bg-input)", border: "1px solid var(--border)", borderRadius: "8px", color: "var(--text-primary)" }}
+              className="w-full px-4 py-3 rounded-xl border border-line bg-white text-ink focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink transition-all"
             />
           </div>
-          <button type="submit" className="btn-primary" disabled={loading} style={{ padding: "12px", width: "100%", marginTop: "8px" }}>
+          <button type="submit" className="w-full flex justify-center items-center gap-2 bg-ink text-paper py-3.5 rounded-xl font-bold shadow-sm hover:bg-ink-soft transition-colors mt-2" disabled={loading}>
             {loading ? "Resetting..." : "Reset Password"}
           </button>
         </form>

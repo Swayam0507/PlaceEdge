@@ -71,7 +71,7 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (err) {
       const message =
-        err.response?.data?.message || "Login failed. Please try again.";
+        err.response?.data?.message || `Login failed: ${err.message}`;
       setError(message);
       return { success: false, message };
     }

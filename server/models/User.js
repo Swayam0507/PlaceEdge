@@ -92,6 +92,11 @@ const userSchema = new mongoose.Schema(
         earnedAt: { type: Date, default: Date.now },
       },
     ],
+    // Interview practice tracking for journey map
+    interviewPracticeCount: {
+      type: Number,
+      default: 0,
+    },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
   },

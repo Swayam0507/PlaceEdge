@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getLeaderboard } from "../services/api";
+import { FiAward, FiStar } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
 
 const Leaderboard = () => {
@@ -19,10 +20,10 @@ const Leaderboard = () => {
     finally { setLoading(false); }
   };
 
-  const getRankDisplay = (i) => {
-    if (i === 0) return <span className="rank-medal gold">🥇</span>;
-    if (i === 1) return <span className="rank-medal silver">🥈</span>;
-    if (i === 2) return <span className="rank-medal bronze">🥉</span>;
+  const getRankBadge = (i) => {
+    if (i === 0) return <span className="rank-medal gold" style={{color: '#fbbf24'}}><FiAward /></span>;
+    if (i === 1) return <span className="rank-medal silver" style={{color: '#94a3b8'}}><FiStar /></span>;
+    if (i === 2) return <span className="rank-medal bronze" style={{color: '#b45309'}}><FiStar /></span>;
     return <span className="rank-number">#{i + 1}</span>;
   };
 
@@ -31,12 +32,10 @@ const Leaderboard = () => {
   return (
     <div className="leaderboard-page">
       <div className="leaderboard-container">
-        <div className="leaderboard-header">
-          <h1>🏆 Leaderboard</h1>
-          <p>See how you rank against other students on the platform</p>
-        </div>
-
-        {/* Filters */}
+        <div className="page-header-col">
+        <h1><FiAward /> Leaderboard</h1>
+        <p className="subtitle">Top performers based on placement readiness scores</p>
+      </div>   {/* Filters */}
         <div className="leaderboard-filters">
           <div className="filter-group">
             <label>Period</label>
@@ -76,7 +75,7 @@ const Leaderboard = () => {
                   if (!p) return null;
                   return (
                     <div key={pos} className={`podium-card pos-${pos + 1} ${p._id === user?._id ? "is-me" : ""}`}>
-                      <div className="podium-rank">{getRankDisplay(pos)}</div>
+                      <div className="podium-rank">{getRankBadge(pos)}</div>
                       <div className="podium-avatar">{p.name?.charAt(0).toUpperCase()}</div>
                       <h3 className="podium-name">{p.name}</h3>
                       <p className="podium-branch">{p.branch || "—"}</p>
@@ -102,7 +101,7 @@ const Leaderboard = () => {
                 <tbody>
                   {leaderboard.map((entry, i) => (
                     <tr key={entry._id} className={entry._id === user?._id ? "is-me" : ""}>
-                      <td>{getRankDisplay(i)}</td>
+                      <td>{getRankBadge(i)}</td>
                       <td className="user-name-cell">
                         <div className="user-avatar">{entry.name?.charAt(0).toUpperCase()}</div>
                         <span>{entry.name} {entry._id === user?._id && <span className="you-badge">You</span>}</span>

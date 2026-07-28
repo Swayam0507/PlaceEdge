@@ -83,6 +83,7 @@ app.use(cookieParser());
 const allowedOrigins = [
   process.env.CLIENT_URL,
   "http://localhost:5173",
+  "http://127.0.0.1:5173",
   "http://localhost:5174",
   "https://place-prep-five.vercel.app",
 ];
@@ -157,6 +158,12 @@ app.use("/api/bookmarks", require("./routes/bookmarkRoutes"));
 
 // Forum routes
 app.use("/api/forum", require("./routes/forumRoutes"));
+
+// Job board route
+app.use("/api/jobBoard", require("./routes/jobBoardRoutes"));
+
+// AI route
+app.use("/api/ai", require("./routes/aiRoutes"));
 
 // Company routes
 app.use("/api/companies", require("./routes/companyRoutes"));

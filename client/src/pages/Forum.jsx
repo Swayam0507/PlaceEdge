@@ -79,136 +79,183 @@ const Forum = () => {
   };
 
   return (
-    <div className="forum-page">
-      <div className="forum-container">
-        <div className="forum-header">
+    <div className="min-h-screen bg-paper text-ink pb-20">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1>💬 Discussion Forum</h1>
-            <p>Share tips, ask doubts, and connect with fellow placement aspirants</p>
+            <h1 className="font-display font-semibold text-3xl mb-1">💬 Discussion Forum</h1>
+            <p className="text-ink-soft font-body text-sm">Share tips, ask doubts, and connect with fellow placement aspirants</p>
           </div>
-          <button className="btn-primary" onClick={() => setShowCreate(!showCreate)}>
+          <button 
+            className={`px-5 py-2.5 rounded-xl font-medium text-sm transition-all shadow-sm ${showCreate ? 'bg-white border border-line text-ink hover:bg-gray-50' : 'bg-ink text-paper hover:bg-ink-soft'}`}
+            onClick={() => setShowCreate(!showCreate)}
+          >
             {showCreate ? "Cancel" : "✍️ New Post"}
           </button>
         </div>
 
         {/* Create Post Form */}
         {showCreate && (
-          <div className="forum-create-card">
-            <h2>✍️ Create New Post</h2>
-            <form onSubmit={handleCreate}>
-              <div className="form-group">
-                <input type="text" placeholder="Post title..." value={newPost.title}
-                  onChange={(e) => setNewPost({ ...newPost, title: e.target.value })} required maxLength={200} />
+          <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-card border border-line mb-8 animate-fade-in">
+            <h2 className="font-display font-semibold text-xl mb-6 border-b border-line pb-4">✍️ Create New Post</h2>
+            <form onSubmit={handleCreate} className="space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-ink mb-1">Post Title</label>
+                <input type="text" className="w-full px-4 py-2.5 rounded-xl border border-line bg-paper focus:outline-none focus:border-ink transition-all" placeholder="What's on your mind?" value={newPost.title} onChange={(e) => setNewPost({ ...newPost, title: e.target.value })} required maxLength={200} />
               </div>
-              <div className="form-group">
-                <textarea placeholder="Share your thoughts..." value={newPost.content}
-                  onChange={(e) => setNewPost({ ...newPost, content: e.target.value })} required rows={4} maxLength={5000} />
+              
+              <div>
+                <label className="block text-sm font-medium text-ink mb-1">Details</label>
+                <textarea className="w-full px-4 py-2.5 rounded-xl border border-line bg-paper focus:outline-none focus:border-ink transition-all" placeholder="Share your thoughts..." value={newPost.content} onChange={(e) => setNewPost({ ...newPost, content: e.target.value })} required rows={4} maxLength={5000} />
               </div>
-              <div className="form-row">
-                <div className="form-group">
-                  <select value={newPost.category} onChange={(e) => setNewPost({ ...newPost, category: e.target.value })}>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label className="block text-sm font-medium text-ink mb-1">Category</label>
+                  <select className="w-full px-4 py-2.5 rounded-xl border border-line bg-paper focus:outline-none focus:border-ink transition-all" value={newPost.category} onChange={(e) => setNewPost({ ...newPost, category: e.target.value })}>
                     {CATEGORIES.slice(1).map((c) => <option key={c.key} value={c.key}>{c.icon} {c.label}</option>)}
                   </select>
                 </div>
-                <div className="form-group">
-                  <input type="text" placeholder="Tags (comma-separated)" value={newPost.tags}
-                    onChange={(e) => setNewPost({ ...newPost, tags: e.target.value })} />
+                <div>
+                  <label className="block text-sm font-medium text-ink mb-1">Tags (Optional)</label>
+                  <input type="text" className="w-full px-4 py-2.5 rounded-xl border border-line bg-paper focus:outline-none focus:border-ink transition-all" placeholder="e.g. TCS, Interview, HR" value={newPost.tags} onChange={(e) => setNewPost({ ...newPost, tags: e.target.value })} />
                 </div>
               </div>
-              <button type="submit" className="btn-primary" disabled={creating}>
-                {creating ? "Posting..." : "📤 Post"}
-              </button>
+              
+              <div className="pt-2">
+                <button type="submit" className="w-full sm:w-auto px-6 py-3 bg-ink text-paper rounded-xl font-medium text-sm hover:bg-ink-soft transition-all shadow-md disabled:opacity-70 disabled:cursor-not-allowed" disabled={creating}>
+                  {creating ? "Posting..." : "📤 Post"}
+                </button>
+              </div>
             </form>
           </div>
         )}
 
-        {/* Category Tabs */}
-        <div className="forum-categories">
-          {CATEGORIES.map((c) => (
-            <button key={c.key}
-              className={`forum-cat-btn ${filters.category === c.key ? "active" : ""}`}
-              onClick={() => setFilters({ ...filters, category: c.key, page: 1 })}>
-              {c.icon} {c.label}
-            </button>
-          ))}
-        </div>
+        {/* Filters and Search Row */}
+        <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center mb-8">
+          {/* Category Tabs */}
+          <div className="flex flex-wrap gap-2">
+            {CATEGORIES.map((c) => (
+              <button key={c.key}
+                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${filters.category === c.key ? "bg-ink text-paper shadow-sm" : "bg-white text-ink-soft border border-line hover:bg-paper hover:text-ink"}`}
+                onClick={() => setFilters({ ...filters, category: c.key, page: 1 })}>
+                {c.icon} {c.label}
+              </button>
+            ))}
+          </div>
 
-        {/* Search */}
-        <form onSubmit={handleSearch} className="forum-search">
-          <input type="text" placeholder="Search posts..." value={filters.search}
-            onChange={(e) => setFilters({ ...filters, search: e.target.value })} />
-          <button type="submit">🔍</button>
-        </form>
+          {/* Search */}
+          <form onSubmit={handleSearch} className="relative w-full md:w-64">
+            <input type="text" className="w-full pl-10 pr-4 py-2 rounded-xl border border-line bg-white focus:outline-none focus:border-ink transition-all text-sm" placeholder="Search posts..." value={filters.search} onChange={(e) => setFilters({ ...filters, search: e.target.value })} />
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft">
+              🔍
+            </div>
+            <button type="submit" className="hidden">Search</button>
+          </form>
+        </div>
 
         {/* Posts List */}
         {loading ? (
-          <div className="loading-screen"><div className="loading-spinner"><div className="spinner"></div><p>Loading posts...</p></div></div>
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="w-10 h-10 border-4 border-line border-t-amber rounded-full animate-spin mb-4"></div>
+            <p className="text-ink-soft font-medium">Loading posts...</p>
+          </div>
         ) : posts.length === 0 ? (
-          <div className="empty-state"><p>No posts yet. Be the first to share something!</p></div>
+          <div className="bg-white border border-line border-dashed rounded-2xl p-12 text-center">
+            <div className="text-4xl mb-4">💬</div>
+            <h3 className="font-display font-semibold text-lg text-ink mb-2">No posts found</h3>
+            <p className="text-ink-soft text-sm">Be the first to share something or try a different search!</p>
+          </div>
         ) : (
-          <div className="forum-posts-list">
+          <div className="space-y-4">
             {posts.map((post) => (
-              <div key={post._id} className={`forum-post-card ${post.isPinned ? "pinned" : ""}`}>
-                <div className="forum-post-header">
-                  <div className="forum-post-author">
-                    <div className="avatar">{post.userId?.name?.charAt(0)?.toUpperCase() || "?"}</div>
+              <div key={post._id} className={`bg-white rounded-2xl shadow-sm border p-5 sm:p-6 transition-all hover:shadow-md ${post.isPinned ? "border-amber/50 bg-amber/5" : "border-line"}`}>
+                
+                {/* Author Info */}
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+                      {post.userId?.name?.charAt(0)?.toUpperCase() || "?"}
+                    </div>
                     <div>
-                      <span className="author-name">{post.userId?.name || "Unknown"}</span>
-                      <span className="post-date">{formatDate(post.createdAt)} · 👁️ {post.views}</span>
+                      <div className="font-semibold text-ink text-sm">{post.userId?.name || "Unknown"}</div>
+                      <div className="text-xs text-ink-soft">{formatDate(post.createdAt)} · 👁️ {post.views} views</div>
                     </div>
                   </div>
-                  {post.isPinned && <span className="pin-badge">📌 Pinned</span>}
+                  {post.isPinned && <span className="px-2.5 py-1 bg-amber/20 text-amber-deep text-xs font-bold rounded-md">📌 Pinned</span>}
                 </div>
 
-                <h3 className="forum-post-title" onClick={() => setExpandedId(expandedId === post._id ? null : post._id)}>
+                {/* Title */}
+                <h3 className="font-display font-semibold text-lg sm:text-xl text-ink mb-3 cursor-pointer hover:text-indigo-600 transition-colors" onClick={() => setExpandedId(expandedId === post._id ? null : post._id)}>
                   {post.title}
                 </h3>
 
-                <div className="forum-post-meta">
-                  <span className="forum-post-category">{CATEGORIES.find((c) => c.key === post.category)?.icon} {post.category}</span>
-                  {post.tags?.map((t, i) => <span key={i} className="forum-tag">{t}</span>)}
+                {/* Meta Tags */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <span className="px-2.5 py-1 bg-indigo-50 text-indigo-600 text-xs font-semibold rounded-md border border-indigo-100 flex items-center gap-1">
+                    {CATEGORIES.find((c) => c.key === post.category)?.icon} <span className="capitalize">{post.category.replace("-", " ")}</span>
+                  </span>
+                  {post.tags?.map((t, i) => (
+                    <span key={i} className="px-2.5 py-1 bg-paper text-ink-soft text-xs font-medium rounded-md border border-line">
+                      {t}
+                    </span>
+                  ))}
                 </div>
 
+                {/* Expanded Body */}
                 {expandedId === post._id && (
-                  <div className="forum-post-body">
-                    <p className="forum-post-content">{post.content}</p>
+                  <div className="mt-4 pt-4 border-t border-line animate-fade-in">
+                    <p className="text-ink text-sm leading-relaxed whitespace-pre-wrap mb-6">{post.content}</p>
 
                     {/* Replies */}
                     {post.replies?.length > 0 && (
-                      <div className="forum-replies">
-                        <h4>💬 {post.replies.length} {post.replies.length === 1 ? "Reply" : "Replies"}</h4>
-                        {post.replies.map((reply, i) => (
-                          <div key={i} className="forum-reply">
-                            <div className="reply-author">
-                              <div className="avatar-sm">{reply.userId?.name?.charAt(0)?.toUpperCase() || "?"}</div>
-                              <span className="reply-name">{reply.userId?.name}</span>
-                              <span className="reply-date">{formatDate(reply.createdAt)}</span>
+                      <div className="mb-6 space-y-4">
+                        <h4 className="font-semibold text-ink text-sm flex items-center gap-2">💬 {post.replies.length} {post.replies.length === 1 ? "Reply" : "Replies"}</h4>
+                        <div className="space-y-3">
+                          {post.replies.map((reply, i) => (
+                            <div key={i} className="bg-paper p-4 rounded-xl border border-line">
+                              <div className="flex items-center gap-2 mb-2">
+                                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 text-white flex items-center justify-center font-bold text-xs">
+                                  {reply.userId?.name?.charAt(0)?.toUpperCase() || "?"}
+                                </div>
+                                <span className="font-medium text-ink text-xs">{reply.userId?.name}</span>
+                                <span className="text-[10px] text-ink-soft ml-auto">{formatDate(reply.createdAt)}</span>
+                              </div>
+                              <p className="text-sm text-ink">{reply.content}</p>
                             </div>
-                            <p>{reply.content}</p>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
                     )}
 
                     {/* Reply Input */}
-                    <div className="forum-reply-input">
-                      <input type="text" placeholder="Write a reply..." value={expandedId === post._id ? replyText : ""}
-                        onChange={(e) => setReplyText(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && handleReply(post._id)} />
-                      <button onClick={() => handleReply(post._id)} className="reply-btn">Reply</button>
+                    <div className="flex gap-2">
+                      <input type="text" className="flex-1 px-4 py-2 rounded-xl border border-line bg-white focus:outline-none focus:border-ink transition-all text-sm" placeholder="Write a reply..." value={expandedId === post._id ? replyText : ""} onChange={(e) => setReplyText(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleReply(post._id)} />
+                      <button onClick={() => handleReply(post._id)} className="px-5 py-2 bg-ink text-paper rounded-xl text-sm font-medium hover:bg-ink-soft transition-all">Reply</button>
                     </div>
                   </div>
                 )}
 
-                <div className="forum-post-actions">
-                  <button className={`upvote-btn ${post.upvotes?.includes(user?._id) ? "upvoted" : ""}`} onClick={() => handleUpvote(post._id)}>
+                {/* Actions */}
+                <div className="flex items-center gap-3 mt-2">
+                  <button 
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${post.upvotes?.includes(user?._id) ? "bg-indigo-50 text-indigo-600 border border-indigo-100" : "bg-paper text-ink-soft border border-line hover:bg-gray-100"}`} 
+                    onClick={() => handleUpvote(post._id)}
+                  >
                     ▲ {post.upvotes?.length || 0}
                   </button>
-                  <button className="comment-btn" onClick={() => setExpandedId(expandedId === post._id ? null : post._id)}>
+                  <button 
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-paper text-ink-soft border border-line hover:bg-gray-100 transition-colors" 
+                    onClick={() => setExpandedId(expandedId === post._id ? null : post._id)}
+                  >
                     💬 {post.replies?.length || 0}
                   </button>
+                  
                   {(post.userId?._id === user?._id || user?.role === "admin") && (
-                    <button className="delete-btn-sm" onClick={() => handleDelete(post._id)}>🗑️</button>
+                    <button className="ml-auto p-1.5 text-ink-soft hover:text-red-500 hover:bg-red-50 rounded-md transition-colors" onClick={() => handleDelete(post._id)} title="Delete Post">
+                      🗑️
+                    </button>
                   )}
                 </div>
               </div>
@@ -218,10 +265,10 @@ const Forum = () => {
 
         {/* Pagination */}
         {pagination.total > 1 && (
-          <div className="forum-pagination">
-            <button disabled={filters.page <= 1} onClick={() => setFilters({ ...filters, page: filters.page - 1 })} className="page-btn">← Prev</button>
-            <span>Page {pagination.current} of {pagination.total}</span>
-            <button disabled={filters.page >= pagination.total} onClick={() => setFilters({ ...filters, page: filters.page + 1 })} className="page-btn">Next →</button>
+          <div className="flex justify-center items-center gap-4 mt-8">
+            <button disabled={filters.page <= 1} onClick={() => setFilters({ ...filters, page: filters.page - 1 })} className="px-4 py-2 rounded-xl border border-line bg-white text-sm font-medium hover:bg-paper disabled:opacity-50 disabled:cursor-not-allowed transition-all">← Prev</button>
+            <span className="text-sm font-medium text-ink-soft">Page {pagination.current} of {pagination.total}</span>
+            <button disabled={filters.page >= pagination.total} onClick={() => setFilters({ ...filters, page: filters.page + 1 })} className="px-4 py-2 rounded-xl border border-line bg-white text-sm font-medium hover:bg-paper disabled:opacity-50 disabled:cursor-not-allowed transition-all">Next →</button>
           </div>
         )}
       </div>

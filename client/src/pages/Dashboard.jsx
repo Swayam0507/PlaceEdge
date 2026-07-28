@@ -1,62 +1,27 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getDashboardAnalytics } from "../services/api";
-import { formatDate, getInitials } from "../utils/helpers";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  ArcElement,
-  RadialLinearScale,
-  Title,
-  Tooltip,
-  Legend,
-  Filler,
-} from "chart.js";
-import { Line, Doughnut, Bar, Radar } from "react-chartjs-2";
+import { FiCheckSquare, FiFileText, FiMessageSquare, FiCpu, FiAward, FiAlertCircle, FiMessageCircle } from "react-icons/fi";
+import { BiTargetLock, BiBuildingHouse } from "react-icons/bi";
 
-// Register Chart.js components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  ArcElement,
-  RadialLinearScale,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-);
-
-const CATEGORY_COLORS = {
-  quantitative: { bg: "rgba(99, 102, 241, 0.2)", border: "#6366f1" },
-  logical: { bg: "rgba(168, 85, 247, 0.2)", border: "#a855f7" },
-  technical: { bg: "rgba(6, 182, 212, 0.2)", border: "#06b6d4" },
-  mixed: { bg: "rgba(245, 158, 11, 0.2)", border: "#f59e0b" },
-};
-
-const CHART_DEFAULTS = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: { labels: { color: "#94a3b8", font: { family: "Inter" } } },
-  },
-  scales: {
-    x: { ticks: { color: "#64748b" }, grid: { color: "rgba(99,102,241,0.08)" } },
-    y: { ticks: { color: "#64748b" }, grid: { color: "rgba(99,102,241,0.08)" } },
-  },
-};
+// UI Primitives
+import Card from "../components/ui/Card";
+import StatCard from "../components/ui/StatCard";
+import ProgressRing from "../components/ui/ProgressRing";
+import Badge from "../components/ui/Badge";
+import EmptyState from "../components/ui/EmptyState";
+import JourneyMap from "../components/ui/JourneyMap";
+import FocusCard from "../components/ui/FocusCard";
+import DriveCard from "../components/ui/DriveCard";
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [activeStatModal, setActiveStatModal] = useState(null);
 
   useEffect(() => {
     fetchAnalytics();
@@ -75,391 +40,424 @@ const Dashboard = () => {
 
   const overview = analytics?.overview || {};
   const hasData = analytics && overview.totalTests > 0;
+  
+  // Calculate weakest topic
+  let weakestArea = analytics?.weakAreas?.[0]?.category || "General Aptitude";
+  if (weakestArea) {
+    const rawCategory = weakestArea.toLowerCase();
+    weakestArea = rawCategory.charAt(0).toUpperCase() + rawCategory.slice(1);
+    if (rawCategory === 'mixed') weakestArea = 'Mixed Tests';
+  }
+  const atsScore = overview.latestResume?.atsScore || 0;
+  const globalRank = overview.globalRank || 0;
+  const totalUsersCount = overview.totalUsers || 0;
 
-  // ---- Chart Data ----
+  // Journey data from backend
+  const journeyData = analytics?.journeyStages || null;
+  const journeyProgress = journeyData?.overallProgress || 0;
+  const currentStage = journeyData?.stages?.[journeyData?.currentStageIndex] || null;
 
-  // Performance Trend (Line Chart)
-  const trendData = {
-    labels: (analytics?.performanceTrend || []).map((t, i) => `Test ${i + 1}`),
-    datasets: [
-      {
-        label: "Score %",
-        data: (analytics?.performanceTrend || []).map((t) => t.percentage),
-        borderColor: "#6366f1",
-        backgroundColor: "rgba(99, 102, 241, 0.1)",
-        fill: true,
-        tension: 0.4,
-        pointBackgroundColor: "#6366f1",
-        pointBorderColor: "#fff",
-        pointBorderWidth: 2,
-        pointRadius: 5,
-      },
-    ],
+  // Time-based greeting
+  const getGreeting = () => {
+    const h = new Date().getHours();
+    if (h < 12) return "Good morning";
+    if (h < 17) return "Good afternoon";
+    if (h < 21) return "Good evening";
+    return "Good night";
   };
 
-  // Category Performance (Bar Chart)
-  const categoryData = {
-    labels: (analytics?.categoryPerformance || []).map(
-      (c) => c.category.charAt(0).toUpperCase() + c.category.slice(1)
-    ),
-    datasets: [
-      {
-        label: "Avg Score %",
-        data: (analytics?.categoryPerformance || []).map((c) => c.avgPercentage),
-        backgroundColor: (analytics?.categoryPerformance || []).map(
-          (c) => CATEGORY_COLORS[c.category]?.bg || "rgba(99,102,241,0.2)"
-        ),
-        borderColor: (analytics?.categoryPerformance || []).map(
-          (c) => CATEGORY_COLORS[c.category]?.border || "#6366f1"
-        ),
-        borderWidth: 2,
-        borderRadius: 8,
-      },
-    ],
+  const getFocusContent = () => {
+    if (!currentStage) return { title: "Start your journey", description: "Take your first aptitude test to begin.", cta: "Practice Now", route: "/practice" };
+    
+    // Use dynamic recommendation from backend if available
+    const dynamicDesc = overview.focusRecommendation || "Continue your placement preparation.";
+    
+    // Prioritize weak areas if they exist
+    if (analytics?.weakAreas?.length > 0) {
+      const rawCategory = analytics.weakAreas[0].category.toLowerCase();
+      let displayCategory = rawCategory.charAt(0).toUpperCase() + rawCategory.slice(1);
+      
+      if (rawCategory === 'mixed') displayCategory = 'Mixed Mock Tests';
+      else if (rawCategory === 'technical') displayCategory = 'Technical Skills';
+      else if (rawCategory === 'quantitative') displayCategory = 'Quantitative Aptitude';
+      else if (rawCategory === 'logical') displayCategory = 'Logical Reasoning';
+      else if (rawCategory === 'verbal') displayCategory = 'Verbal Ability';
+
+      return { 
+        title: `Work on your ${displayCategory}`, 
+        description: "Focus on practicing this area to improve your overall readiness score.", 
+        cta: "Start Practice", 
+        route: "/practice" 
+      };
+    }
+    
+    switch (currentStage.key) {
+      case "aptitude":
+        return { title: "Sharpen your aptitude skills", description: dynamicDesc, cta: "Take a Test", route: "/practice" };
+      case "coding":
+        return { title: "Level up your coding", description: dynamicDesc, cta: "Practice Coding", route: "/practice" };
+      case "resume":
+        return { title: "Your Resume needs a tune-up", description: dynamicDesc, cta: "Update Resume", route: "/career/resume" };
+      case "interview":
+        return { title: "Ace the mock interview", description: dynamicDesc, cta: "Start Interview Prep", route: "/practice/interview" };
+      case "placed":
+        return { title: "You're almost there! 🎉", description: dynamicDesc, cta: "View Jobs", route: "/career/jobs" };
+      default:
+        return { title: "Keep going!", description: dynamicDesc, cta: "Dashboard", route: "/dashboard" };
+    }
   };
 
-  // Readiness Doughnut
-  const readinessData = {
-    labels: ["Ready", "Remaining"],
-    datasets: [
-      {
-        data: [overview.readinessScore || 0, 100 - (overview.readinessScore || 0)],
-        backgroundColor: ["#6366f1", "rgba(99, 102, 241, 0.1)"],
-        borderWidth: 0,
-        cutout: "80%",
-      },
-    ],
-  };
-
-  // Radar Chart — category strengths
-  const radarData = {
-    labels: (analytics?.categoryPerformance || []).map(
-      (c) => c.category.charAt(0).toUpperCase() + c.category.slice(1)
-    ),
-    datasets: [
-      {
-        label: "Best Score",
-        data: (analytics?.categoryPerformance || []).map((c) => c.bestScore),
-        backgroundColor: "rgba(6, 182, 212, 0.2)",
-        borderColor: "#06b6d4",
-        pointBackgroundColor: "#06b6d4",
-      },
-      {
-        label: "Average",
-        data: (analytics?.categoryPerformance || []).map((c) => c.avgPercentage),
-        backgroundColor: "rgba(99, 102, 241, 0.2)",
-        borderColor: "#6366f1",
-        pointBackgroundColor: "#6366f1",
-      },
-    ],
-  };
+  const focusContent = getFocusContent();
 
   return (
-    <div className="dashboard-page">
-      {/* Hero Section */}
-      <div className="dashboard-hero">
-        <div className="hero-content">
-          <div className="hero-greeting">
-            <div className="hero-avatar">{getInitials(user?.name)}</div>
-            <div>
-              <h1>
-                Welcome back, <span className="highlight">{user?.name?.split(" ")[0]}</span> 👋
-              </h1>
-              <p className="hero-subtitle">
-                {hasData
-                  ? `You've taken ${overview.totalTests} tests. Keep going!`
-                  : "Start your placement preparation journey today."}
-              </p>
+    <>
+      <div className="space-y-8 animate-fade-in">
+        
+      {/* 1. Greeting Row */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5 mb-7">
+        <div>
+          <h1 className="font-display font-medium text-[32px] tracking-[-0.01em] text-ink mb-1.5">
+            {getGreeting()}, {user?.name?.split(" ")[0] || "Student"}
+          </h1>
+          <p className="font-body text-[15px] text-ink-soft">
+            {journeyProgress > 0
+              ? `You're ${journeyProgress}% through your placement journey. Keep the momentum going.`
+              : "Start your placement journey today. Take your first step!"}
+          </p>
+        </div>
+        {analytics?.upcomingEvent && (
+          <div className="flex items-center gap-3 bg-ink text-paper px-5 py-3 rounded-2xl shadow-card">
+            <div className="font-mono text-3xl font-bold text-amber leading-none">{analytics.upcomingEvent.daysLeft}</div>
+            <div className="text-xs text-[#B8C2DB] leading-snug">
+              days left for<br /><strong className="text-white font-semibold text-[13px]">{analytics.upcomingEvent.name}</strong>
             </div>
           </div>
-          <div className="hero-badge">
-            <span className={`role-tag student`}>
-              {"🎓 Student"}
-            </span>
-          </div>
-        </div>
+        )}
       </div>
 
-      {/* Quick Actions */}
-      <div className="quick-actions">
-        <Link to="/aptitude-test" className="action-card">
-          <span className="action-icon">📝</span>
-          <span>Take Test</span>
-        </Link>
-        <Link to="/resume" className="action-card">
-          <span className="action-icon">📄</span>
-          <span>Upload Resume</span>
-        </Link>
-        <Link to="/test-history" className="action-card">
-          <span className="action-icon">📊</span>
-          <span>Test History</span>
-        </Link>
+      {/* 2. Journey Map */}
+      <JourneyMap journeyData={journeyData} />
+
+      {/* 3. Focus Card */}
+      <FocusCard 
+        title={focusContent.title}
+        description={focusContent.description}
+        ctaText={focusContent.cta}
+        onCtaClick={() => navigate(focusContent.route)}
+        icon={<FiFileText size={24} />}
+      />
+
+      {/* 4. Stat Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4.5 mb-6">
+        <StatCard 
+          label="ATS Score" 
+          value={atsScore}
+          valueSuffix="/100"
+          deltaText={atsScore < 70 ? "Needs improvement" : "Good to go"}
+          deltaType={atsScore < 70 ? "negative" : "positive"}
+          ringValue={atsScore}
+          ringColor={atsScore < 70 ? "#E8654F" : "#2F8F6E"}
+        />
+        <StatCard 
+          label="Global Rank" 
+          value={`#${globalRank}`}
+          deltaText={`Out of ${totalUsersCount} students`}
+          deltaType="neutral"
+          onClick={() => setActiveStatModal('rank')}
+        />
+        <StatCard 
+          label="Tests Taken" 
+          value={overview?.totalTests || 0}
+          deltaText={`avg. ${overview?.avgScore || 0}% score`}
+          deltaType="neutral"
+          onClick={() => setActiveStatModal('tests')}
+        />
+        <StatCard 
+          label="Weak Topic" 
+          value={<span className="text-[19px] leading-none mt-1 inline-block truncate max-w-[120px]">{weakestArea}</span>}
+          deltaText="Focus practice here"
+          deltaType="negative"
+          onClick={() => setActiveStatModal('weak')}
+        />
       </div>
 
-      {/* Overview Stats */}
-      <div className="stats-grid">
-        <div className="stat-card blue">
-          <div className="stat-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
-            </svg>
+      {/* 5. Two Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-[22px] mb-6">
+        {/* Left Column: Drives & Forum */}
+        <div>
+          <div className="flex justify-between items-center mb-3.5">
+            <h2 className="font-display font-semibold text-[19px]">Companies visiting soon</h2>
+            <Link to="/career/jobs" className="text-[13px] font-semibold text-ink-soft hover:underline">View all →</Link>
           </div>
-          <div className="stat-info">
-            <p className="stat-label">Tests Taken</p>
-            <h3 className="stat-value">{overview.totalTests || 0}</h3>
-          </div>
-        </div>
-        <div className="stat-card purple">
-          <div className="stat-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-            </svg>
-          </div>
-          <div className="stat-info">
-            <p className="stat-label">Avg Score</p>
-            <h3 className="stat-value">{overview.avgScore || 0}%</h3>
-          </div>
-        </div>
-        <div className="stat-card amber">
-          <div className="stat-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <polyline points="14 2 14 8 20 8"/>
-            </svg>
-          </div>
-          <div className="stat-info">
-            <p className="stat-label">Resumes</p>
-            <h3 className="stat-value">{overview.resumeCount || 0}</h3>
-          </div>
-        </div>
-        <div className="stat-card green">
-          <div className="stat-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-              <polyline points="22 4 12 14.01 9 11.01"/>
-            </svg>
-          </div>
-          <div className="stat-info">
-            <p className="stat-label">Readiness</p>
-            <h3 className="stat-value">{overview.readinessScore || 0}%</h3>
-          </div>
-        </div>
-      </div>
-
-      {/* Charts Section */}
-      {hasData ? (
-        <div className="charts-section">
-          {/* Row 1: Trend + Readiness */}
-          <div className="charts-row">
-            <div className="chart-card wide">
-              <div className="card-header">
-                <h3>Performance Trend</h3>
-                <span className="chart-badge">Last {analytics.performanceTrend.length} tests</span>
-              </div>
-              <div className="chart-body" style={{ height: "280px" }}>
-                <Line
-                  data={trendData}
-                  options={{
-                    ...CHART_DEFAULTS,
-                    plugins: {
-                      ...CHART_DEFAULTS.plugins,
-                      legend: { display: false },
-                    },
-                    scales: {
-                      ...CHART_DEFAULTS.scales,
-                      y: { ...CHART_DEFAULTS.scales.y, min: 0, max: 100 },
-                    },
-                  }}
-                />
-              </div>
+          
+          {!analytics?.upcomingCompanies?.length ? (
+            <div className="bg-paper-raised border border-line rounded-xl p-6 text-center shadow-card text-muted text-[13px] mb-3">
+              No upcoming drives scheduled.
             </div>
-
-            <div className="chart-card narrow">
-              <div className="card-header">
-                <h3>Placement Readiness</h3>
-              </div>
-              <div className="chart-body readiness-chart" style={{ height: "280px" }}>
-                <Doughnut
-                  data={readinessData}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                  }}
-                />
-                <div className="readiness-center">
-                  <span className="readiness-score">{overview.readinessScore}%</span>
-                  <span className="readiness-label">Ready</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Row 2: Category + Radar */}
-          <div className="charts-row">
-            <div className="chart-card">
-              <div className="card-header">
-                <h3>Category-wise Scores</h3>
-              </div>
-              <div className="chart-body" style={{ height: "280px" }}>
-                <Bar
-                  data={categoryData}
-                  options={{
-                    ...CHART_DEFAULTS,
-                    plugins: { ...CHART_DEFAULTS.plugins, legend: { display: false } },
-                    scales: {
-                      ...CHART_DEFAULTS.scales,
-                      y: { ...CHART_DEFAULTS.scales.y, min: 0, max: 100 },
-                    },
-                  }}
-                />
-              </div>
-            </div>
-
-            <div className="chart-card">
-              <div className="card-header">
-                <h3>Skill Radar</h3>
-              </div>
-              <div className="chart-body" style={{ height: "280px" }}>
-                <Radar
-                  data={radarData}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                      r: {
-                        angleLines: { color: "rgba(99,102,241,0.1)" },
-                        grid: { color: "rgba(99,102,241,0.1)" },
-                        pointLabels: { color: "#94a3b8", font: { size: 12 } },
-                        ticks: { display: false },
-                        min: 0,
-                        max: 100,
-                      },
-                    },
-                    plugins: {
-                      legend: { labels: { color: "#94a3b8" } },
-                    },
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Weak & Strong Areas */}
-          <div className="charts-row">
-            {analytics.weakAreas.length > 0 && (
-              <div className="card insight-card weak">
-                <div className="card-header">
-                  <h3>⚠️ Weak Areas</h3>
-                </div>
-                <div className="insight-list">
-                  {analytics.weakAreas.map((area, i) => (
-                    <div key={i} className="insight-item">
-                      <span className="insight-name">
-                        {area.category.charAt(0).toUpperCase() + area.category.slice(1)}
-                      </span>
-                      <div className="insight-bar-wrap">
-                        <div className="insight-bar">
-                          <div
-                            className="insight-bar-fill weak"
-                            style={{ width: `${area.avgPercentage}%` }}
-                          ></div>
-                        </div>
-                        <span className="insight-pct">{area.avgPercentage}%</span>
-                      </div>
+          ) : (
+            analytics.upcomingCompanies.map((comp) => {
+              // Extract initials for placeholder logo if actual logo fails
+              const initials = comp.name.substring(0, 2).toUpperCase();
+              // Try clearbit logo
+              const domain = comp.name.toLowerCase().replace(/\s+/g, '') + '.com';
+              
+              return (
+                <div key={comp._id} onClick={() => setSelectedCompany(comp)} className="block bg-paper-raised border border-line rounded-xl p-4 mb-3 shadow-card transition-transform hover:-translate-y-0.5 hover:shadow-md cursor-pointer">
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-11 h-11 rounded-xl border border-line overflow-hidden bg-white shrink-0 flex items-center justify-center">
+                      <img src={`https://logo.clearbit.com/${domain}`} alt={`${comp.name} Logo`} className="w-full h-full object-contain p-1.5" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+                      <div className="w-full h-full items-center justify-center font-display font-bold text-[15px] text-ink-soft hidden">{initials}</div>
                     </div>
-                  ))}
-                </div>
-                <Link to="/aptitude-test" className="insight-action">
-                  Practice Now →
-                </Link>
-              </div>
-            )}
-
-            {analytics.strongAreas.length > 0 && (
-              <div className="card insight-card strong">
-                <div className="card-header">
-                  <h3>💪 Strong Areas</h3>
-                </div>
-                <div className="insight-list">
-                  {analytics.strongAreas.map((area, i) => (
-                    <div key={i} className="insight-item">
-                      <span className="insight-name">
-                        {area.category.charAt(0).toUpperCase() + area.category.slice(1)}
-                      </span>
-                      <div className="insight-bar-wrap">
-                        <div className="insight-bar">
-                          <div
-                            className="insight-bar-fill strong"
-                            style={{ width: `${area.avgPercentage}%` }}
-                          ></div>
-                        </div>
-                        <span className="insight-pct">{area.avgPercentage}%</span>
-                      </div>
+                    <div className="flex-1 overflow-hidden">
+                      <h4 className="text-[14.5px] font-bold mb-0.5 truncate text-ink">{comp.name}</h4>
+                      <p className="text-[12px] text-muted truncate">{comp.rolesStr} · {comp.type}</p>
                     </div>
-                  ))}
+                    <div className={`text-center px-3 py-1.5 rounded-[10px] font-mono font-bold text-[13px] shrink-0 ${comp.daysLeft <= 3 ? 'bg-[#FDE9E5] text-coral' : 'bg-emerald-soft text-emerald'}`}>
+                      {comp.daysLeft === 0 ? 'Today' : `${comp.daysLeft} days`}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })
+          )}
+
+          {/* Empty State Card */}
+          <div className="bg-paper-raised border-[1.5px] border-dashed border-line rounded-xl p-7 text-center mt-1.5">
+            <div className="text-[30px] mb-2">💬</div>
+            <h4 className="font-display text-[16px] mb-1 font-semibold">No doubts posted this week</h4>
+            <p className="text-[13px] text-muted mb-3.5">Stuck on something? The community usually replies within an hour.</p>
+            <button 
+              onClick={() => navigate('/community/forum')}
+              className="border-[1.5px] border-ink bg-transparent text-ink px-4.5 py-2.5 rounded-[10px] font-bold text-[13px] hover:bg-ink hover:text-white transition-colors"
+            >
+              Ask a doubt
+            </button>
+          </div>
+        </div>
+
+        {/* Right Column: Recent Tests */}
+        <div>
+          <div className="flex justify-between items-center mb-3.5">
+            <h2 className="font-display font-semibold text-[19px]">Recent tests</h2>
+            <Link to="/practice/history" className="text-[13px] font-semibold text-ink-soft hover:underline">History →</Link>
           </div>
 
-          {/* Resume Skills */}
-          {overview.latestResume && (
-            <div className="card">
-              <div className="card-header">
-                <h3>📄 Latest Resume</h3>
-                <Link to="/resume" className="chart-badge">Manage</Link>
-              </div>
-              <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", marginBottom: "12px" }}>
-                {overview.latestResume.fileName} — uploaded {formatDate(overview.latestResume.uploadDate)}
-              </p>
-              {overview.latestResume.skills.length > 0 && (
-                <div className="skill-tags">
-                  {overview.latestResume.skills.map((s, i) => (
-                    <span key={i} className="skill-tag">{s}</span>
-                  ))}
-                </div>
-              )}
+          {!analytics?.recentAttempts?.length ? (
+            <div className="bg-paper-raised border border-line rounded-xl p-6 text-center shadow-card text-muted text-[13px]">
+              No tests taken yet. Start practicing!
             </div>
+          ) : (
+            analytics.recentAttempts.slice(0, 3).map((test, i) => {
+              const bgColors = ["bg-[#2F8F6E]", "bg-[#E8962C]", "bg-[#E8654F]"];
+              const bgColor = bgColors[i % bgColors.length];
+              return (
+                <div key={i} className="bg-paper-raised border border-line rounded-xl p-4 flex items-center gap-3.5 mb-3 shadow-card">
+                  <div className={`w-[46px] h-[46px] rounded-full ${bgColor} flex items-center justify-center font-mono font-bold text-[13px] text-white shrink-0`}>
+                    {Math.round(test.percentage)}%
+                  </div>
+                  <div className="flex-1 overflow-hidden">
+                    <h4 className="text-[14px] font-bold mb-0.5 truncate capitalize">{test.category}</h4>
+                    <p className="text-[11.5px] text-muted">{new Date(test.date).toLocaleDateString()} · {test.totalQuestions} questions</p>
+                  </div>
+                </div>
+              );
+            })
           )}
         </div>
-      ) : (
-        /* No Data State */
-        <div className="dashboard-section">
-          <div className="section-header">
-            <h2>Get Started</h2>
-          </div>
-          <div className="prep-grid">
-            {[
-              {
-                title: "Take Aptitude Test",
-                desc: "Practice quantitative, logical reasoning, and technical questions with timed tests.",
-                icon: "📝",
-                link: "/aptitude-test",
-              },
-              {
-                title: "Upload Resume",
-                desc: "Upload your PDF resume and manage your skills profile for placement readiness.",
-                icon: "📄",
-                link: "/resume",
-              },
-              {
-                title: "Track Progress",
-                desc: "View your test history, performance trends, and identify areas to improve.",
-                icon: "📊",
-                link: "/test-history",
-              },
-            ].map((item, i) => (
-              <Link key={i} to={item.link} className="prep-card" style={{ textDecoration: "none" }}>
-                <div className="prep-card-icon">{item.icon}</div>
-                <h3>{item.title}</h3>
-                <p>{item.desc}</p>
-              </Link>
-            ))}
+      </div>
+      </div>
+
+      {/* Company Detail Modal */}
+      {selectedCompany && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/40 backdrop-blur-sm p-4 animate-fade-in" onClick={() => setSelectedCompany(null)}>
+          <div className="bg-paper border border-line rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl relative" onClick={e => e.stopPropagation()}>
+            <button 
+              onClick={() => setSelectedCompany(null)}
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-ink-soft hover:bg-gray-200 transition-colors"
+            >
+              ✕
+            </button>
+            
+            <div className="p-6 md:p-8">
+              <div className="flex items-start gap-5 mb-6">
+                <div className="w-16 h-16 rounded-2xl border border-line overflow-hidden bg-white shrink-0 flex items-center justify-center shadow-sm">
+                  <img 
+                    src={`https://logo.clearbit.com/${selectedCompany.name.toLowerCase().replace(/\s+/g, '') + '.com'}`} 
+                    alt={selectedCompany.name} 
+                    className="w-full h-full object-contain p-2" 
+                    onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} 
+                  />
+                  <div className="w-full h-full items-center justify-center font-display font-bold text-xl text-ink-soft hidden">
+                    {selectedCompany.name.substring(0, 2).toUpperCase()}
+                  </div>
+                </div>
+                <div>
+                  <h2 className="font-display font-bold text-2xl text-ink">{selectedCompany.name}</h2>
+                  <p className="text-ink-soft font-medium flex items-center gap-2 mt-1">
+                    <BiBuildingHouse /> {selectedCompany.industry || "IT/Software"}
+                    {selectedCompany.website && (
+                      <>
+                        <span className="text-gray-300">•</span>
+                        <a href={selectedCompany.website.startsWith('http') ? selectedCompany.website : `https://${selectedCompany.website}`} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">
+                          Visit Website
+                        </a>
+                      </>
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                <div className="bg-white p-4 rounded-xl border border-line shadow-sm">
+                  <p className="text-xs font-semibold text-ink-soft uppercase tracking-wider mb-1">Roles Offered</p>
+                  <p className="font-medium text-ink">{selectedCompany.rolesStr}</p>
+                </div>
+                <div className="bg-white p-4 rounded-xl border border-line shadow-sm">
+                  <p className="text-xs font-semibold text-ink-soft uppercase tracking-wider mb-1">Expected CTC</p>
+                  <p className="font-medium text-ink">
+                    {selectedCompany.package?.min ? `${selectedCompany.package.min} - ${selectedCompany.package.max} LPA` : "Not Disclosed"}
+                  </p>
+                </div>
+                <div className="bg-white p-4 rounded-xl border border-line shadow-sm">
+                  <p className="text-xs font-semibold text-ink-soft uppercase tracking-wider mb-1">Drive Date</p>
+                  <p className="font-medium text-ink">
+                    {selectedCompany.visitDate ? new Date(selectedCompany.visitDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : "TBD"}
+                  </p>
+                </div>
+                <div className="bg-white p-4 rounded-xl border border-line shadow-sm">
+                  <p className="text-xs font-semibold text-ink-soft uppercase tracking-wider mb-1">Eligibility Criteria</p>
+                  <p className="font-medium text-ink">
+                    CGPA: {selectedCompany.eligibility?.minCGPA || "N/A"}+ | Max Backlogs: {selectedCompany.eligibility?.maxBacklogs !== undefined ? selectedCompany.eligibility.maxBacklogs : "N/A"}
+                  </p>
+                </div>
+              </div>
+
+              {selectedCompany.description && (
+                <div className="mb-8">
+                  <h3 className="font-display font-semibold text-lg text-ink mb-2">About the Company</h3>
+                  <p className="text-ink-soft leading-relaxed text-sm">
+                    {selectedCompany.description}
+                  </p>
+                </div>
+              )}
+
+              {selectedCompany.selectionProcess && selectedCompany.selectionProcess.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="font-display font-semibold text-lg text-ink mb-3">Selection Process</h3>
+                  <div className="space-y-3">
+                    {selectedCompany.selectionProcess.map((step, idx) => (
+                      <div key={idx} className="flex items-start gap-3">
+                        <div className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
+                          {idx + 1}
+                        </div>
+                        <p className="text-ink text-sm font-medium pt-0.5">{step}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              <div className="pt-6 border-t border-line flex justify-end gap-3">
+                <button 
+                  onClick={() => setSelectedCompany(null)}
+                  className="px-5 py-2.5 rounded-xl font-semibold text-sm border border-line text-ink hover:bg-gray-50 transition-colors"
+                >
+                  Close
+                </button>
+                <button 
+                  onClick={() => {
+                    setSelectedCompany(null);
+                    navigate('/company-prep');
+                  }}
+                  className="px-5 py-2.5 rounded-xl font-semibold text-sm bg-ink text-paper shadow-sm hover:bg-ink-soft transition-colors"
+                >
+                  Start Preparation
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
-    </div>
+
+
+      {/* Global Rank Modal */}
+      {activeStatModal === 'rank' && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/40 backdrop-blur-sm p-4 animate-fade-in" onClick={() => setActiveStatModal(null)}>
+          <div className="bg-paper border border-line rounded-2xl w-full max-w-md p-6 shadow-2xl relative" onClick={e => e.stopPropagation()}>
+             <h2 className="font-display font-bold text-2xl mb-2 text-ink">Global Rank</h2>
+             <p className="text-muted text-sm mb-5">Your ranking is determined by your Placement Readiness score, which combines your aptitude, coding, and resume scores.</p>
+             <div className="bg-ink/5 border border-line rounded-xl p-5 flex items-center gap-4 mb-5 shadow-sm">
+               <div className="text-4xl">🏆</div>
+               <div>
+                 <p className="text-sm font-semibold text-ink-soft uppercase tracking-wider mb-1">Current Standing</p>
+                 <p className="text-3xl font-bold text-ink">#{globalRank} <span className="text-lg text-muted font-normal">of {totalUsersCount}</span></p>
+               </div>
+             </div>
+             <p className="text-sm text-ink-soft leading-relaxed">Keep practicing mock tests, update your ATS resume, and participate in interview prep to improve your readiness score and climb the leaderboard!</p>
+             <button onClick={() => setActiveStatModal(null)} className="w-full mt-6 py-2.5 rounded-xl font-semibold bg-gray-100 text-ink hover:bg-gray-200 transition-colors">Close</button>
+          </div>
+        </div>
+      )}
+
+      {/* Tests Taken Modal */}
+      {activeStatModal === 'tests' && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/40 backdrop-blur-sm p-4 animate-fade-in" onClick={() => setActiveStatModal(null)}>
+          <div className="bg-paper border border-line rounded-2xl w-full max-w-md p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+             <h2 className="font-display font-bold text-2xl mb-2 text-ink">Tests Taken</h2>
+             <p className="text-muted text-sm mb-5">You have taken {overview?.totalTests || 0} tests with an average score of {overview?.avgScore || 0}%.</p>
+             
+             {analytics?.categoryPerformance?.length > 0 ? (
+               <div className="space-y-3 mb-6">
+                 {analytics.categoryPerformance.map((cat, i) => (
+                   <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-line bg-gray-50">
+                     <span className="font-semibold text-ink capitalize">{cat.category}</span>
+                     <div className="flex items-center gap-3">
+                       <span className="text-xs text-muted">{cat.totalAttempts} attempts</span>
+                       <span className={`font-mono font-bold ${cat.avgPercentage >= 70 ? 'text-emerald' : cat.avgPercentage < 50 ? 'text-coral' : 'text-amber'}`}>
+                         {cat.avgPercentage}% avg
+                       </span>
+                     </div>
+                   </div>
+                 ))}
+               </div>
+             ) : (
+               <div className="py-6 text-center text-muted">No tests taken yet.</div>
+             )}
+             
+             <button onClick={() => { setActiveStatModal(null); navigate('/practice'); }} className="w-full py-2.5 rounded-xl font-semibold bg-ink text-white shadow-sm hover:bg-ink-soft transition-colors mb-3">Take a new Test</button>
+             <button onClick={() => setActiveStatModal(null)} className="w-full py-2.5 rounded-xl font-semibold bg-gray-100 text-ink hover:bg-gray-200 transition-colors">Close</button>
+          </div>
+        </div>
+      )}
+
+      {/* Weak Topic Modal */}
+      {activeStatModal === 'weak' && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/40 backdrop-blur-sm p-4 animate-fade-in" onClick={() => setActiveStatModal(null)}>
+          <div className="bg-paper border border-line rounded-2xl w-full max-w-md p-6 shadow-2xl relative" onClick={e => e.stopPropagation()}>
+             <h2 className="font-display font-bold text-2xl mb-2 text-ink">Weak Topics</h2>
+             <p className="text-muted text-sm mb-5">Areas where your average score is below 50%. Focus your practice here.</p>
+             
+             {analytics?.weakAreas?.length > 0 ? (
+               <div className="space-y-3 mb-6">
+                 {analytics.weakAreas.map((topic, i) => (
+                   <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-coral/30 bg-[#FDE9E5]">
+                     <span className="font-semibold text-coral capitalize">{topic.category}</span>
+                     <span className="font-mono font-bold text-coral">{topic.avgPercentage}% avg</span>
+                   </div>
+                 ))}
+               </div>
+             ) : (
+               <div className="p-4 rounded-xl border border-emerald/30 bg-emerald-soft text-emerald font-semibold text-center mb-6">
+                 Great job! You have no weak areas currently.
+               </div>
+             )}
+             
+             <button onClick={() => { setActiveStatModal(null); navigate('/practice'); }} className="w-full py-2.5 rounded-xl font-semibold bg-ink text-white shadow-sm hover:bg-ink-soft transition-colors mb-3">Start Practicing</button>
+             <button onClick={() => setActiveStatModal(null)} className="w-full py-2.5 rounded-xl font-semibold bg-gray-100 text-ink hover:bg-gray-200 transition-colors">Close</button>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

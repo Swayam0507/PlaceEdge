@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { getProfile, updateProfile } from "../services/api";
 import { BRANCHES, SEMESTERS } from "../utils/helpers";
+import { FiEdit2, FiCheckSquare, FiBarChart2, FiFileText, FiTrendingUp, FiSave, FiList, FiPhone, FiBriefcase, FiGithub, FiCalendar, FiTool, FiAward, FiStar, FiBook, FiUser } from "react-icons/fi";
+
 
 const ProfilePage = () => {
   const { user } = useAuth();
@@ -80,54 +82,56 @@ const ProfilePage = () => {
         <div className="profile-hero-card">
           <div className="profile-hero-bg"></div>
           <div className="profile-hero-content">
-            <div className="profile-avatar-large">{initials}</div>
+            <img src={`https://api.dicebear.com/7.x/adventurer/svg?seed=${profile?.name || 'User'}`} alt="Profile Avatar" className="profile-avatar-large" style={{ backgroundColor: 'var(--bg-secondary)', objectFit: 'cover' }} />
             <div className="profile-hero-info">
               <h1>{profile?.name}</h1>
               <p className="profile-email">{profile?.email}</p>
               <div className="profile-badges-row">
-                <span className={`role-badge student`}>
-                  {"🎓 Student"}
+                <span className={`role-badge ${profile?.role}`}>
+                  <FiUser /> {profile?.role === 'admin' ? 'Admin' : 'Student'}
                 </span>
-                {profile?.branch && <span className="info-chip">📚 {profile?.branch}</span>}
-                {profile?.semester && <span className="info-chip">📅 Sem {profile?.semester}</span>}
-                {profile?.cgpa > 0 && <span className="info-chip">⭐ {profile?.cgpa} CGPA</span>}
+                {profile?.role !== 'admin' && profile?.branch && <span className="info-chip"><FiBook /> {profile?.branch}</span>}
+                {profile?.role !== 'admin' && profile?.semester && <span className="info-chip"><FiCalendar /> Sem {profile?.semester}</span>}
+                {profile?.role !== 'admin' && profile?.cgpa > 0 && <span className="info-chip"><FiStar /> {profile?.cgpa} CGPA</span>}
               </div>
             </div>
-            <button className="edit-profile-btn" onClick={() => setEditing(!editing)}>
-              {editing ? "Cancel" : "✏️ Edit Profile"}
+            <button className="edit-profile-btn" onClick={() => setEditing(!editing)} style={{display:'flex', alignItems:'center', gap:'6px'}}>
+              {editing ? "Cancel" : <><FiEdit2 /> Edit Profile</>}
             </button>
           </div>
         </div>
 
         <div className="profile-grid">
           {/* Stats Cards */}
-          <div className="profile-stats-row">
-            <div className="profile-stat-card">
-              <span className="profile-stat-icon">📝</span>
-              <span className="profile-stat-value">{profile?.stats?.totalTests || 0}</span>
-              <span className="profile-stat-label">Tests Taken</span>
+          {profile?.role !== 'admin' && (
+            <div className="profile-stats-row">
+              <div className="profile-stat-card">
+                <span className="profile-stat-icon" style={{display:'flex', alignItems:'center'}}><FiCheckSquare /></span>
+                <span className="profile-stat-value">{profile?.stats?.totalTests || 0}</span>
+                <span className="profile-stat-label">Tests Taken</span>
+              </div>
+              <div className="profile-stat-card">
+                <span className="profile-stat-icon" style={{display:'flex', alignItems:'center'}}><FiBarChart2 /></span>
+                <span className="profile-stat-value">{profile?.stats?.avgScore || 0}%</span>
+                <span className="profile-stat-label">Avg Score</span>
+              </div>
+              <div className="profile-stat-card">
+                <span className="profile-stat-icon" style={{display:'flex', alignItems:'center'}}><FiFileText /></span>
+                <span className="profile-stat-value">{profile?.stats?.resumeCount || 0}</span>
+                <span className="profile-stat-label">Resumes</span>
+              </div>
+              <div className="profile-stat-card">
+                <span className="profile-stat-icon" style={{display:'flex', alignItems:'center'}}><FiTrendingUp /></span>
+                <span className="profile-stat-value">{profile?.streak?.current || 0}</span>
+                <span className="profile-stat-label">Day Streak</span>
+              </div>
             </div>
-            <div className="profile-stat-card">
-              <span className="profile-stat-icon">📊</span>
-              <span className="profile-stat-value">{profile?.stats?.avgScore || 0}%</span>
-              <span className="profile-stat-label">Avg Score</span>
-            </div>
-            <div className="profile-stat-card">
-              <span className="profile-stat-icon">📄</span>
-              <span className="profile-stat-value">{profile?.stats?.resumeCount || 0}</span>
-              <span className="profile-stat-label">Resumes</span>
-            </div>
-            <div className="profile-stat-card">
-              <span className="profile-stat-icon">🔥</span>
-              <span className="profile-stat-value">{profile?.streak?.current || 0}</span>
-              <span className="profile-stat-label">Day Streak</span>
-            </div>
-          </div>
+          )}
 
           {/* Edit Form or Profile Details */}
           {editing ? (
             <div className="profile-edit-card">
-              <h2>✏️ Edit Profile</h2>
+              <h2 style={{display:'flex', alignItems:'center', gap:'8px'}}><FiEdit2 /> Edit Profile</h2>
               <form onSubmit={handleSave} className="profile-form">
                 <div className="form-row">
                   <div className="form-group">
@@ -139,25 +143,27 @@ const ProfilePage = () => {
                     <input type="text" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} placeholder="+91 xxxxx xxxxx" />
                   </div>
                 </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Branch</label>
-                    <select value={formData.branch} onChange={(e) => setFormData({...formData, branch: e.target.value})}>
-                      <option value="">Select Branch</option>
-                      {BRANCHES.map((b) => <option key={b} value={b}>{b}</option>)}
-                    </select>
+                {profile?.role !== 'admin' && (
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>Branch</label>
+                      <select value={formData.branch} onChange={(e) => setFormData({...formData, branch: e.target.value})}>
+                        <option value="">Select Branch</option>
+                        {BRANCHES.map((b) => <option key={b} value={b}>{b}</option>)}
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Semester</label>
+                      <select value={formData.semester} onChange={(e) => setFormData({...formData, semester: e.target.value})}>
+                        {SEMESTERS.map((s) => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>CGPA</label>
+                      <input type="number" min="0" max="10" step="0.1" value={formData.cgpa} onChange={(e) => setFormData({...formData, cgpa: e.target.value})} />
+                    </div>
                   </div>
-                  <div className="form-group">
-                    <label>Semester</label>
-                    <select value={formData.semester} onChange={(e) => setFormData({...formData, semester: e.target.value})}>
-                      {SEMESTERS.map((s) => <option key={s} value={s}>{s}</option>)}
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label>CGPA</label>
-                    <input type="number" min="0" max="10" step="0.1" value={formData.cgpa} onChange={(e) => setFormData({...formData, cgpa: e.target.value})} />
-                  </div>
-                </div>
+                )}
                 <div className="form-group">
                   <label>Bio</label>
                   <textarea value={formData.bio} onChange={(e) => setFormData({...formData, bio: e.target.value})} placeholder="Tell us about yourself..." maxLength="300" rows={3} />
@@ -176,25 +182,25 @@ const ProfilePage = () => {
                     <input type="url" value={formData.github} onChange={(e) => setFormData({...formData, github: e.target.value})} placeholder="https://github.com/..." />
                   </div>
                 </div>
-                <button type="submit" className="btn-primary" disabled={saving}>
-                  {saving ? "Saving..." : "💾 Save Changes"}
+                <button type="submit" className="btn-primary" disabled={saving} style={{display:'flex', alignItems:'center', gap:'8px'}}>
+                  {saving ? "Saving..." : <><FiSave /> Save Changes</>}
                 </button>
               </form>
             </div>
           ) : (
             <div className="profile-details-card">
-              <h2>📋 Profile Details</h2>
+              <h2 style={{display:'flex', alignItems:'center', gap:'8px'}}><FiList /> Profile Details</h2>
               {profile?.bio && <p className="profile-bio">{profile.bio}</p>}
               <div className="profile-details-grid">
-                {profile?.phone && <div className="detail-item"><span className="detail-label">📱 Phone</span><span>{profile.phone}</span></div>}
-                {profile?.linkedin && <div className="detail-item"><span className="detail-label">💼 LinkedIn</span><a href={profile.linkedin} target="_blank" rel="noopener noreferrer">{profile.linkedin.replace("https://", "")}</a></div>}
-                {profile?.github && <div className="detail-item"><span className="detail-label">🐙 GitHub</span><a href={profile.github} target="_blank" rel="noopener noreferrer">{profile.github.replace("https://", "")}</a></div>}
-                <div className="detail-item"><span className="detail-label">📅 Joined</span><span>{new Date(profile?.createdAt).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</span></div>
+                {profile?.phone && <div className="detail-item"><span className="detail-label" style={{display:'flex', alignItems:'center', gap:'6px'}}><FiPhone /> Phone</span><span>{profile.phone}</span></div>}
+                {profile?.linkedin && <div className="detail-item"><span className="detail-label" style={{display:'flex', alignItems:'center', gap:'6px'}}><FiBriefcase /> LinkedIn</span><a href={profile.linkedin} target="_blank" rel="noopener noreferrer">{profile.linkedin.replace("https://", "")}</a></div>}
+                {profile?.github && <div className="detail-item"><span className="detail-label" style={{display:'flex', alignItems:'center', gap:'6px'}}><FiGithub /> GitHub</span><a href={profile.github} target="_blank" rel="noopener noreferrer">{profile.github.replace("https://", "")}</a></div>}
+                <div className="detail-item"><span className="detail-label" style={{display:'flex', alignItems:'center', gap:'6px'}}><FiCalendar /> Joined</span><span>{new Date(profile?.createdAt).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</span></div>
               </div>
               {/* Skills */}
               {profile?.skills?.length > 0 && (
                 <div className="profile-skills-section">
-                  <h3>🛠️ Skills</h3>
+                  <h3 style={{display:'flex', alignItems:'center', gap:'8px'}}><FiTool /> Skills</h3>
                   <div className="skill-tags">
                     {profile.skills.map((s, i) => <span key={i} className="skill-tag">{s}</span>)}
                   </div>
@@ -203,11 +209,11 @@ const ProfilePage = () => {
               {/* Badges */}
               {profile?.badges?.length > 0 && (
                 <div className="profile-badges-section">
-                  <h3>🏅 Badges</h3>
+                  <h3 style={{display:'flex', alignItems:'center', gap:'8px'}}><FiAward /> Badges</h3>
                   <div className="badges-grid">
                     {profile.badges.map((b, i) => (
                       <div key={i} className="badge-item">
-                        <span className="badge-icon">{b.icon || "🏅"}</span>
+                        <span className="badge-icon" style={{display:'flex', alignItems:'center'}}>{b.icon || <FiAward />}</span>
                         <span className="badge-name">{b.name}</span>
                       </div>
                     ))}

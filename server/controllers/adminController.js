@@ -85,12 +85,15 @@ const getAllUsers = async (req, res) => {
  */
 const updateUser = async (req, res) => {
   try {
-    const { branch, semester } = req.body;
+    const { name, email, role, branch, semester, cgpa } = req.body;
 
     const updateData = {};
-    // Role changes are not allowed — only one admin exists
+    if (name !== undefined) updateData.name = name;
+    if (email !== undefined) updateData.email = email;
+    if (role !== undefined) updateData.role = role;
     if (branch !== undefined) updateData.branch = branch;
     if (semester !== undefined) updateData.semester = semester;
+    if (cgpa !== undefined) updateData.cgpa = cgpa;
 
     const user = await User.findByIdAndUpdate(
       req.params.id,

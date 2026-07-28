@@ -1,5 +1,7 @@
 const TestAttempt = require("../models/TestAttempt");
 const Resume = require("../models/Resume");
+const Company = require("../models/Company");
+const User = require("../models/User");
 
 /**
  * @desc    Get dashboard analytics for current user
@@ -101,6 +103,160 @@ const getDashboardAnalytics = async (req, res) => {
       },
     ]);
 
+    // ── 9. Journey stages computation ──
+    const aptitudeCategories = ["quantitative", "logical"];
+    const codingCategories = ["technical"];
+
+    const aptitudeStats = categoryStats.filter((c) =>
+      aptitudeCategories.includes(c._id?.toLowerCase())
+    );
+    const codingStats = categoryStats.filter((c) =>
+      codingCategories.includes(c._id?.toLowerCase())
+    );
+
+    const aptitudeCount = aptitudeStats.reduce((s, c) => s + c.totalAttempts, 0);
+    const aptitudeAvg =
+      aptitudeStats.length > 0
+        ? Math.round(
+            aptitudeStats.reduce((s, c) => s + c.avgPercentage, 0) /
+              aptitudeStats.length
+          )
+        : 0;
+
+    const codingCount = codingStats.reduce((s, c) => s + c.totalAttempts, 0);
+    const codingAvg =
+      codingStats.length > 0
+        ? Math.round(
+            codingStats.reduce((s, c) => s + c.avgPercentage, 0) /
+              codingStats.length
+          )
+        : 0;
+
+    // Fetch user's interview practice count
+    const currentUser = await User.findById(userId).select("interviewPracticeCount").lean();
+    const interviewPracticeCount = currentUser?.interviewPracticeCount || 0;
+
+    // Stage completion rules
+    const aptitudeDone = aptitudeCount >= 3 && aptitudeAvg >= 40;
+    const codingDone = codingCount >= 2 && codingAvg >= 40;
+    const resumeDone = resumeCount > 0;
+    const interviewDone = interviewPracticeCount >= 5;
+    const allDone = aptitudeDone && codingDone && resumeDone && interviewDone;
+
+    // Determine statuses — stages unlock sequentially
+    const stageCompleted = [aptitudeDone, codingDone, resumeDone, interviewDone, allDone];
+    let currentStageIndex = 0;
+    for (let i = 0; i < stageCompleted.length; i++) {
+      if (stageCompleted[i]) {
+        currentStageIndex = i + 1; // move to next stage
+      } else {
+        break;
+      }
+    }
+    // Clamp to max index
+    if (currentStageIndex > 4) currentStageIndex = 4;
+
+    const completedCount = stageCompleted.filter(Boolean).length;
+    const overallProgress = Math.round((completedCount / 5) * 100);
+
+    const getStatus = (idx) => {
+      if (stageCompleted[idx]) return "completed";
+      if (idx === currentStageIndex) return "current";
+      return "locked";
+    };
+
+    const getSublabel = (idx) => {
+      switch (idx) {
+        case 0:
+          return aptitudeCount > 0
+            ? `${aptitudeCount} test${aptitudeCount > 1 ? "s" : ""} · ${aptitudeAvg}% avg`
+            : `0/${3} tests`;
+        case 1:
+          return codingCount > 0
+            ? `${codingCount} test${codingCount > 1 ? "s" : ""} · ${codingAvg}% avg`
+            : `0/${2} tests`;
+        case 2:
+          return resumeCount > 0
+            ? `${resumeCount} resume uploaded`
+            : "No resume yet";
+        case 3:
+          return interviewPracticeCount > 0
+            ? `${interviewPracticeCount}/5 practiced`
+            : "Not started";
+        case 4:
+          return allDone ? "All stages clear!" : "";
+        default:
+          return "";
+      }
+    };
+
+    const journeyStages = {
+      stages: [
+        { key: "aptitude", label: "Aptitude", status: getStatus(0), sublabel: getSublabel(0) },
+        { key: "coding", label: "Coding Test", status: getStatus(1), sublabel: getSublabel(1) },
+        { key: "resume", label: "Resume + ATS", status: getStatus(2), sublabel: getSublabel(2) },
+        { key: "interview", label: "Mock Interview", status: getStatus(3), sublabel: getSublabel(3) },
+        { key: "placed", label: "Placed", status: getStatus(4), sublabel: getSublabel(4) },
+      ],
+      currentStageIndex,
+      completedCount,
+      overallProgress,
+    };
+
+    // 9. Get upcoming companies
+    const upcomingCompaniesList = await Company.find({
+      status: "upcoming",
+      visitDate: { $gte: new Date() }
+    })
+      .sort({ visitDate: 1 })
+      .limit(3)
+      .select('name visitDate roles type industry website package eligibility selectionProcess description')
+      .lean();
+
+    const formattedUpcoming = upcomingCompaniesList.map(comp => {
+      const diffTime = Math.abs(new Date(comp.visitDate) - new Date());
+      return {
+        ...comp,
+        type: comp.type || "On-campus",
+        rolesStr: comp.roles?.join(" · ") || "Multiple Roles",
+        daysLeft: Math.ceil(diffTime / (1000 * 60 * 60 * 24)),
+      };
+    });
+
+    let upcomingEvent = formattedUpcoming.length > 0 ? formattedUpcoming[0] : null;
+
+    // 10. Global Rank & Total Users
+    const totalUsers = await User.countDocuments();
+    // Percentile-based rank approximation (lower readiness = higher rank number)
+    // Example: readiness 90% -> rank is in top 10%
+    const globalRank = totalUsers > 0 
+      ? Math.max(1, Math.floor(totalUsers * (1 - (readinessScore / 100)))) + (readinessScore === 100 ? 0 : 1)
+      : 1;
+
+    // 11. Smart Focus Recommendation
+    let focusRecommendation = "Keep up the momentum! You're on track.";
+    if (weakAreas.length > 0) {
+      const weakest = weakAreas[0].category.toLowerCase();
+      let displayCategory = weakest.charAt(0).toUpperCase() + weakest.slice(1);
+      if (weakest === 'mixed') displayCategory = 'Mixed Mock Tests';
+      else if (weakest === 'technical') displayCategory = 'Technical Skills';
+      else if (weakest === 'quantitative') displayCategory = 'Quantitative Aptitude';
+      else if (weakest === 'logical') displayCategory = 'Logical Reasoning';
+      else if (weakest === 'verbal') displayCategory = 'Verbal Ability';
+
+      if (weakest.includes("quantitative") || weakest.includes("logical")) {
+        focusRecommendation = `Your Aptitude is holding you back. Practice more ${displayCategory} questions.`;
+      } else if (weakest.includes("technical")) {
+        focusRecommendation = `Your Coding score is low. Focus on Data Structures and Algorithms.`;
+      } else {
+        focusRecommendation = `Spend more time practicing your weak area: ${displayCategory}.`;
+      }
+    } else if (!resumeDone) {
+      focusRecommendation = "You haven't uploaded a resume. Get your ATS score to stand out.";
+    } else if (currentStageIndex === 4) {
+      focusRecommendation = "You're placement ready! Start applying for companies in Career Hub.";
+    }
+
     res.status(200).json({
       success: true,
       analytics: {
@@ -109,14 +265,19 @@ const getDashboardAnalytics = async (req, res) => {
           avgScore,
           readinessScore,
           resumeCount,
+          totalUsers,
+          globalRank,
+          focusRecommendation,
           latestResume: latestResume
             ? {
                 fileName: latestResume.originalName,
                 skills: latestResume.skills,
                 uploadDate: latestResume.createdAt,
+                atsScore: latestResume.atsScore || 0,
               }
             : null,
         },
+        upcomingCompanies: formattedUpcoming,
         categoryPerformance: categoryStats.map((c) => ({
           category: c._id,
           avgPercentage: Math.round(c.avgPercentage),
@@ -134,6 +295,8 @@ const getDashboardAnalytics = async (req, res) => {
           avgPercentage: Math.round(d.avgPercentage),
           count: d.count,
         })),
+        journeyStages,
+        upcomingEvent,
       },
     });
   } catch (error) {

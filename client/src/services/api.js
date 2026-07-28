@@ -135,4 +135,14 @@ export const getResumeScore = (data) => API.post("/features/resume-score", data)
 export const bulkImportQuestions = (questions) =>
   API.post("/features/questions/bulk", { questions });
 
+// ---------- AI Chat & Exam API ----------
+export const chatWithAI = (data) => {
+  if (data instanceof FormData) {
+    return API.post("/ai/chat", data);
+  }
+  return API.post("/ai/chat", { messages: data });
+};
+export const generateExam = (data) => API.post("/ai/generate-exam", data);
+export const getCareerAdvice = () => API.post("/ai/career-advice");
+
 export default API;

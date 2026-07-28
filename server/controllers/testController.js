@@ -103,6 +103,11 @@ const getTestHistory = async (req, res) => {
     const { limit = 20, category } = req.query;
 
     const filter = { userId: req.user._id };
+    // Allow admin to fetch history for a specific user
+    if (req.user.role === "admin" && req.query.userId) {
+      filter.userId = req.query.userId;
+    }
+    
     if (category) filter.category = category;
 
     const history = await TestAttempt.find(filter)

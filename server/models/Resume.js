@@ -35,6 +35,10 @@ const resumeSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    atsScore: {
+      type: Number,
+      default: 0,
+    },
     parsed: {
       type: Boolean,
       default: false,

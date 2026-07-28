@@ -5,7 +5,6 @@ const questionSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
-      enum: ["quantitative", "logical", "technical"],
       index: true,
     },
     question: {

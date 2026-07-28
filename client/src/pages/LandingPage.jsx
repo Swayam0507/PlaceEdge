@@ -7,7 +7,7 @@ const FEATURES = [
   { icon: "💼", title: "Job Recommendations", desc: "Receive personalized job matches based on your skills profile and academic performance." },
   { icon: "📄", title: "Resume Analysis", desc: "Upload your resume for skill extraction, scoring, and ATS-readiness feedback." },
   { icon: "📊", title: "Analytics Dashboard", desc: "Track your performance trends, identify weak areas, and monitor placement readiness." },
-  { icon: "🏆", title: "Leaderboard & Certificates", desc: "Compete with peers, climb the rankings, and earn achievement certificates." },
+  { icon: "🏆", title: "Leaderboard", desc: "Compete with peers and climb the rankings on the global leaderboard." },
 ];
 
 const STATS = [
