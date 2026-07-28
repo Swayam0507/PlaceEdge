@@ -93,18 +93,18 @@ const StudyBuddy = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-120px)] bg-surface font-body p-4 sm:p-6 lg:p-8 animate-fade-in flex flex-col relative overflow-hidden rounded-3xl">
+    <div className="min-h-[calc(100vh-120px)] bg-surface font-body animate-fade-in flex flex-col relative overflow-hidden rounded-2xl">
       
       {/* Background Decor */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/4 pointer-events-none"></div>
 
-      <div className="max-w-5xl mx-auto w-full h-full flex flex-col relative z-10">
+      <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col relative z-10 p-4 sm:p-6 lg:p-8 min-h-0">
         
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 shrink-0">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20 shrink-0">
               <FiCpu size={28} />
             </div>
             <div>
@@ -118,7 +118,7 @@ const StudyBuddy = () => {
           </div>
 
           {/* Category Chips */}
-          <div className="flex gap-2 flex-wrap sm:justify-end">
+          <div className="flex gap-2 flex-wrap sm:justify-end shrink-0">
             {CATEGORIES.map((cat) => {
               const Icon = cat.icon;
               const isActive = activeCategory === cat.key;
@@ -141,7 +141,8 @@ const StudyBuddy = () => {
         </div>
 
         {/* Chat Window */}
-        <div className="flex-1 bg-white/80 backdrop-blur-xl border border-white rounded-3xl shadow-xl flex flex-col overflow-hidden relative">
+        <div className="flex-1 min-h-0 bg-white/80 backdrop-blur-xl border border-white rounded-3xl shadow-xl flex flex-col overflow-hidden relative">
+
           
           {/* Messages Area */}
           <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 space-y-6 custom-scrollbar">
