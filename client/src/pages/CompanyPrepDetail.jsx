@@ -122,8 +122,8 @@ const CompanyPrepDetail = () => {
               </div>
               
               <div className="h-4 w-full overflow-hidden rounded-full bg-slate-100 flex shadow-inner">
-                <div style={{ width: `${easyPct}%` }} className="bg-emerald-500 hover:brightness-110 transition-all cursor-help" title="Easy"></div>
-                <div style={{ width: `${medPct}%` }} className="bg-amber-500 hover:brightness-110 transition-all cursor-help" title="Medium"></div>
+                <div style={{ width: `${easyPct}%` }} className="bg-emerald hover:brightness-110 transition-all cursor-help" title="Easy"></div>
+                <div style={{ width: `${medPct}%` }} className="bg-amber hover:brightness-110 transition-all cursor-help" title="Medium"></div>
                 <div style={{ width: `${hardPct}%` }} className="bg-coral hover:brightness-110 transition-all cursor-help" title="Hard"></div>
               </div>
               
