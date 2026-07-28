@@ -131,6 +131,9 @@ const ResumeBuilder = () => {
     const element = resumeRef.current;
     if (!element) return;
 
+    const originalWidth = element.style.width;
+    element.style.width = "794px";
+
     setIsGenerating(true);
 
     try {
@@ -193,6 +196,7 @@ const ResumeBuilder = () => {
     } catch (err) {
       console.error("Error generating PDF", err);
     } finally {
+      element.style.width = originalWidth;
       setIsGenerating(false);
     }
   };
