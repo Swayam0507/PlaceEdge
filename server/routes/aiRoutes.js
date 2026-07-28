@@ -44,7 +44,7 @@ router.post("/interview-feedback", protect, async (req, res) => {
         const ai = new GoogleGenAI({});
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
-            contents: `You are an expert interview coach. Evaluate the following interview answer and provide constructive feedback with ratings and improvement tips.\n\nQuestion: ${question}\n\nCandidate's Answer: ${answer}\n\nProvide feedback in markdown format covering: Strength, Weaknesses, Score (1-10), and Suggestions.`,
+            contents: `You are an expert interview coach. Evaluate the following interview answer and provide short, direct, and constructive feedback. KEEP YOUR RESPONSE EXTREMELY CONCISE AND TO THE POINT (maximum 3-4 short sentences per section). Do not write long essays or full answers.\n\nQuestion: ${question}\n\nCandidate's Answer: ${answer}\n\nProvide short feedback in markdown format covering:\n- Strength (1 bullet)\n- Weaknesses (1-2 bullets)\n- Score (1-10)\n- Suggestions (1-2 short bullet points max)`,
         });
 
         res.status(200).json({
