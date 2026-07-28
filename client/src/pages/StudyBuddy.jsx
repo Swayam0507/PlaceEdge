@@ -1,14 +1,15 @@
 import { useState, useRef, useEffect } from "react";
-import { FiSend, FiCpu, FiBook, FiCode, FiUsers, FiTarget, FiZap } from "react-icons/fi";
+import { FiSend, FiCpu, FiBook, FiCode, FiUsers, FiTarget, FiZap, FiMessageSquare } from "react-icons/fi";
 import ReactMarkdown from "react-markdown";
 import { chatWithAI } from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import { Loader2 } from "lucide-react";
 
 const CATEGORIES = [
-  { key: "dsa", label: "DSA & Coding", icon: FiCode, color: "#6366f1" },
-  { key: "aptitude", label: "Aptitude", icon: FiTarget, color: "#f59e0b" },
-  { key: "system-design", label: "System Design", icon: FiZap, color: "#06b6d4" },
-  { key: "hr", label: "HR & Behavioral", icon: FiUsers, color: "#ec4899" },
+  { key: "dsa", label: "DSA & Coding", icon: FiCode, color: "text-indigo-500", bg: "bg-indigo-500/10", border: "border-indigo-500" },
+  { key: "aptitude", label: "Aptitude", icon: FiTarget, color: "text-amber-500", bg: "bg-amber-500/10", border: "border-amber-500" },
+  { key: "system-design", label: "System Design", icon: FiZap, color: "text-cyan-500", bg: "bg-cyan-500/10", border: "border-cyan-500" },
+  { key: "hr", label: "HR & Behavioral", icon: FiUsers, color: "text-pink-500", bg: "bg-pink-500/10", border: "border-pink-500" },
 ];
 
 const QUICK_PROMPTS = [
@@ -77,6 +78,7 @@ const StudyBuddy = () => {
       ]);
     } finally {
       setLoading(false);
+      setTimeout(() => inputRef.current?.focus(), 100);
     }
   };
 
@@ -91,303 +93,178 @@ const StudyBuddy = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 animate-fade-in h-[calc(100vh-80px)] flex flex-col">
-      {/* Header */}
-      <div className="flex items-center gap-4 mb-6 shrink-0">
-        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 text-white flex items-center justify-center shadow-md">
-          <FiBook size={24} />
-        </div>
-        <div>
-          <h1 className="font-display font-bold text-2xl text-ink">
-            AI Study Buddy
-          </h1>
-          <p className="font-body text-muted text-sm mt-0.5">
-            Your personal AI tutor for placement prep
-          </p>
-        </div>
-      </div>
+    <div className="min-h-screen bg-surface font-body px-4 sm:px-6 lg:px-8 py-8 animate-fade-in flex flex-col relative overflow-hidden">
+      
+      {/* Background Decor */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/4 pointer-events-none"></div>
 
-      {/* Category Chips */}
-      <div style={{ display: "flex", gap: "8px", marginBottom: "16px", flexWrap: "wrap" }}>
-        {CATEGORIES.map((cat) => {
-          const Icon = cat.icon;
-          const isActive = activeCategory === cat.key;
-          return (
-            <button
-              key={cat.key}
-              onClick={() => setActiveCategory(isActive ? null : cat.key)}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-                padding: "8px 16px",
-                borderRadius: "20px",
-                border: `1.5px solid ${isActive ? cat.color : "#e2e8f0"}`,
-                backgroundColor: isActive ? `${cat.color}15` : "#fff",
-                color: isActive ? cat.color : "#64748b",
-                fontWeight: 600,
-                fontSize: "0.8rem",
-                cursor: "pointer",
-                transition: "all 0.2s",
-              }}
-            >
-              <Icon size={14} />
-              {cat.label}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Chat Window */}
-      <div
-        style={{
-          backgroundColor: "#fff",
-          border: "1px solid #e2e8f0",
-          borderRadius: "16px",
-          display: "flex",
-          flexDirection: "column",
-          height: "calc(100vh - 320px)",
-          minHeight: "400px",
-          overflow: "hidden",
-        }}
-      >
-        {/* Messages */}
-        <div
-          style={{
-            flex: 1,
-            overflowY: "auto",
-            padding: "24px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "16px",
-          }}
-        >
-          {messages.map((msg, i) => (
-            <div
-              key={i}
-              style={{
-                display: "flex",
-                justifyContent: msg.role === "user" ? "flex-end" : "flex-start",
-                gap: "10px",
-              }}
-            >
-              {msg.role === "ai" && (
-                <div
-                  style={{
-                    width: "32px",
-                    height: "32px",
-                    borderRadius: "10px",
-                    background: "linear-gradient(135deg, #6366f1, #a855f7)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#fff",
-                    flexShrink: 0,
-                    marginTop: "2px",
-                  }}
-                >
-                  <FiCpu size={16} />
-                </div>
-              )}
-              <div
-                style={{
-                  maxWidth: "75%",
-                  padding: "14px 18px",
-                  borderRadius: msg.role === "user" ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
-                  backgroundColor: msg.role === "user" ? "#6366f1" : "#f1f5f9",
-                  color: msg.role === "user" ? "#fff" : "#1e293b",
-                  fontSize: "0.9rem",
-                  lineHeight: 1.6,
-                }}
-              >
-                {msg.role === "ai" ? (
-                  <ReactMarkdown
-                    components={{
-                      p: ({ children }) => <p style={{ margin: "4px 0" }}>{children}</p>,
-                      strong: ({ children }) => (
-                        <strong style={{ fontWeight: 700 }}>{children}</strong>
-                      ),
-                      code: ({ children }) => (
-                        <code
-                          style={{
-                            backgroundColor: "#e2e8f0",
-                            padding: "2px 6px",
-                            borderRadius: "4px",
-                            fontSize: "0.85em",
-                            fontFamily: "monospace",
-                          }}
-                        >
-                          {children}
-                        </code>
-                      ),
-                      pre: ({ children }) => (
-                        <pre
-                          style={{
-                            backgroundColor: "#1e293b",
-                            color: "#e2e8f0",
-                            padding: "16px",
-                            borderRadius: "8px",
-                            overflow: "auto",
-                            fontSize: "0.85em",
-                            margin: "8px 0",
-                          }}
-                        >
-                          {children}
-                        </pre>
-                      ),
-                      li: ({ children }) => (
-                        <li style={{ marginBottom: "4px" }}>{children}</li>
-                      ),
-                    }}
-                  >
-                    {msg.text}
-                  </ReactMarkdown>
-                ) : (
-                  msg.text
-                )}
-              </div>
+      <div className="max-w-5xl mx-auto w-full h-[calc(100vh-120px)] flex flex-col relative z-10">
+        
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 shrink-0">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20">
+              <FiCpu size={28} />
             </div>
-          ))}
+            <div>
+              <h1 className="font-display font-black text-3xl text-ink tracking-tight">
+                AI Study Buddy
+              </h1>
+              <p className="text-slate-500 font-medium mt-1">
+                Your personal AI tutor for placement prep
+              </p>
+            </div>
+          </div>
 
-          {loading && (
-            <div style={{ display: "flex", gap: "10px" }}>
+          {/* Category Chips */}
+          <div className="flex gap-2 flex-wrap sm:justify-end">
+            {CATEGORIES.map((cat) => {
+              const Icon = cat.icon;
+              const isActive = activeCategory === cat.key;
+              return (
+                <button
+                  key={cat.key}
+                  onClick={() => setActiveCategory(isActive ? null : cat.key)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all border ${
+                    isActive 
+                      ? `${cat.bg} ${cat.color} ${cat.border} shadow-sm ring-2 ring-offset-2 ring-${cat.border.split('-')[1]}-200` 
+                      : "bg-white border-line text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                  }`}
+                >
+                  <Icon size={16} />
+                  {cat.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Chat Window */}
+        <div className="flex-1 bg-white/80 backdrop-blur-xl border border-white rounded-3xl shadow-xl flex flex-col overflow-hidden relative">
+          
+          {/* Messages Area */}
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 space-y-6 custom-scrollbar">
+            {messages.map((msg, i) => (
               <div
-                style={{
-                  width: "32px",
-                  height: "32px",
-                  borderRadius: "10px",
-                  background: "linear-gradient(135deg, #6366f1, #a855f7)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#fff",
-                  flexShrink: 0,
-                }}
+                key={i}
+                className={`flex gap-4 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
-                <FiCpu size={16} />
+                {msg.role === "ai" && (
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white shrink-0 mt-1 shadow-md shadow-indigo-500/20">
+                    <FiCpu size={20} />
+                  </div>
+                )}
+                
+                <div
+                  className={`max-w-[85%] sm:max-w-[75%] px-5 py-4 rounded-2xl text-[15px] leading-relaxed shadow-sm ${
+                    msg.role === "user" 
+                      ? "bg-indigo-600 text-white rounded-tr-sm" 
+                      : "bg-slate-50/80 border border-slate-100 text-slate-800 rounded-tl-sm"
+                  }`}
+                >
+                  {msg.role === "ai" ? (
+                    <ReactMarkdown
+                      components={{
+                        p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                        strong: ({ children }) => <strong className="font-bold text-indigo-900">{children}</strong>,
+                        code: ({ node, inline, children, ...props }) => {
+                          const match = /language-(\w+)/.exec(props.className || "");
+                          return !inline ? (
+                            <div className="my-4 rounded-xl overflow-hidden bg-[#1e1e2e] border border-slate-700/50">
+                              <div className="flex items-center px-4 py-2 bg-black/40 border-b border-white/10">
+                                <span className="text-xs font-mono text-slate-400">{match ? match[1] : 'code'}</span>
+                              </div>
+                              <pre className="p-4 overflow-x-auto text-sm text-slate-300 font-mono">
+                                <code {...props}>{children}</code>
+                              </pre>
+                            </div>
+                          ) : (
+                            <code className="bg-indigo-100/50 text-indigo-700 px-1.5 py-0.5 rounded-md font-mono text-sm border border-indigo-200/50" {...props}>
+                              {children}
+                            </code>
+                          )
+                        },
+                        ul: ({ children }) => <ul className="list-disc pl-5 mb-3 space-y-1">{children}</ul>,
+                        ol: ({ children }) => <ol className="list-decimal pl-5 mb-3 space-y-1">{children}</ol>,
+                        li: ({ children }) => <li>{children}</li>,
+                        h3: ({ children }) => <h3 className="font-bold text-lg text-indigo-900 mt-4 mb-2">{children}</h3>,
+                      }}
+                    >
+                      {msg.text}
+                    </ReactMarkdown>
+                  ) : (
+                    msg.text
+                  )}
+                </div>
               </div>
-              <div
-                style={{
-                  padding: "14px 18px",
-                  borderRadius: "18px 18px 18px 4px",
-                  backgroundColor: "#f1f5f9",
-                  color: "#64748b",
-                  fontSize: "0.9rem",
-                }}
-              >
-                <span className="typing-dots">Thinking</span>
+            ))}
+            
+            {loading && (
+              <div className="flex gap-4 justify-start">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white shrink-0 shadow-md">
+                  <FiCpu size={20} />
+                </div>
+                <div className="bg-slate-50 border border-slate-100 px-5 py-4 rounded-2xl rounded-tl-sm flex items-center gap-2 text-slate-500">
+                  <Loader2 className="animate-spin" size={18} />
+                  <span className="font-medium text-sm">Thinking...</span>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Quick Prompts (Only show if few messages) */}
+          {messages.length < 3 && !loading && (
+            <div className="px-4 sm:px-8 pb-4">
+              <div className="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
+                {QUICK_PROMPTS.filter(p => !activeCategory || p.category === activeCategory).map((prompt, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleQuickPrompt(prompt)}
+                    className="flex items-center gap-2 px-4 py-2 bg-white border border-indigo-100 rounded-full text-xs font-bold text-indigo-600 hover:bg-indigo-50 hover:border-indigo-300 transition-colors whitespace-nowrap shrink-0 shadow-sm"
+                  >
+                    <FiMessageSquare size={14} className="text-indigo-400" />
+                    {prompt.text}
+                  </button>
+                ))}
               </div>
             </div>
           )}
 
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Quick Prompts (show only if few messages) */}
-        {messages.length <= 2 && (
-          <div
-            style={{
-              padding: "12px 24px 8px",
-              borderTop: "1px solid #f1f5f9",
-              display: "flex",
-              gap: "8px",
-              flexWrap: "wrap",
-            }}
-          >
-            {QUICK_PROMPTS.filter(
-              (p) => !activeCategory || p.category === activeCategory
-            )
-              .slice(0, 4)
-              .map((prompt, i) => (
-                <button
-                  key={i}
-                  onClick={() => handleQuickPrompt(prompt)}
-                  style={{
-                    padding: "8px 14px",
-                    borderRadius: "20px",
-                    border: "1px solid #e2e8f0",
-                    backgroundColor: "#fafafa",
-                    color: "#475569",
-                    fontSize: "0.78rem",
-                    cursor: "pointer",
-                    transition: "all 0.2s",
-                    fontWeight: 500,
+          {/* Input Area */}
+          <div className="p-4 sm:p-6 bg-white/50 border-t border-slate-100 backdrop-blur-md">
+            <form onSubmit={handleSubmit} className="relative flex items-end gap-2 max-w-4xl mx-auto">
+              <div className="relative flex-1 bg-white rounded-2xl border border-indigo-100 shadow-sm focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/10 transition-all">
+                <textarea
+                  ref={inputRef}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSubmit(e);
+                    }
                   }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = "#6366f115";
-                    e.target.style.borderColor = "#6366f1";
-                    e.target.style.color = "#6366f1";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = "#fafafa";
-                    e.target.style.borderColor = "#e2e8f0";
-                    e.target.style.color = "#475569";
-                  }}
-                >
-                  {prompt.text}
-                </button>
-              ))}
+                  placeholder="Ask anything about placements..."
+                  className="w-full bg-transparent border-none px-5 py-4 text-slate-700 placeholder:text-slate-400 focus:outline-none resize-none max-h-32 min-h-[56px] font-medium"
+                  rows={1}
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={!input.trim() || loading}
+                className="w-14 h-[56px] flex items-center justify-center bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shrink-0"
+              >
+                <FiSend size={20} className="ml-1" />
+              </button>
+            </form>
+            <p className="text-center text-[11px] font-medium text-slate-400 mt-3">
+              AI Study Buddy can make mistakes. Verify important information.
+            </p>
           </div>
-        )}
-
-        {/* Input */}
-        <form
-          onSubmit={handleSubmit}
-          style={{
-            padding: "16px 24px",
-            borderTop: "1px solid #e2e8f0",
-            display: "flex",
-            gap: "12px",
-            alignItems: "center",
-          }}
-        >
-          <input
-            ref={inputRef}
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder={
-              activeCategory
-                ? `Ask about ${activeCategory}...`
-                : "Ask anything about placements..."
-            }
-            disabled={loading}
-            style={{
-              flex: 1,
-              padding: "12px 18px",
-              borderRadius: "12px",
-              border: "1.5px solid #e2e8f0",
-              backgroundColor: "#fafafa",
-              fontSize: "0.9rem",
-              outline: "none",
-              transition: "border-color 0.2s",
-            }}
-            onFocus={(e) => (e.target.style.borderColor = "#6366f1")}
-            onBlur={(e) => (e.target.style.borderColor = "#e2e8f0")}
-          />
-          <button
-            type="submit"
-            disabled={loading || !input.trim()}
-            style={{
-              width: "44px",
-              height: "44px",
-              borderRadius: "12px",
-              background:
-                loading || !input.trim()
-                  ? "#e2e8f0"
-                  : "linear-gradient(135deg, #6366f1, #a855f7)",
-              color: loading || !input.trim() ? "#94a3b8" : "#fff",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              border: "none",
-              cursor: loading || !input.trim() ? "not-allowed" : "pointer",
-              transition: "all 0.2s",
-            }}
-          >
-            <FiSend size={18} />
-          </button>
-        </form>
+          
+        </div>
       </div>
     </div>
   );
