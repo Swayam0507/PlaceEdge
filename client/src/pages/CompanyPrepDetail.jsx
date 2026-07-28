@@ -120,9 +120,9 @@ const CompanyPrepDetail = () => {
               </div>
               
               <div className="h-4 w-full overflow-hidden rounded-full bg-slate-100 flex shadow-inner">
-                <div style={{ width: \`\${easyPct}%\` }} className="bg-emerald-500 hover:brightness-110 transition-all cursor-help" title="Easy"></div>
-                <div style={{ width: \`\${medPct}%\` }} className="bg-amber-500 hover:brightness-110 transition-all cursor-help" title="Medium"></div>
-                <div style={{ width: \`\${hardPct}%\` }} className="bg-coral hover:brightness-110 transition-all cursor-help" title="Hard"></div>
+                <div style={{ width: `${easyPct}%` }} className="bg-emerald-500 hover:brightness-110 transition-all cursor-help" title="Easy"></div>
+                <div style={{ width: `${medPct}%` }} className="bg-amber-500 hover:brightness-110 transition-all cursor-help" title="Medium"></div>
+                <div style={{ width: `${hardPct}%` }} className="bg-coral hover:brightness-110 transition-all cursor-help" title="Hard"></div>
               </div>
               
               <div className="mt-5 grid grid-cols-3 gap-2">
@@ -177,10 +177,10 @@ const CompanyPrepDetail = () => {
                   return (
                     <a 
                       key={i} 
-                      href={q.leetcodeUrl || \`https://leetcode.com/problemset/all/?search=\${q.title}\`}
+                      href={q.leetcodeUrl || `https://leetcode.com/problemset/all/?search=${q.title}`}
                       target="_blank" 
                       rel="noreferrer"
-                      className={\`group flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-line bg-paper-raised p-4 transition-all hover:border-indigo-200 hover:shadow-md border-l-4 \${borderColor}\`}
+                      className={`group flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-line bg-paper-raised p-4 transition-all hover:border-indigo-200 hover:shadow-md border-l-4 ${borderColor}`}
                     >
                       <div className="flex items-center gap-4">
                         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white border border-line text-sm font-display font-bold text-ink-soft shadow-sm group-hover:bg-indigo-50 group-hover:text-indigo-600 group-hover:border-indigo-200 transition-colors">
@@ -191,7 +191,7 @@ const CompanyPrepDetail = () => {
                         </span>
                       </div>
                       <div className="flex items-center justify-between sm:justify-end gap-4 sm:w-auto w-full pl-14 sm:pl-0">
-                        <span className={\`rounded-lg border px-3 py-1 text-[10px] font-bold uppercase tracking-wider \${badgeColor}\`}>
+                        <span className={`rounded-lg border px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${badgeColor}`}>
                           {q.difficulty}
                         </span>
                         <div className="h-8 w-8 rounded-full bg-slate-50 border border-line flex items-center justify-center group-hover:bg-indigo-600 group-hover:border-indigo-600 transition-colors">
