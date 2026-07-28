@@ -42,11 +42,11 @@ const JourneyMap = ({ journeyData }) => {
     if (status === "completed") {
       return (
         <g key={idx} className="journey-node-group">
-          <circle cx={x} cy={y} r="16" fill="#2F8F6E" className="journey-node-done" />
+          <circle cx={x} cy={y} r="16" fill="#10b981" className="journey-node-done" />
           <text x={x} y={y + 5} textAnchor="middle" fill="white" fontSize="14" fontWeight="700">✓</text>
-          <text x={x} y={y + 35} className="font-body" textAnchor="middle" fontSize="12.5" fontWeight="600" fill="var(--ink, #1B2A4A)">{label}</text>
+          <text x={x} y={y + 35} className="font-sans" textAnchor="middle" fontSize="12.5" fontWeight="600" fill="#0f172a">{label}</text>
           {sublabel && (
-            <text x={x} y={y + 50} className="font-body" textAnchor="middle" fontSize="10.5" fill="var(--muted, #8B93A7)">{sublabel}</text>
+            <text x={x} y={y + 50} className="font-sans" textAnchor="middle" fontSize="10.5" fill="#64748b">{sublabel}</text>
           )}
         </g>
       );
@@ -56,15 +56,15 @@ const JourneyMap = ({ journeyData }) => {
       return (
         <g key={idx} className="journey-node-group">
           {/* Pulse ring animation */}
-          <circle cx={x} cy={y} r="24" fill="none" stroke="#FFB648" strokeWidth="2" opacity="0.3">
+          <circle cx={x} cy={y} r="24" fill="none" stroke="#3b82f6" strokeWidth="2" opacity="0.3">
             <animate attributeName="r" from="20" to="30" dur="1.8s" repeatCount="indefinite" />
             <animate attributeName="opacity" from="0.4" to="0" dur="1.8s" repeatCount="indefinite" />
           </circle>
-          <circle cx={x} cy={y} r="20" fill="#FFB648" stroke="#1B2A4A" strokeWidth="3" />
-          <text x={x} y={y + 6} textAnchor="middle" fill="#3A2600" fontSize="14" fontWeight="700">{idx + 1}</text>
-          <text x={x} y={y + 38} className="font-body" textAnchor="middle" fontSize="12.5" fontWeight="700" fill="var(--ink, #1B2A4A)">{label}</text>
+          <circle cx={x} cy={y} r="20" fill="#3b82f6" stroke="#ffffff" strokeWidth="3" />
+          <text x={x} y={y + 6} textAnchor="middle" fill="#ffffff" fontSize="14" fontWeight="700">{idx + 1}</text>
+          <text x={x} y={y + 38} className="font-sans" textAnchor="middle" fontSize="13" fontWeight="700" fill="#0f172a">{label}</text>
           {sublabel && (
-            <text x={x} y={y + 53} className="font-body" textAnchor="middle" fontSize="10.5" fill="var(--muted, #8B93A7)">{sublabel}</text>
+            <text x={x} y={y + 53} className="font-sans" textAnchor="middle" fontSize="10.5" fill="#64748b">{sublabel}</text>
           )}
         </g>
       );
@@ -73,28 +73,28 @@ const JourneyMap = ({ journeyData }) => {
     // Locked
     return (
       <g key={idx} className="journey-node-group">
-        <circle cx={x} cy={y} r="16" fill="white" stroke="#C9CEDB" strokeWidth="3" />
-        <text x={x} y={y + 33} className="font-body" textAnchor="middle" fontSize="12.5" fontWeight="600" fill="#8B93A7">{label}</text>
+        <circle cx={x} cy={y} r="16" fill="white" stroke="#cbd5e1" strokeWidth="3" />
+        <text x={x} y={y + 33} className="font-sans" textAnchor="middle" fontSize="12.5" fontWeight="600" fill="#94a3b8">{label}</text>
       </g>
     );
   };
 
   return (
-    <div className="bg-paper-raised rounded-[28px] border border-line shadow-card p-8 pb-6 mb-6 relative overflow-hidden">
+    <div className="bg-white rounded-[28px] border border-slate-200 shadow-sm p-8 pb-6 mb-6 relative overflow-hidden transition-all hover:shadow-md">
       <div className="flex justify-between items-baseline mb-2">
-        <h2 className="font-display text-[20px] font-semibold text-ink">Your prep journey</h2>
-        <span className="text-[13px] text-muted">5 stages · {completedCount} completed</span>
+        <h2 className="font-bold text-[20px] text-slate-900">Your prep journey</h2>
+        <span className="text-[13px] font-medium text-slate-500">5 stages · {completedCount} completed</span>
       </div>
       
       <svg className="w-full h-auto mt-3" viewBox="0 0 1080 190" xmlns="http://www.w3.org/2000/svg">
         {/* Background Track */}
-        <path d={bgPath} stroke="#E8E4DB" strokeWidth="4" fill="none" strokeLinecap="round"/>
+        <path d={bgPath} stroke="#f1f5f9" strokeWidth="6" fill="none" strokeLinecap="round"/>
         
         {/* Animated Progress Track */}
         <path 
           d={bgPath} 
-          stroke="#2F8F6E" 
-          strokeWidth="4" 
+          stroke="#10b981" 
+          strokeWidth="6" 
           fill="none" 
           strokeLinecap="round"
           pathLength="100"

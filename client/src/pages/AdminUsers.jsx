@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getAdminUsers, updateAdminUser, deleteAdminUser, getTestHistory } from "../services/api";
-import { FiEdit2, FiTrash2, FiSearch, FiUsers, FiEye, FiArrowUp, FiArrowDown, FiX, FiTrendingUp, FiCalendar, FiBookOpen } from "react-icons/fi";
+import { Edit2, Trash2, Search, Users, Eye, ArrowUp, ArrowDown, X, TrendingUp, Calendar, BookOpen } from "lucide-react";
 import toast from "react-hot-toast";
 import {
   Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Filler, Tooltip as ChartTooltip, Legend as ChartLegend,
@@ -128,8 +128,8 @@ const AdminUsers = () => {
   });
 
   const SortIcon = ({ field }) => {
-    if (sortField !== field) return <FiArrowUp size={12} style={{ opacity: 0.2 }} />;
-    return sortDir === "asc" ? <FiArrowUp size={12} /> : <FiArrowDown size={12} />;
+    if (sortField !== field) return <ArrowUp size={12} style={{ opacity: 0.2 }} />;
+    return sortDir === "asc" ? <ArrowUp size={12} /> : <ArrowDown size={12} />;
   };
 
   // Detail modal chart data
@@ -155,7 +155,7 @@ const AdminUsers = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="flex items-center gap-2 font-display font-bold text-2xl text-ink mb-1">
-              <FiUsers className="text-blue-500" /> Manage Students
+              <Users className="text-blue-500" /> Manage Students
             </h1>
             <p className="text-muted text-sm font-medium">View, edit, and manage platform students ({pagination.count || 0} total)</p>
           </div>
@@ -173,7 +173,7 @@ const AdminUsers = () => {
               id="admin-user-search"
             />
             <button type="submit" className="absolute left-3 top-1/2 -translate-y-1/2 text-muted hover:text-ink transition-colors">
-              <FiSearch size={18} />
+              <Search size={18} />
             </button>
           </form>
         </div>
@@ -233,13 +233,13 @@ const AdminUsers = () => {
                         <td className="p-4">
                           <div className="flex items-center justify-center gap-2">
                             <button className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" onClick={() => openDetailModal(user)} title="View Details">
-                              <FiEye size={16} />
+                              <Eye size={16} />
                             </button>
                             <button className="p-2 text-indigo-500 hover:bg-indigo-50 rounded-lg transition-colors" onClick={() => openEditModal(user)} title="Edit">
-                              <FiEdit2 size={16} />
+                              <Edit2 size={16} />
                             </button>
                             <button className="p-2 text-coral hover:bg-coral/10 rounded-lg transition-colors" onClick={() => handleDelete(user._id, user.name)} title="Delete">
-                              <FiTrash2 size={16} />
+                              <Trash2 size={16} />
                             </button>
                           </div>
                         </td>
@@ -249,7 +249,7 @@ const AdminUsers = () => {
                       <tr>
                         <td colSpan="7" className="p-12 text-center text-muted">
                           <div className="flex flex-col items-center gap-3 opacity-50">
-                            <FiUsers size={48} />
+                            <Users size={48} />
                             <p className="text-sm font-medium">No students found.</p>
                           </div>
                         </td>
@@ -283,10 +283,10 @@ const AdminUsers = () => {
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden" onClick={(e) => e.stopPropagation()}>
               <div className="px-6 py-4 border-b border-line flex items-center justify-between bg-gray-50/50">
                 <h2 className="font-display font-bold text-xl text-ink flex items-center gap-2">
-                  <FiEdit2 className="text-indigo-500" /> Edit Student
+                  <Edit2 className="text-indigo-500" /> Edit Student
                 </h2>
                 <button className="p-2 text-muted hover:text-ink hover:bg-gray-100 rounded-xl transition-colors" onClick={() => setEditingUser(null)}>
-                  <FiX size={20} />
+                  <X size={20} />
                 </button>
               </div>
               <form onSubmit={handleUpdate} className="p-6 space-y-4">
@@ -336,10 +336,10 @@ const AdminUsers = () => {
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
               <div className="px-6 py-4 border-b border-line flex items-center justify-between bg-gray-50/50">
                 <h2 className="font-display font-bold text-xl text-ink flex items-center gap-2">
-                  <FiEye className="text-indigo-500" /> Student Profile
+                  <Eye className="text-indigo-500" /> Student Profile
                 </h2>
                 <button className="p-2 text-muted hover:text-ink hover:bg-gray-100 rounded-xl transition-colors" onClick={() => setDetailUser(null)}>
-                  <FiX size={20} />
+                  <X size={20} />
                 </button>
               </div>
 
@@ -358,10 +358,10 @@ const AdminUsers = () => {
                 {/* Quick Stats */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
                   {[
-                    { label: 'Branch', value: detailUser.branch || '—', icon: FiBookOpen },
-                    { label: 'CGPA', value: detailUser.cgpa || '—', icon: FiTrendingUp },
-                    { label: 'Tests', value: detailUser.totalTests, icon: FiCalendar },
-                    { label: 'Avg Score', value: `${detailUser.avgScore}%`, icon: FiTrendingUp, color: getScoreColor(detailUser.avgScore) },
+                    { label: 'Branch', value: detailUser.branch || '—', icon: BookOpen },
+                    { label: 'CGPA', value: detailUser.cgpa || '—', icon: TrendingUp },
+                    { label: 'Tests', value: detailUser.totalTests, icon: Calendar },
+                    { label: 'Avg Score', value: `${detailUser.avgScore}%`, icon: TrendingUp, color: getScoreColor(detailUser.avgScore) },
                   ].map((s, i) => (
                     <div key={i} className="p-3 bg-white border border-line rounded-xl text-center shadow-sm">
                       <div className="text-xl font-bold mb-0.5" style={{ color: s.color || 'var(--text-primary)' }}>{s.value}</div>
@@ -376,7 +376,7 @@ const AdminUsers = () => {
                 ) : detailChartData ? (
                   <div className="mb-6">
                     <h4 className="flex items-center gap-2 font-bold text-sm text-ink mb-3 uppercase tracking-wider">
-                      <FiTrendingUp className="text-indigo-500" /> Score Trend
+                      <TrendingUp className="text-indigo-500" /> Score Trend
                     </h4>
                     <div className="h-48 p-4 bg-white border border-line rounded-xl shadow-sm">
                       <Line data={detailChartData} options={{
@@ -394,7 +394,7 @@ const AdminUsers = () => {
                 {detailTests.length > 0 && (
                   <div>
                     <h4 className="flex items-center gap-2 font-bold text-sm text-ink mb-3 uppercase tracking-wider">
-                      <FiCalendar className="text-indigo-500" /> Recent Tests
+                      <Calendar className="text-indigo-500" /> Recent Tests
                     </h4>
                     <div className="border border-line rounded-xl overflow-hidden shadow-sm">
                       <table className="w-full text-left text-sm">

@@ -4,9 +4,9 @@ import {
   bulkAddInterviewQuestions, deleteInterviewQuestion,
 } from "../services/api";
 import {
-  FiMessageSquare, FiPlus, FiTrash2, FiSearch,
-  FiUpload, FiX, FiTag, FiFilter,
-} from "react-icons/fi";
+  MessageSquare, Plus, Trash2, Search,
+  Upload, X, Tag, Filter,
+} from "lucide-react";
 import toast from "react-hot-toast";
 
 const CATEGORIES = ["hr", "technical", "behavioral", "company-specific"];
@@ -166,16 +166,16 @@ const AdminInterviewQuestions = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="flex items-center gap-2 font-display font-bold text-2xl text-ink mb-1">
-              <FiMessageSquare className="text-blue-500" /> Interview Questions
+              <MessageSquare className="text-blue-500" /> Interview Questions
             </h1>
             <p className="text-muted text-sm font-medium">Manage interview preparation questions ({questions.length} shown)</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <button className="flex items-center gap-2 px-4 py-2 bg-white border border-line text-ink font-bold text-sm rounded-xl hover:bg-gray-50 transition-colors shadow-sm" onClick={() => setShowBulkModal(true)}>
-              <FiUpload size={16} /> Bulk Import
+              <Upload size={16} /> Bulk Import
             </button>
             <button className="flex items-center gap-2 px-4 py-2 bg-ink text-white font-bold text-sm rounded-xl hover:bg-ink-soft transition-colors shadow-sm" onClick={() => { resetForm(); setShowModal(true); }}>
-              <FiPlus size={16} /> Add Question
+              <Plus size={16} /> Add Question
             </button>
           </div>
         </div>
@@ -209,7 +209,7 @@ const AdminInterviewQuestions = () => {
         ) : questions.length === 0 ? (
           <div className="p-12 text-center text-muted bg-white rounded-2xl border border-line shadow-sm">
             <div className="flex flex-col items-center gap-3 opacity-50">
-              <FiMessageSquare size={48} />
+              <MessageSquare size={48} />
               <p className="text-sm font-medium">No interview questions found.</p>
             </div>
           </div>
@@ -260,7 +260,7 @@ const AdminInterviewQuestions = () => {
                       <div className="flex flex-wrap gap-2 pt-2">
                         {q.tags.map((tag, i) => (
                           <span key={i} className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-medium bg-gray-100 text-ink-soft">
-                            <FiTag size={10} /> {tag}
+                            <Tag size={10} /> {tag}
                           </span>
                         ))}
                       </div>
@@ -268,7 +268,7 @@ const AdminInterviewQuestions = () => {
                   </div>
 
                   <button className="p-2 text-coral hover:bg-coral/10 rounded-lg transition-colors shrink-0" onClick={() => handleDelete(q._id)} title="Delete">
-                    <FiTrash2 size={18} />
+                    <Trash2 size={18} />
                   </button>
                 </div>
               </div>
@@ -282,9 +282,9 @@ const AdminInterviewQuestions = () => {
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
               <div className="px-6 py-4 border-b border-line flex items-center justify-between bg-gray-50/50">
                 <h2 className="font-display font-bold text-xl text-ink flex items-center gap-2">
-                  <FiPlus className="text-emerald" /> Add Interview Question
+                  <Plus className="text-emerald" /> Add Interview Question
                 </h2>
-                <button className="p-2 text-muted hover:text-ink hover:bg-gray-100 rounded-xl transition-colors" onClick={() => setShowModal(false)}><FiX size={20} /></button>
+                <button className="p-2 text-muted hover:text-ink hover:bg-gray-100 rounded-xl transition-colors" onClick={() => setShowModal(false)}><X size={20} /></button>
               </div>
               <form onSubmit={handleAddQuestion} className="p-6 overflow-y-auto space-y-5">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -327,7 +327,7 @@ const AdminInterviewQuestions = () => {
                       <input type="text" value={tip} onChange={(e) => updateTip(i, e.target.value)} placeholder={`Tip ${i + 1}`} className="flex-1 px-4 py-2 rounded-xl border border-line bg-white text-ink focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink transition-all text-sm" />
                       {formData.tips.length > 1 && (
                         <button type="button" onClick={() => removeTip(i)} className="p-2 text-coral hover:bg-coral/10 rounded-xl transition-colors border border-transparent hover:border-coral/20">
-                          <FiX size={16} />
+                          <X size={16} />
                         </button>
                       )}
                     </div>
@@ -341,7 +341,7 @@ const AdminInterviewQuestions = () => {
                     {formData.tags.map(tag => (
                       <span key={tag} className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-sm font-medium bg-indigo-50 text-indigo-600 border border-indigo-100">
                         {tag}
-                        <FiX size={14} className="cursor-pointer hover:text-indigo-800" onClick={() => removeTag(tag)} />
+                        <X size={14} className="cursor-pointer hover:text-indigo-800" onClick={() => removeTag(tag)} />
                       </span>
                     ))}
                   </div>
@@ -368,9 +368,9 @@ const AdminInterviewQuestions = () => {
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
               <div className="px-6 py-4 border-b border-line flex items-center justify-between bg-gray-50/50">
                 <h2 className="font-display font-bold text-xl text-ink flex items-center gap-2">
-                  <FiUpload className="text-indigo-500" /> Bulk Import Interview Questions
+                  <Upload className="text-indigo-500" /> Bulk Import Interview Questions
                 </h2>
-                <button className="p-2 text-muted hover:text-ink hover:bg-gray-100 rounded-xl transition-colors" onClick={() => setShowBulkModal(false)}><FiX size={20} /></button>
+                <button className="p-2 text-muted hover:text-ink hover:bg-gray-100 rounded-xl transition-colors" onClick={() => setShowBulkModal(false)}><X size={20} /></button>
               </div>
               <div className="p-6 overflow-y-auto space-y-4">
                 <p className="text-sm text-muted font-medium">
@@ -378,7 +378,7 @@ const AdminInterviewQuestions = () => {
                 </p>
                 <div className="flex gap-3">
                   <label className="flex items-center gap-2 px-4 py-2 bg-gray-50 border border-line rounded-xl text-sm font-bold text-ink cursor-pointer hover:bg-gray-100 transition-colors">
-                    <FiUpload size={16} /> Upload File
+                    <Upload size={16} /> Upload File
                     <input type="file" accept=".json" onChange={handleFileUpload} className="hidden" />
                   </label>
                   <button onClick={() => setBulkJSON(sampleJSON)} className="px-4 py-2 bg-white border border-line rounded-xl text-sm font-bold text-ink hover:bg-gray-50 transition-colors">Load Sample</button>

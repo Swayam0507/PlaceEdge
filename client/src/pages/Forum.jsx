@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getForumPosts, createForumPost, upvoteForumPost, addForumReply, deleteForumPost } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { formatDate } from "../utils/helpers";
+import { ClipboardList, Target, Building2, HelpCircle, BookOpen, MessageSquare, Edit3, Send, Search, Eye, Pin, ChevronUp, Trash2 } from "lucide-react";
 
 const CATEGORIES = [
   { key: "", label: "All Posts", icon: "📋" },
@@ -84,21 +85,21 @@ const Forum = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="font-display font-semibold text-3xl mb-1">💬 Discussion Forum</h1>
+            <h1 className="flex items-center gap-2 font-display font-semibold text-3xl mb-1"><MessageSquare className="w-8 h-8 text-blue-500" /> Discussion Forum</h1>
             <p className="text-ink-soft font-body text-sm">Share tips, ask doubts, and connect with fellow placement aspirants</p>
           </div>
           <button 
             className={`px-5 py-2.5 rounded-xl font-medium text-sm transition-all shadow-sm ${showCreate ? 'bg-white border border-line text-ink hover:bg-gray-50' : 'bg-ink text-paper hover:bg-ink-soft'}`}
             onClick={() => setShowCreate(!showCreate)}
           >
-            {showCreate ? "Cancel" : "✍️ New Post"}
+            {showCreate ? "Cancel" : <span className="flex items-center gap-2"><Edit3 size={16} /> New Post</span>}
           </button>
         </div>
 
         {/* Create Post Form */}
         {showCreate && (
           <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-card border border-line mb-8 animate-fade-in">
-            <h2 className="font-display font-semibold text-xl mb-6 border-b border-line pb-4">✍️ Create New Post</h2>
+            <h2 className="flex items-center gap-2 font-display font-semibold text-xl mb-6 border-b border-line pb-4"><Edit3 className="w-5 h-5 text-indigo-500" /> Create New Post</h2>
             <form onSubmit={handleCreate} className="space-y-5">
               <div>
                 <label className="block text-sm font-medium text-ink mb-1">Post Title</label>
@@ -125,7 +126,7 @@ const Forum = () => {
               
               <div className="pt-2">
                 <button type="submit" className="w-full sm:w-auto px-6 py-3 bg-ink text-paper rounded-xl font-medium text-sm hover:bg-ink-soft transition-all shadow-md disabled:opacity-70 disabled:cursor-not-allowed" disabled={creating}>
-                  {creating ? "Posting..." : "📤 Post"}
+                  {creating ? "Posting..." : <span className="flex items-center justify-center gap-2"><Send size={16} /> Post</span>}
                 </button>
               </div>
             </form>
@@ -140,7 +141,7 @@ const Forum = () => {
               <button key={c.key}
                 className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${filters.category === c.key ? "bg-ink text-paper shadow-sm" : "bg-white text-ink-soft border border-line hover:bg-paper hover:text-ink"}`}
                 onClick={() => setFilters({ ...filters, category: c.key, page: 1 })}>
-                {c.icon} {c.label}
+                <span className="flex items-center gap-2">{c.icon} {c.label}</span>
               </button>
             ))}
           </div>
@@ -149,7 +150,7 @@ const Forum = () => {
           <form onSubmit={handleSearch} className="relative w-full md:w-64">
             <input type="text" className="w-full pl-10 pr-4 py-2 rounded-xl border border-line bg-white focus:outline-none focus:border-ink transition-all text-sm" placeholder="Search posts..." value={filters.search} onChange={(e) => setFilters({ ...filters, search: e.target.value })} />
             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft">
-              🔍
+              <Search size={16} />
             </div>
             <button type="submit" className="hidden">Search</button>
           </form>
@@ -163,7 +164,7 @@ const Forum = () => {
           </div>
         ) : posts.length === 0 ? (
           <div className="bg-white border border-line border-dashed rounded-2xl p-12 text-center">
-            <div className="text-4xl mb-4">💬</div>
+            <div className="flex justify-center text-4xl mb-4 text-slate-300"><MessageSquare size={48} /></div>
             <h3 className="font-display font-semibold text-lg text-ink mb-2">No posts found</h3>
             <p className="text-ink-soft text-sm">Be the first to share something or try a different search!</p>
           </div>
@@ -180,10 +181,10 @@ const Forum = () => {
                     </div>
                     <div>
                       <div className="font-semibold text-ink text-sm">{post.userId?.name || "Unknown"}</div>
-                      <div className="text-xs text-ink-soft">{formatDate(post.createdAt)} · 👁️ {post.views} views</div>
+                      <div className="flex items-center gap-1 text-xs text-ink-soft">{formatDate(post.createdAt)} · <Eye size={12} /> {post.views} views</div>
                     </div>
                   </div>
-                  {post.isPinned && <span className="px-2.5 py-1 bg-amber/20 text-amber-deep text-xs font-bold rounded-md">📌 Pinned</span>}
+                  {post.isPinned && <span className="flex items-center gap-1 px-2.5 py-1 bg-amber/20 text-amber-deep text-xs font-bold rounded-md"><Pin size={12} /> Pinned</span>}
                 </div>
 
                 {/* Title */}
@@ -211,7 +212,7 @@ const Forum = () => {
                     {/* Replies */}
                     {post.replies?.length > 0 && (
                       <div className="mb-6 space-y-4">
-                        <h4 className="font-semibold text-ink text-sm flex items-center gap-2">💬 {post.replies.length} {post.replies.length === 1 ? "Reply" : "Replies"}</h4>
+                        <h4 className="font-semibold text-ink text-sm flex items-center gap-2"><MessageSquare size={16} className="text-indigo-500" /> {post.replies.length} {post.replies.length === 1 ? "Reply" : "Replies"}</h4>
                         <div className="space-y-3">
                           {post.replies.map((reply, i) => (
                             <div key={i} className="bg-paper p-4 rounded-xl border border-line">
@@ -243,18 +244,18 @@ const Forum = () => {
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${post.upvotes?.includes(user?._id) ? "bg-indigo-50 text-indigo-600 border border-indigo-100" : "bg-paper text-ink-soft border border-line hover:bg-gray-100"}`} 
                     onClick={() => handleUpvote(post._id)}
                   >
-                    ▲ {post.upvotes?.length || 0}
+                    <ChevronUp size={16} /> {post.upvotes?.length || 0}
                   </button>
                   <button 
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-paper text-ink-soft border border-line hover:bg-gray-100 transition-colors" 
                     onClick={() => setExpandedId(expandedId === post._id ? null : post._id)}
                   >
-                    💬 {post.replies?.length || 0}
+                    <MessageSquare size={16} /> {post.replies?.length || 0}
                   </button>
                   
                   {(post.userId?._id === user?._id || user?.role === "admin") && (
                     <button className="ml-auto p-1.5 text-ink-soft hover:text-red-500 hover:bg-red-50 rounded-md transition-colors" onClick={() => handleDelete(post._id)} title="Delete Post">
-                      🗑️
+                      <Trash2 size={16} />
                     </button>
                   )}
                 </div>

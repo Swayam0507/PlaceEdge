@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import {
   getAllQuestions, addQuestion, updateQuestion, deleteQuestion, bulkImportQuestions,
 } from "../services/api";
-import { FiEdit2, FiTrash2, FiPlus, FiSearch, FiFileText, FiUpload, FiX, FiDownload } from "react-icons/fi";
+import { Edit2, Trash2, Plus, Search, FileText, Upload, X, Download } from "lucide-react";
 import toast from "react-hot-toast";
 
 const AdminQuestions = () => {
@@ -165,16 +165,16 @@ const AdminQuestions = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="flex items-center gap-2 font-display font-bold text-2xl text-ink mb-1">
-              <FiFileText className="text-blue-500" /> Manage Questions
+              <FileText className="text-blue-500" /> Manage Questions
             </h1>
             <p className="text-muted text-sm font-medium">Add, edit, and delete aptitude questions ({categoryCounts.all || 0} total)</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <button className="flex items-center gap-2 px-4 py-2 bg-white border border-line text-ink font-bold text-sm rounded-xl hover:bg-gray-50 transition-colors shadow-sm" onClick={() => setShowBulkModal(true)}>
-              <FiUpload size={16} /> Bulk Import
+              <Upload size={16} /> Bulk Import
             </button>
             <button className="flex items-center gap-2 px-4 py-2 bg-ink text-white font-bold text-sm rounded-xl hover:bg-ink-soft transition-colors shadow-sm" onClick={openAddModal}>
-              <FiPlus size={16} /> Add Question
+              <Plus size={16} /> Add Question
             </button>
           </div>
         </div>
@@ -186,7 +186,7 @@ const AdminQuestions = () => {
               onChange={(e) => setFilters({ ...filters, search: e.target.value })}
               className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-line bg-gray-50 text-ink focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink transition-all text-sm" id="admin-question-search" />
             <button type="submit" className="absolute left-3 top-1/2 -translate-y-1/2 text-muted hover:text-ink transition-colors">
-              <FiSearch size={18} />
+              <Search size={18} />
             </button>
           </form>
           <select value={filters.category} onChange={(e) => setFilters({ ...filters, category: e.target.value, page: 1 })}
@@ -255,10 +255,10 @@ const AdminQuestions = () => {
                         <td className="p-4">
                           <div className="flex items-center justify-center gap-2">
                             <button className="p-2 text-indigo-500 hover:bg-indigo-50 rounded-lg transition-colors" onClick={() => openEditModal(q)} title="Edit">
-                              <FiEdit2 size={16} />
+                              <Edit2 size={16} />
                             </button>
                             <button className="p-2 text-coral hover:bg-coral/10 rounded-lg transition-colors" onClick={() => handleDelete(q._id)} title="Delete">
-                              <FiTrash2 size={16} />
+                              <Trash2 size={16} />
                             </button>
                           </div>
                         </td>
@@ -268,7 +268,7 @@ const AdminQuestions = () => {
                       <tr>
                         <td colSpan="5" className="p-12 text-center text-muted">
                           <div className="flex flex-col items-center gap-3 opacity-50">
-                            <FiFileText size={48} />
+                            <FileText size={48} />
                             <p className="text-sm font-medium">No questions found.</p>
                           </div>
                         </td>
@@ -295,9 +295,9 @@ const AdminQuestions = () => {
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
               <div className="px-6 py-4 border-b border-line flex items-center justify-between bg-gray-50/50">
                 <h2 className="font-display font-bold text-xl text-ink flex items-center gap-2">
-                  {editingQuestion ? <><FiEdit2 className="text-indigo-500" /> Edit Question</> : <><FiPlus className="text-emerald" /> Add Question</>}
+                  {editingQuestion ? <><Edit2 className="text-indigo-500" /> Edit Question</> : <><Plus className="text-emerald" /> Add Question</>}
                 </h2>
-                <button className="p-2 text-muted hover:text-ink hover:bg-gray-100 rounded-xl transition-colors" onClick={() => setShowModal(false)}><FiX size={20} /></button>
+                <button className="p-2 text-muted hover:text-ink hover:bg-gray-100 rounded-xl transition-colors" onClick={() => setShowModal(false)}><X size={20} /></button>
               </div>
               <form onSubmit={handleSave} className="p-6 overflow-y-auto space-y-5">
                 <div className="grid grid-cols-2 gap-4">
@@ -351,9 +351,9 @@ const AdminQuestions = () => {
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
               <div className="px-6 py-4 border-b border-line flex items-center justify-between bg-gray-50/50">
                 <h2 className="font-display font-bold text-xl text-ink flex items-center gap-2">
-                  <FiUpload className="text-indigo-500" /> Bulk Import Questions
+                  <Upload className="text-indigo-500" /> Bulk Import Questions
                 </h2>
-                <button className="p-2 text-muted hover:text-ink hover:bg-gray-100 rounded-xl transition-colors" onClick={() => setShowBulkModal(false)}><FiX size={20} /></button>
+                <button className="p-2 text-muted hover:text-ink hover:bg-gray-100 rounded-xl transition-colors" onClick={() => setShowBulkModal(false)}><X size={20} /></button>
               </div>
 
               <div className="p-6 overflow-y-auto space-y-4">
@@ -362,7 +362,7 @@ const AdminQuestions = () => {
                 </p>
                 <div className="flex gap-3">
                   <label className="flex items-center gap-2 px-4 py-2 bg-gray-50 border border-line rounded-xl text-sm font-bold text-ink cursor-pointer hover:bg-gray-100 transition-colors">
-                    <FiUpload size={16} /> Upload JSON File
+                    <Upload size={16} /> Upload JSON File
                     <input type="file" accept=".json" onChange={handleFileUpload} className="hidden" />
                   </label>
                   <button onClick={() => setBulkJSON(sampleJSON)} className="px-4 py-2 bg-white border border-line rounded-xl text-sm font-bold text-ink hover:bg-gray-50 transition-colors">

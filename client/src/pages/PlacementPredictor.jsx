@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Lightbulb } from "lucide-react";
 import { predictPlacement } from "../services/api";
 
 const PlacementPredictor = () => {
@@ -207,7 +209,7 @@ const PlacementPredictor = () => {
 
                 {/* Recommendation */}
                 <div className="recommendation-card">
-                  <h3>💡 Recommendation</h3>
+                  <h3 className="flex items-center gap-2"><Lightbulb className="w-5 h-5 text-amber-500" /> Recommendation</h3>
                   <div className="recommendation-text">
                     {result.recommendation.split("\n").map((line, i) => (
                       <p key={i}>{line}</p>

@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { getAdminAnalytics, exportReport } from "../services/api";
 import {
-  FiPieChart, FiDownload, FiUsers, FiFileText,
-  FiList, FiTrendingUp, FiBarChart2, FiAward, FiBookOpen, FiZap,
-  FiRefreshCw, FiCalendar, FiArrowUp, FiArrowDown, FiClock
-} from "react-icons/fi";
+  PieChart, Download, Users, FileText,
+  List, TrendingUp, BarChart2, Award, BookOpen, Zap,
+  RefreshCw, Calendar, ArrowUp, ArrowDown, Clock
+} from "lucide-react";
 import {
   Chart as ChartJS,
   CategoryScale, LinearScale, BarElement, ArcElement,
@@ -319,10 +319,10 @@ const AdminDashboard = () => {
 
   // Stat cards config
   const statCards = [
-    { label: 'Total Students', value: overview.totalStudents || 0, icon: FiUsers, color: '#6366f1', target: 'top-performers' },
-    { label: 'Questions', value: overview.totalQuestions || 0, icon: FiFileText, color: '#ea580c', target: 'questions-category' },
-    { label: 'Test Attempts', value: overview.totalTests || 0, icon: FiList, color: '#0891b2', target: 'category-performance' },
-    { label: 'Avg Score', value: `${overview.avgScore || 0}%`, icon: FiTrendingUp, color: '#dc2626', target: 'score-distribution' },
+    { label: 'Total Students', value: overview.totalStudents || 0, icon: Users, color: '#6366f1', target: 'top-performers' },
+    { label: 'Questions', value: overview.totalQuestions || 0, icon: FileText, color: '#ea580c', target: 'questions-category' },
+    { label: 'Test Attempts', value: overview.totalTests || 0, icon: List, color: '#0891b2', target: 'category-performance' },
+    { label: 'Avg Score', value: `${overview.avgScore || 0}%`, icon: TrendingUp, color: '#dc2626', target: 'score-distribution' },
   ];
 
   const getTimeAgo = () => {
@@ -369,15 +369,15 @@ const AdminDashboard = () => {
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-white border border-line rounded-xl text-ink-soft hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-70"
               title={`Last updated: ${getTimeAgo()}`}
             >
-              <FiRefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
+              <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
               {getTimeAgo() || 'Refresh'}
             </button>
             {/* Export buttons */}
             <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-white border border-line rounded-xl text-ink-soft hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-70" onClick={() => handleExport("users")} disabled={!!exporting}>
-              <FiDownload size={14} /> {exporting === "users" ? "..." : "CSV"}
+              <Download size={14} /> {exporting === "users" ? "..." : "CSV"}
             </button>
             <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-ink text-white rounded-xl hover:bg-ink-soft transition-colors shadow-sm" onClick={handlePDFExport}>
-              <FiDownload size={14} /> PDF
+              <Download size={14} /> PDF
             </button>
           </div>
         </div>
@@ -411,7 +411,7 @@ const AdminDashboard = () => {
         {(recentRegs?.length > 0 || recentTests?.length > 0) && (
           <div id="recent-activity" className="scroll-mt-24">
             <h2 className="flex items-center gap-2 font-display font-bold text-xl text-ink mb-4">
-              <FiClock className="text-indigo-500" /> Platform Activity
+              <Clock className="text-indigo-500" /> Platform Activity
               <span className="text-xs font-semibold text-muted ml-auto uppercase tracking-wider">
                 {dateRange > 0 ? `Last ${dateRange} days` : 'All time'}
               </span>
@@ -426,7 +426,7 @@ const AdminDashboard = () => {
         {analytics?.categoryPerformance?.length > 0 && (
           <div id="category-performance" className="scroll-mt-24">
             <h2 className="flex items-center gap-2 font-display font-bold text-xl text-ink mb-4">
-              <FiBarChart2 className="text-indigo-500" /> Category Performance
+              <BarChart2 className="text-indigo-500" /> Category Performance
             </h2>
             <div className="h-80 p-5 bg-white rounded-2xl border border-line shadow-sm">
               <Bar data={categoryChartData} options={categoryChartOptions} />
@@ -438,7 +438,7 @@ const AdminDashboard = () => {
         {analytics?.scoreDistribution?.length > 0 && (
           <div id="score-distribution" className="scroll-mt-24">
             <h2 className="flex items-center gap-2 font-display font-bold text-xl text-ink mb-4">
-              <FiPieChart className="text-sky-500" /> Score Distribution
+              <PieChart className="text-sky-500" /> Score Distribution
             </h2>
             <div className="h-80 p-5 bg-white rounded-2xl border border-line shadow-sm">
               <Bar data={scoreChartData} options={scoreChartOptions} />
@@ -450,7 +450,7 @@ const AdminDashboard = () => {
         {analytics?.topPerformers?.length > 0 && (
           <div id="top-performers" className="scroll-mt-24">
             <h2 className="flex items-center gap-2 font-display font-bold text-xl text-ink mb-4">
-              <FiAward className="text-amber-500" /> Top Performers
+              <Award className="text-amber-500" /> Top Performers
             </h2>
             <div className="bg-white rounded-2xl border border-line shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
@@ -494,7 +494,7 @@ const AdminDashboard = () => {
           {analytics?.categoryDistribution?.length > 0 && (
             <div>
               <h2 className="flex items-center gap-2 font-display font-bold text-xl text-ink mb-4">
-                <FiBookOpen className="text-blue-500" /> Questions by Category
+                <BookOpen className="text-blue-500" /> Questions by Category
               </h2>
               <div className="h-72 p-5 bg-white rounded-2xl border border-line shadow-sm">
                 <Doughnut data={qCategoryData} options={doughnutOptions} />
@@ -505,7 +505,7 @@ const AdminDashboard = () => {
           {analytics?.difficultyStats?.length > 0 && (
             <div>
               <h2 className="flex items-center gap-2 font-display font-bold text-xl text-ink mb-4">
-                <FiZap className="text-amber-500" /> Questions by Difficulty
+                <Zap className="text-amber-500" /> Questions by Difficulty
               </h2>
               <div className="h-72 p-5 bg-white rounded-2xl border border-line shadow-sm">
                 <Doughnut data={qDifficultyData} options={doughnutOptions} />

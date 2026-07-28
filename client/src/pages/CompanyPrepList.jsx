@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from "react-router-dom";
-import { FiSearch } from 'react-icons/fi';
-import { BiBuildingHouse } from "react-icons/bi";
+import { Search, Building2 } from 'lucide-react';
 
 const TOP_COMPANIES = [
   { name: "TCS", domain: "tcs.com", industry: "IT Services", count: 1200, easy: 40, medium: 40, hard: 20 },
@@ -69,11 +68,11 @@ const CompanyPrepList = () => {
         </div>
         <div className="relative w-full max-w-xs">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <FiSearch className="h-5 w-5 text-slate-400" />
+            <Search className="h-5 w-5 text-slate-400" />
           </div>
           <input
             type="text"
-            className="block w-full rounded-lg border-slate-300 bg-white py-2.5 pl-10 pr-3 text-sm placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 shadow-sm border"
+            className="block w-full rounded-xl border-slate-200 bg-white py-2.5 pl-10 pr-3 text-sm placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-sm border transition-all"
             placeholder="Search companies..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -93,10 +92,10 @@ const CompanyPrepList = () => {
               <Link
                 key={company.name}
                 to={`/company-prep/${company.name}`}
-                className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-indigo-300 hover:shadow-md"
+                className="group relative flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-300 hover:shadow-xl hover:shadow-blue-500/10"
               >
                 <div className="mb-4 flex items-center gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white border border-slate-100 overflow-hidden shadow-sm">
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white border border-slate-100 overflow-hidden shadow-sm">
                     <img 
                       src={`https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://${company.domain}&size=128`} 
                       alt={`${company.name} logo`} 
@@ -108,29 +107,29 @@ const CompanyPrepList = () => {
                     />
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                    <h3 className="font-bold text-lg text-slate-900 group-hover:text-blue-600 transition-colors">
                       {company.name}
                     </h3>
-                    <p className="text-xs text-slate-500">{company.industry}</p>
+                    <p className="text-xs font-medium text-slate-500">{company.industry}</p>
                   </div>
                 </div>
 
                 <div className="mt-auto">
-                  <div className="mb-2 flex items-center justify-between text-xs font-medium">
-                    <span className="text-slate-600">Questions Base</span>
+                  <div className="mb-2 flex items-center justify-between text-xs font-semibold">
+                    <span className="text-slate-500">Questions Base</span>
                     <span className="text-slate-900">{company.count}+</span>
                   </div>
                   
                   {/* Difficulty Distribution Bar */}
                   <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100 flex">
-                    <div style={{ width: `${easy}%` }} className="bg-emerald" title={`Easy: ${easy}%`}></div>
-                    <div style={{ width: `${medium}%` }} className="bg-amber" title={`Medium: ${medium}%`}></div>
-                    <div style={{ width: `${hard}%` }} className="bg-coral" title={`Hard: ${hard}%`}></div>
+                    <div style={{ width: `${easy}%` }} className="bg-emerald-500" title={`Easy: ${easy}%`}></div>
+                    <div style={{ width: `${medium}%` }} className="bg-amber-500" title={`Medium: ${medium}%`}></div>
+                    <div style={{ width: `${hard}%` }} className="bg-red-500" title={`Hard: ${hard}%`}></div>
                   </div>
                   <div className="mt-2 flex justify-between text-[10px] uppercase tracking-wider text-slate-500 font-bold">
-                    <span className="text-emerald">Easy</span>
-                    <span className="text-amber">Med</span>
-                    <span className="text-coral">Hard</span>
+                    <span className="text-emerald-600">Easy</span>
+                    <span className="text-amber-600">Med</span>
+                    <span className="text-red-600">Hard</span>
                   </div>
                 </div>
               </Link>
@@ -138,17 +137,17 @@ const CompanyPrepList = () => {
           })}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 py-16 text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-slate-400 mb-4">
-            <FiSearch size={24} />
+        <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-200 bg-slate-50 py-16 text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-slate-200 text-slate-500 mb-4">
+            <Search size={24} />
           </div>
-          <h3 className="text-lg font-medium text-slate-900">No companies found</h3>
-          <p className="mt-1 text-sm text-slate-500">
+          <h3 className="text-lg font-bold text-slate-900">No companies found</h3>
+          <p className="mt-1 text-sm text-slate-500 font-medium">
             We couldn't find a match for "{searchTerm}".
           </p>
           <button 
             onClick={() => setSearchTerm("")}
-            className="mt-4 text-sm font-medium text-indigo-600 hover:text-indigo-500"
+            className="mt-4 text-sm font-bold text-blue-600 hover:text-blue-700"
           >
             Clear search
           </button>

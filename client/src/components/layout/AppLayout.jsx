@@ -25,7 +25,7 @@ const AppLayout = ({ children }) => {
   }, []);
 
   return (
-    <div className="flex min-h-screen flex-col bg-paper text-ink font-body">
+    <div className="flex min-h-screen flex-col bg-slate-50 text-slate-900 font-sans selection:bg-blue-100 selection:text-blue-900">
       <TopNav onOpenCommandPalette={() => setCmdOpen(true)} />
       <div className="flex flex-1 relative">
         {isAuthenticated && isAdmin && (
@@ -34,7 +34,7 @@ const AppLayout = ({ children }) => {
             onToggle={() => setSidebarCollapsed(c => !c)}
           />
         )}
-        <main className={`flex-1 w-full pb-20 md:pb-8 pt-6 ${isAdmin ? 'px-4' : 'max-w-7xl mx-auto px-7'}`}>
+        <main className={`flex-1 w-full pb-20 md:pb-8 pt-6 ${isAdmin ? 'px-4' : 'max-w-7xl mx-auto px-4 sm:px-6'}`}>
           {children}
         </main>
       </div>
@@ -45,12 +45,12 @@ const AppLayout = ({ children }) => {
         toastOptions={{
           duration: 3000,
           style: {
-            background: '#1e293b',
-            color: '#f1f5f9',
+            background: '#0f172a',
+            color: '#f8fafc',
             borderRadius: '12px',
             fontSize: '0.875rem',
             padding: '12px 16px',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
           },
           success: {
             iconTheme: { primary: '#10b981', secondary: '#fff' },

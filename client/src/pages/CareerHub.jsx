@@ -1,57 +1,55 @@
 import { Link } from "react-router-dom";
-import { FiFileText, FiCpu, FiBriefcase, FiAward, FiChevronRight } from "react-icons/fi";
-import { BiBuildingHouse, BiTargetLock } from "react-icons/bi";
-import Card from "../components/ui/Card";
+import { FileText, Cpu, Briefcase, ChevronRight, Target, Building2 } from "lucide-react";
 
 const SECTIONS = [
   {
     title: "Resume Builder",
     desc: "Upload and manage your resumes with auto-detected skills and education.",
     path: "/career/resume",
-    icon: FiFileText,
-    color: "text-amber-deep",
-    bg: "bg-amber/10",
+    icon: FileText,
+    color: "text-blue-600",
+    bg: "bg-blue-50 border-blue-100",
   },
   {
     title: "ATS Checker",
     desc: "Analyze your resume against Applicant Tracking Systems for compatibility.",
     path: "/career/ats",
-    icon: FiCpu,
-    color: "text-emerald",
-    bg: "bg-emerald-soft",
+    icon: Cpu,
+    color: "text-emerald-600",
+    bg: "bg-emerald-50 border-emerald-100",
   },
   {
     title: "Placement Predictor",
     desc: "Get your placement probability predicted by ML classifiers.",
     path: "/career/predictor",
-    icon: BiTargetLock,
-    color: "text-ink",
-    bg: "bg-ink/5",
+    icon: Target,
+    color: "text-violet-600",
+    bg: "bg-violet-50 border-violet-100",
   },
   {
     title: "Off-Campus Jobs",
     desc: "Browse live remote and off-campus job opportunities.",
     path: "/career/jobs",
-    icon: FiBriefcase,
-    color: "text-amber-deep",
-    bg: "bg-amber/10",
+    icon: Briefcase,
+    color: "text-amber-600",
+    bg: "bg-amber-50 border-amber-100",
   },
   {
     title: "Company Explorer",
     desc: "Track company visits, eligibility criteria, and placement stats.",
     path: "/career/companies",
-    icon: BiBuildingHouse,
-    color: "text-emerald",
-    bg: "bg-emerald-soft",
+    icon: Building2,
+    color: "text-emerald-600",
+    bg: "bg-emerald-50 border-emerald-100",
   },
 ];
 
 const CareerHub = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in">
-      <div className="mb-10">
-        <h1 className="font-display text-3xl font-bold text-ink">Career Hub</h1>
-        <p className="font-body text-muted mt-2">Manage your placement journey — resume, jobs, predictions, and certifications.</p>
+      <div className="mb-10 text-center md:text-left">
+        <h1 className="font-bold text-3xl md:text-4xl text-slate-900 tracking-tight">Career Hub</h1>
+        <p className="text-slate-500 mt-3 text-lg font-medium max-w-2xl">Manage your placement journey — resume, jobs, predictions, and certifications.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -59,20 +57,23 @@ const CareerHub = () => {
           const Icon = section.icon;
           return (
             <Link to={section.path} key={section.path} className="block group">
-              <Card className="h-full flex flex-col justify-between border-line group-hover:border-ink/20">
+              <div className="h-full flex flex-col justify-between bg-white border border-slate-200 rounded-3xl p-6 md:p-8 transition-all duration-300 hover:border-blue-300 hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-1 relative overflow-hidden z-10">
+                {/* Decorative background glow */}
+                <div className="absolute -right-8 -top-8 w-32 h-32 bg-slate-100 rounded-full blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none -z-10"></div>
+                
                 <div>
-                  <div className={`w-12 h-12 rounded-lg ${section.bg} ${section.color} flex items-center justify-center mb-6 transition-transform group-hover:scale-110`}>
-                    <Icon size={24} />
+                  <div className={`w-14 h-14 rounded-2xl ${section.bg} ${section.color} border flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110 shadow-sm`}>
+                    <Icon size={28} strokeWidth={2.5} />
                   </div>
-                  <h3 className="font-display font-semibold text-lg text-ink mb-2">{section.title}</h3>
-                  <p className="font-body text-sm text-muted">{section.desc}</p>
+                  <h3 className="font-bold text-xl text-slate-900 mb-2.5 group-hover:text-blue-600 transition-colors tracking-tight">{section.title}</h3>
+                  <p className="text-[15px] text-slate-500 font-medium leading-relaxed">{section.desc}</p>
                 </div>
-                <div className="mt-6 flex justify-end">
-                  <div className="w-8 h-8 rounded-full bg-paper flex items-center justify-center text-muted group-hover:bg-ink group-hover:text-white transition-colors">
-                    <FiChevronRight size={18} />
+                <div className="mt-8 flex justify-end">
+                  <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 shadow-sm group-hover:shadow-md">
+                    <ChevronRight size={20} strokeWidth={2.5} />
                   </div>
                 </div>
-              </Card>
+              </div>
             </Link>
           );
         })}
