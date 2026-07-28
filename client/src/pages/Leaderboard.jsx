@@ -103,7 +103,7 @@ const Leaderboard = () => {
           <>
             {/* Top 3 Podium */}
             {leaderboard.length >= 3 && (
-              <div className="flex justify-center items-end gap-4 sm:gap-6 pt-10 pb-8 px-4 overflow-x-auto custom-scrollbar">
+              <div className="flex justify-center items-end gap-4 sm:gap-6 pt-20 sm:pt-24 pb-8 px-4 overflow-x-auto custom-scrollbar">
                 {[1, 0, 2].map((pos) => {
                   const p = leaderboard[pos];
                   if (!p) return null;
