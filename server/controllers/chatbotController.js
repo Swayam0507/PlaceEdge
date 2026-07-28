@@ -345,3 +345,48 @@ ${fileText}
         res.status(500).json({ success: false, message: "Failed to perform ATS check." });
     }
 };
+
+exports.companyPrep = async (req, res) => {
+    try {
+        const { companyName } = req.params;
+        if (!companyName) {
+            return res.status(400).json({ success: false, message: "Company name is required." });
+        }
+
+        const prompt = `You are an expert technical interviewer and career coach.
+Generate a comprehensive interview preparation guide for ${companyName}.
+Return the response as a raw JSON string.
+The JSON object must perfectly match this structure:
+{
+  "totalQuestions": <approximate number of recent interview questions, e.g. 150>,
+  "difficulty": { "easy": <percentage>, "medium": <percentage>, "hard": <percentage> },
+  "mostAskedTopics": [
+    { "name": "<topic name, e.g. Arrays, System Design, HR>", "count": <approximate frequency> }
+  ],
+  "topQuestions": [
+    { "title": "<question title>", "difficulty": "<Easy/Medium/Hard>", "leetcodeUrl": "<optional url or empty string>" }
+  ]
+}
+Make sure the percentages in difficulty add up to 100.
+Provide around 6 most asked topics and 10 top questions specifically tailored to ${companyName}'s known interview patterns.`;
+
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+            config: {
+                temperature: 0.3,
+                responseMimeType: "application/json"
+            }
+        });
+
+        const data = JSON.parse(response.text);
+
+        return res.status(200).json({ 
+            success: true, 
+            data 
+        });
+    } catch (error) {
+        console.error("Company Prep Error:", error);
+        res.status(500).json({ success: false, message: "Failed to generate company prep data." });
+    }
+};

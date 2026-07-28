@@ -60,4 +60,7 @@ router.post("/interview-feedback", protect, async (req, res) => {
 // ATS Resume Check Endpoint
 router.post("/ats-check", protect, upload.single("resume"), chatbotController.atsCheck);
 
+// Company Prep Guide Generation
+router.get("/company-prep/:companyName", protect, chatbotController.companyPrep);
+
 module.exports = router;
