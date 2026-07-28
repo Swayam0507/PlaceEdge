@@ -22,7 +22,7 @@ const Leaderboard = () => {
   };
 
   const getRankBadge = (i) => {
-    if (i === 0) return <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-yellow-300 to-amber-500 text-white shadow-lg shadow-amber-500/30 ring-2 ring-white"><Trophy size={18} fill="currentColor" /></div>;
+    if (i === 0) return <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-yellow-300 to-yellow-500 text-white shadow-lg shadow-yellow-500/30 ring-2 ring-white"><Trophy size={18} fill="currentColor" /></div>;
     if (i === 1) return <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-slate-300 to-slate-400 text-white shadow-lg shadow-slate-400/30 ring-2 ring-white"><Medal size={20} fill="currentColor" /></div>;
     if (i === 2) return <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-orange-300 to-orange-500 text-white shadow-lg shadow-orange-500/30 ring-2 ring-white"><Medal size={20} fill="currentColor" /></div>;
     return <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-slate-500 border border-slate-200">#{i + 1}</div>;
@@ -114,7 +114,7 @@ const Leaderboard = () => {
                   
                   // Height multiplier based on rank
                   const heightClass = isFirst ? 'h-64 sm:h-72' : isSecond ? 'h-52 sm:h-60' : 'h-48 sm:h-52';
-                  const bgClass = isFirst ? 'bg-gradient-to-b from-amber-50 to-white border-amber-200 shadow-amber-500/10' : 
+                  const bgClass = isFirst ? 'bg-gradient-to-b from-yellow-50 to-white border-yellow-200 shadow-yellow-500/10' : 
                                  isSecond ? 'bg-gradient-to-b from-slate-50 to-white border-slate-200' : 
                                             'bg-gradient-to-b from-orange-50 to-white border-orange-200';
                                             
@@ -128,14 +128,14 @@ const Leaderboard = () => {
                         {isFirst ? (
                           <div className="absolute -top-6 text-yellow-400 animate-bounce"><FiStar size={24} fill="currentColor" /></div>
                         ) : null}
-                        <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-2xl font-display font-bold text-white shadow-lg border-4 border-white ${isFirst ? 'bg-gradient-to-br from-amber-400 to-amber-600' : isSecond ? 'bg-gradient-to-br from-slate-400 to-slate-600' : 'bg-gradient-to-br from-orange-400 to-orange-600'}`}>
+                        <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-2xl font-display font-bold text-white shadow-lg border-4 border-white ${isFirst ? 'bg-gradient-to-br from-yellow-400 to-yellow-600' : isSecond ? 'bg-gradient-to-br from-slate-400 to-slate-600' : 'bg-gradient-to-br from-orange-400 to-orange-600'}`}>
                           {p.name?.charAt(0).toUpperCase()}
                         </div>
                       </div>
 
                       <div className="text-center mt-auto w-full">
                         <div className="flex justify-center mb-2">
-                          <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm text-white ${isFirst ? 'bg-amber-500' : isSecond ? 'bg-slate-400' : 'bg-orange-500'}`}>
+                          <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm text-white ${isFirst ? 'bg-yellow-500' : isSecond ? 'bg-slate-400' : 'bg-orange-500'}`}>
                             {pos + 1}
                           </span>
                         </div>
