@@ -404,24 +404,52 @@ const ResumeBuilder = () => {
             {(data.skills.technical || data.skills.soft) && (
               <div>
                 <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest mb-4 flex items-center gap-2">
-                  <FiAward className="text-indigo-600" /> Skills
+                  <FiAward className="text-indigo-600" /> Technical Skills
                 </h3>
                 {data.skills.technical && (
-                  <div className="mb-3">
-                    <strong className="block text-[11px] uppercase tracking-wider text-slate-500 mb-1.5">Technical</strong>
-                    <div className="flex flex-wrap gap-1.5">
-                      {data.skills.technical.split(/[,\n]+/).map((skill, idx) => {
-                        const s = skill.trim();
-                        if(!s) return null;
-                        return <span key={idx} className="bg-white border border-slate-200 text-slate-700 px-2 py-1 rounded text-[11px] font-semibold">{s}</span>
-                      })}
-                    </div>
+                  <div className="mb-4 space-y-3.5">
+                    {data.skills.technical.split('\n').map((line, idx) => {
+                      if (!line.trim()) return null;
+                      const colonIndex = line.indexOf(':');
+                      if (colonIndex > -1) {
+                        const category = line.substring(0, colonIndex).trim();
+                        const items = line.substring(colonIndex + 1).split(',');
+                        return (
+                          <div key={idx}>
+                            <strong className="block text-[11px] uppercase tracking-wider text-slate-500 mb-1.5">{category}</strong>
+                            <div className="flex flex-wrap gap-1.5">
+                              {items.map((item, i) => {
+                                const s = item.trim();
+                                if(!s) return null;
+                                return <span key={i} className="bg-white border border-slate-200 text-slate-700 px-2 py-1 rounded text-[11px] font-semibold">{s}</span>
+                              })}
+                            </div>
+                          </div>
+                        );
+                      }
+                      // fallback if no colon
+                      return (
+                        <div key={idx} className="flex flex-wrap gap-1.5">
+                          {line.split(/[,\n]+/).map((item, i) => {
+                             const s = item.trim();
+                             if(!s) return null;
+                             return <span key={i} className="bg-white border border-slate-200 text-slate-700 px-2 py-1 rounded text-[11px] font-semibold">{s}</span>
+                          })}
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
                 {data.skills.soft && (
                   <div>
                     <strong className="block text-[11px] uppercase tracking-wider text-slate-500 mb-1.5">Soft Skills</strong>
-                    <div className="text-[12px] text-slate-600 font-medium">{data.skills.soft}</div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {data.skills.soft.split(/[,\n]+/).map((skill, idx) => {
+                        const s = skill.trim();
+                        if (!s) return null;
+                        return <span key={idx} className="bg-indigo-50 border border-indigo-100 text-indigo-700 px-2 py-1 rounded text-[11px] font-semibold">{s}</span>
+                      })}
+                    </div>
                   </div>
                 )}
               </div>
