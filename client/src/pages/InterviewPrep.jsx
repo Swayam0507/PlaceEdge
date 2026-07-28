@@ -238,51 +238,49 @@ const InterviewPrep = () => {
                   </div>
 
                   {/* Body (Expanded Content) */}
-                  {isExpanded && (
-                    <div className="px-5 sm:px-6 pb-6 pt-0 border-t border-line/50 mt-2 animate-fade-in">
-                      <div className="pt-6 space-y-6">
-                        
-                        {q.sampleAnswer && (
-                          <div className="p-5 bg-amber-50/50 border border-amber-100 rounded-2xl relative">
-                            <div className="absolute -left-px top-5 bottom-5 w-1 bg-amber-400 rounded-r-md"></div>
-                            <h4 className="font-bold text-amber-900 flex items-center gap-2 mb-2 text-sm uppercase tracking-wider">
-                              <FiZap className="text-amber-500" /> Sample Answer Structure
-                            </h4>
-                            <p className="text-ink-soft text-sm leading-relaxed whitespace-pre-wrap">{q.sampleAnswer}</p>
-                          </div>
-                        )}
+                  <div className={`px-5 sm:px-6 pb-6 pt-0 border-t border-line/50 mt-2 animate-fade-in ${isExpanded ? 'block' : 'hidden'}`}>
+                    <div className="pt-6 space-y-6">
+                      
+                      {q.sampleAnswer && (
+                        <div className="p-5 bg-amber-50/50 border border-amber-100 rounded-2xl relative">
+                          <div className="absolute -left-px top-5 bottom-5 w-1 bg-amber-400 rounded-r-md"></div>
+                          <h4 className="font-bold text-amber-900 flex items-center gap-2 mb-2 text-sm uppercase tracking-wider">
+                            <FiZap className="text-amber-500" /> Sample Answer Structure
+                          </h4>
+                          <p className="text-ink-soft text-sm leading-relaxed whitespace-pre-wrap">{q.sampleAnswer}</p>
+                        </div>
+                      )}
 
-                        {q.tips && q.tips.length > 0 && (
-                          <div>
-                            <h4 className="font-bold text-emerald-700 flex items-center gap-2 mb-3 text-sm uppercase tracking-wider">
-                              <div className="p-1 bg-emerald-100 rounded text-emerald-600"><FiPaperclip size={14}/></div>
-                              Expert Tips
-                            </h4>
-                            <ul className="space-y-2">
-                              {q.tips.map((tip, i) => (
-                                <li key={i} className="flex items-start gap-2.5 text-sm text-ink-soft">
-                                  <span className="text-emerald-500 mt-0.5">•</span>
-                                  <span>{tip}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-
-                        {q.tags && q.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-2 pt-2">
-                            {q.tags.map((t, i) => (
-                              <span key={i} className="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-semibold rounded-full border border-slate-200">
-                                #{t}
-                              </span>
+                      {q.tips && q.tips.length > 0 && (
+                        <div>
+                          <h4 className="font-bold text-emerald-700 flex items-center gap-2 mb-3 text-sm uppercase tracking-wider">
+                            <div className="p-1 bg-emerald-100 rounded text-emerald-600"><FiPaperclip size={14}/></div>
+                            Expert Tips
+                          </h4>
+                          <ul className="space-y-2">
+                            {q.tips.map((tip, i) => (
+                              <li key={i} className="flex items-start gap-2.5 text-sm text-ink-soft">
+                                <span className="text-emerald-500 mt-0.5">•</span>
+                                <span>{tip}</span>
+                              </li>
                             ))}
-                          </div>
-                        )}
+                          </ul>
+                        </div>
+                      )}
 
-                        <MockAnswerForm question={q} />
-                      </div>
+                      {q.tags && q.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-2 pt-2">
+                          {q.tags.map((t, i) => (
+                            <span key={i} className="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-semibold rounded-full border border-slate-200">
+                              #{t}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      <MockAnswerForm question={q} />
                     </div>
-                  )}
+                  </div>
                 </div>
               );
             })
