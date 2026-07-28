@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { createPortal } from "react-dom";
 import { 
   BrainCircuit, Code2, Users2, Target, Play, X, LayoutDashboard, 
   Mic, CheckSquare, Award, Bookmark, ChevronRight, TrendingUp, Clock, Zap
@@ -162,8 +163,8 @@ const PracticeHub = () => {
       </div>
 
       {/* Unified Test Configuration Modal */}
-      {showConfig && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/30 backdrop-blur-sm animate-fade-in" onClick={() => setShowConfig(false)}>
+      {showConfig && createPortal(
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/40 backdrop-blur-md animate-fade-in" onClick={() => setShowConfig(false)}>
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
             {/* Modal Header */}
             <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-white/50">
@@ -253,7 +254,8 @@ const PracticeHub = () => {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>
