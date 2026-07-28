@@ -15,7 +15,7 @@ const CommunityHub = () => {
         {/* Top Half: The Social Network (Forum) */}
         <div className="mb-12">
           <Link to="/community/forum" className="block group">
-            <div className="relative bg-gradient-to-br from-amber-500 to-orange-600 rounded-[2rem] p-8 md:p-12 overflow-hidden shadow-floating">
+            <div className="relative bg-gradient-to-br from-orange-500 to-red-600 rounded-[2rem] p-8 md:p-12 overflow-hidden shadow-floating">
               {/* Background Effects */}
               <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/4 pointer-events-none"></div>
               
