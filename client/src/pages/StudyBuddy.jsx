@@ -93,7 +93,7 @@ const StudyBuddy = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-70px)] bg-surface font-body p-4 sm:p-6 lg:p-8 animate-fade-in flex flex-col relative overflow-hidden">
+    <div className="h-[calc(100vh-120px)] bg-surface font-body p-4 sm:p-6 lg:p-8 animate-fade-in flex flex-col relative overflow-hidden rounded-3xl">
       
       {/* Background Decor */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
