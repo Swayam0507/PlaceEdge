@@ -93,13 +93,13 @@ const StudyBuddy = () => {
   };
 
   return (
-    <div className="min-h-screen bg-surface font-body px-4 sm:px-6 lg:px-8 py-8 animate-fade-in flex flex-col relative overflow-hidden">
+    <div className="h-[calc(100vh-70px)] bg-surface font-body p-4 sm:p-6 lg:p-8 animate-fade-in flex flex-col relative overflow-hidden">
       
       {/* Background Decor */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/4 pointer-events-none"></div>
 
-      <div className="max-w-5xl mx-auto w-full h-[calc(100vh-120px)] flex flex-col relative z-10">
+      <div className="max-w-5xl mx-auto w-full h-full flex flex-col relative z-10">
         
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 shrink-0">
