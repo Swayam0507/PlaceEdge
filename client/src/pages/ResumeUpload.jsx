@@ -217,227 +217,284 @@ const ResumeBuilder = () => {
   const renderTemplate = () => {
     const data = resumeData;
 
+    // -------------------------------------------------------------
+    // 1. MINIMALIST (Clean, airy, Notion-like elegance)
+    // -------------------------------------------------------------
     if (template === "minimalist") {
       return (
-        <div className="bg-white p-8" ref={resumeRef} style={{ minHeight: "297mm", fontFamily: "Inter, sans-serif" }}>
-          <div className="text-center pb-4 border-b-2 border-slate-800">
-            <h1 className="text-3xl font-bold uppercase tracking-wider text-slate-900">{data.personal.name || "Your Name"}</h1>
-            <div className="mt-2 text-sm text-slate-600 text-center" style={{ lineHeight: '1.8' }}>
+        <div className="bg-white p-10" ref={resumeRef} style={{ minHeight: "297mm", fontFamily: "'Inter', sans-serif", color: "#1a1a1a" }}>
+          <header className="mb-8">
+            <h1 className="text-4xl font-extrabold tracking-tight mb-2 text-slate-900">{data.personal.name || "Your Name"}</h1>
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-[13px] text-slate-500 font-medium">
               {data.personal.email && (
-                <span style={{ marginRight: '10px' }}>
-                  <a href={`mailto:${data.personal.email}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <FiMail size={13} style={{ display: 'inline-block', position: 'relative', top: '2px', marginRight: '4px' }} />{data.personal.email}
-                  </a>
-                </span>
+                <a href={`mailto:${data.personal.email}`} className="flex items-center gap-1 hover:text-slate-800 transition-colors">
+                  <FiMail size={12} /> {data.personal.email}
+                </a>
               )}
-              {data.personal.phone && <span style={{ marginRight: '10px' }}>• {data.personal.phone}</span>}
+              {data.personal.phone && <span className="flex items-center gap-1"><FiPhone size={12} /> {data.personal.phone}</span>}
               {data.personal.linkedin && (
-                <span style={{ marginRight: '10px' }}>
-                  • <a href={getValidUrl(data.personal.linkedin)} target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit', marginLeft: '4px' }}>
-                    <FiLinkedin size={13} style={{ display: 'inline-block', position: 'relative', top: '2px', marginRight: '4px' }} />{formatUrl(data.personal.linkedin, 'linkedin')}
-                  </a>
-                </span>
+                <a href={getValidUrl(data.personal.linkedin)} className="flex items-center gap-1 hover:text-slate-800 transition-colors">
+                  <FiLinkedin size={12} /> {formatUrl(data.personal.linkedin, 'linkedin')}
+                </a>
               )}
               {data.personal.github && (
-                <span>
-                  • <a href={getValidUrl(data.personal.github)} target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit', marginLeft: '4px' }}>
-                    <FiGithub size={13} style={{ display: 'inline-block', position: 'relative', top: '2px', marginRight: '4px' }} />{formatUrl(data.personal.github, 'github')}
-                  </a>
-                </span>
+                <a href={getValidUrl(data.personal.github)} className="flex items-center gap-1 hover:text-slate-800 transition-colors">
+                  <FiGithub size={12} /> {formatUrl(data.personal.github, 'github')}
+                </a>
+              )}
+              {data.personal.portfolio && (
+                <a href={getValidUrl(data.personal.portfolio)} className="flex items-center gap-1 hover:text-slate-800 transition-colors">
+                  <FiGlobe size={12} /> {formatUrl(data.personal.portfolio, 'portfolio')}
+                </a>
+              )}
+            </div>
+          </header>
+
+          <div className="space-y-7">
+            {data.personal.summary && (
+              <section>
+                <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-3">Profile</h2>
+                <p className="text-[13px] leading-relaxed text-slate-700">{data.personal.summary}</p>
+              </section>
+            )}
+
+            {data.experience.length > 0 && (
+              <section>
+                <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-4">Experience</h2>
+                <div className="space-y-5">
+                  {data.experience.map((exp, i) => (
+                    <div key={i}>
+                      <div className="flex justify-between items-baseline mb-1">
+                        <h3 className="font-bold text-slate-900 text-[14px]">{exp.role}</h3>
+                        <span className="text-[12px] font-medium text-slate-400">{exp.duration}</span>
+                      </div>
+                      <div className="text-[13px] font-medium text-slate-600 mb-2">{exp.company}</div>
+                      <p className="text-[13px] leading-relaxed text-slate-700 whitespace-pre-wrap">{exp.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {data.projects.length > 0 && (
+              <section>
+                <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-4">Projects</h2>
+                <div className="space-y-5">
+                  {data.projects.map((proj, i) => (
+                    <div key={i}>
+                      <div className="flex justify-between items-baseline mb-1">
+                        <h3 className="font-bold text-slate-900 text-[14px]">
+                          {proj.link ? <a href={getValidUrl(proj.link)} target="_blank" rel="noreferrer" className="hover:underline">{proj.title}</a> : proj.title}
+                        </h3>
+                        {proj.techStack && <span className="text-[11px] font-semibold text-slate-400">{proj.techStack}</span>}
+                      </div>
+                      <p className="text-[13px] leading-relaxed text-slate-700 whitespace-pre-wrap">{proj.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            <div className="grid grid-cols-2 gap-8">
+              {data.education.length > 0 && (
+                <section>
+                  <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-4">Education</h2>
+                  <div className="space-y-4">
+                    {data.education.map((edu, i) => (
+                      <div key={i}>
+                        <h3 className="font-bold text-slate-900 text-[13px]">{edu.degree}</h3>
+                        <div className="text-[13px] text-slate-600 mt-0.5">{edu.college}</div>
+                        <div className="text-[12px] text-slate-400 mt-0.5 flex gap-3">
+                          <span>{edu.year}</span>
+                          {edu.gpa && <span>GPA: {edu.gpa}</span>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {(data.skills.technical || data.skills.soft || data.certifications.length > 0) && (
+                <section className="space-y-6">
+                  {(data.skills.technical || data.skills.soft) && (
+                    <div>
+                      <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-4">Skills</h2>
+                      {data.skills.technical && (
+                        <div className="mb-3 text-[13px]">
+                          <strong className="block text-slate-900 mb-1">Technical</strong>
+                          <div className="text-slate-700">{formatSkillText(data.skills.technical)}</div>
+                        </div>
+                      )}
+                      {data.skills.soft && (
+                        <div className="text-[13px]">
+                          <strong className="block text-slate-900 mb-1">Soft Skills</strong>
+                          <div className="text-slate-700">{data.skills.soft}</div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {data.certifications.length > 0 && (
+                    <div>
+                      <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-4">Certifications</h2>
+                      <div className="space-y-2">
+                        {data.certifications.map((cert, i) => (
+                          <div key={i} className="text-[13px]">
+                            <strong className="text-slate-900 block">{cert.title}</strong>
+                            <span className="text-slate-500">{cert.issuer} • {cert.year}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </section>
               )}
             </div>
           </div>
+        </div>
+      );
+    }
 
-          <div className="pt-4 space-y-5">
-            {data.personal.summary && (
-              <div>
-                <p className="text-sm text-slate-700 leading-relaxed">{data.personal.summary}</p>
-              </div>
-            )}
+    // -------------------------------------------------------------
+    // 2. MODERN (Sleek 2-column, sophisticated accents, no heavy backgrounds)
+    // -------------------------------------------------------------
+    if (template === "modern") {
+      return (
+        <div className="bg-white flex" ref={resumeRef} style={{ minHeight: "297mm", fontFamily: "'Outfit', sans-serif" }}>
+          {/* Left Column - 35% */}
+          <div className="w-[35%] bg-slate-50 border-r border-slate-200 p-8 flex flex-col gap-8">
+            <div>
+              <div className="w-12 h-1 bg-indigo-600 mb-4"></div>
+              <h1 className="text-3xl font-black text-slate-900 leading-none mb-1 tracking-tight">{data.personal.name || "Your Name"}</h1>
+            </div>
+
+            <div className="space-y-3 text-[13px] text-slate-600 font-medium">
+              {data.personal.email && (
+                <div className="flex items-center gap-3"><div className="w-6 h-6 rounded bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0"><FiMail size={12}/></div> <span className="truncate">{data.personal.email}</span></div>
+              )}
+              {data.personal.phone && (
+                <div className="flex items-center gap-3"><div className="w-6 h-6 rounded bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0"><FiPhone size={12}/></div> {data.personal.phone}</div>
+              )}
+              {data.personal.linkedin && (
+                <div className="flex items-center gap-3"><div className="w-6 h-6 rounded bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0"><FiLinkedin size={12}/></div> <span className="truncate">{formatUrl(data.personal.linkedin, 'linkedin')}</span></div>
+              )}
+              {data.personal.github && (
+                <div className="flex items-center gap-3"><div className="w-6 h-6 rounded bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0"><FiGithub size={12}/></div> <span className="truncate">{formatUrl(data.personal.github, 'github')}</span></div>
+              )}
+            </div>
 
             {data.education.length > 0 && (
               <div>
-                <h2 className="text-lg font-bold uppercase border-b border-slate-300 mb-2 text-slate-800">Education</h2>
-                {data.education.map((edu, i) => (
-                  <div key={i} className="mb-2">
-                    <div className="flex justify-between font-semibold text-slate-900 text-sm">
-                      <span>{edu.degree}</span>
-                      <span>{edu.year}</span>
+                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <FiBook className="text-indigo-600" /> Education
+                </h3>
+                <div className="space-y-4">
+                  {data.education.map((edu, i) => (
+                    <div key={i} className="relative pl-4 border-l-2 border-indigo-200">
+                      <div className="absolute w-2 h-2 rounded-full bg-indigo-600 -left-[5px] top-1.5"></div>
+                      <div className="font-bold text-slate-900 text-[13px]">{edu.degree}</div>
+                      <div className="text-slate-600 text-[12px] font-medium mt-0.5">{edu.college}</div>
+                      <div className="text-indigo-600 text-[11px] font-bold mt-1 tracking-wider">{edu.year} {edu.gpa && `• GPA: ${edu.gpa}`}</div>
                     </div>
-                    <div className="flex justify-between text-sm text-slate-700">
-                      <span>{edu.college}</span>
-                      <span>{edu.gpa ? `CGPA: ${edu.gpa}` : ""}</span>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             )}
 
             {(data.skills.technical || data.skills.soft) && (
               <div>
-                <h2 className="text-lg font-bold uppercase border-b border-slate-300 mb-2 text-slate-800">Skills</h2>
+                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <FiAward className="text-indigo-600" /> Skills
+                </h3>
                 {data.skills.technical && (
-                  <div className="text-sm text-slate-700">
-                    <span className="font-semibold text-slate-900">Technical: </span> {data.skills.technical}
+                  <div className="mb-3">
+                    <strong className="block text-[11px] uppercase tracking-wider text-slate-500 mb-1.5">Technical</strong>
+                    <div className="flex flex-wrap gap-1.5">
+                      {data.skills.technical.split(/[,\\n]+/).map((skill, idx) => {
+                        const s = skill.trim();
+                        if(!s) return null;
+                        return <span key={idx} className="bg-white border border-slate-200 text-slate-700 px-2 py-1 rounded text-[11px] font-semibold">{s}</span>
+                      })}
+                    </div>
                   </div>
                 )}
                 {data.skills.soft && (
-                  <div className="text-sm text-slate-700 mt-1">
-                    <span className="font-semibold text-slate-900">Soft Skills: </span> {data.skills.soft}
+                  <div>
+                    <strong className="block text-[11px] uppercase tracking-wider text-slate-500 mb-1.5">Soft Skills</strong>
+                    <div className="text-[12px] text-slate-600 font-medium">{data.skills.soft}</div>
                   </div>
                 )}
               </div>
             )}
-
-            {data.experience.length > 0 && (
-              <div>
-                <h2 className="text-lg font-bold uppercase border-b border-slate-300 mb-2 text-slate-800">Experience</h2>
-                {data.experience.map((exp, i) => (
-                  <div key={i} className="mb-3">
-                    <div className="flex justify-between font-semibold text-slate-900 text-sm">
-                      <span>{exp.role}</span>
-                      <span>{exp.duration}</span>
-                    </div>
-                    <div className="text-sm text-slate-700 font-medium mb-1">{exp.company}</div>
-                    <p className="text-sm text-slate-600 whitespace-pre-wrap leading-relaxed">{exp.description}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {data.projects.length > 0 && (
-              <div>
-                <h2 className="text-lg font-bold uppercase border-b border-slate-300 mb-2 text-slate-800">Projects</h2>
-                {data.projects.map((proj, i) => (
-                  <div key={i} className="mb-3">
-                    <div className="flex justify-between items-start gap-4 mb-1">
-                      <span className="font-semibold text-slate-900 text-sm flex-1">
-                        {proj.link ? <a href={getValidUrl(proj.link)} target="_blank" rel="noreferrer" className="hover:text-indigo-600 hover:underline">{proj.title}</a> : proj.title}
-                      </span>
-                      {proj.techStack && <span className="text-xs text-slate-600 font-medium shrink-0 text-right">{proj.techStack}</span>}
-                    </div>
-                    <p className="text-sm text-slate-600 mt-1 whitespace-pre-wrap leading-relaxed">{proj.description}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {data.certifications.length > 0 && (
-              <div>
-                <h2 className="text-lg font-bold uppercase border-b border-slate-300 mb-2 text-slate-800">Certifications</h2>
-                {data.certifications.map((cert, i) => (
-                  <div key={i} className="mb-1 text-sm text-slate-700 flex justify-between">
-                    <span className="font-medium text-slate-900">
-                      {cert.link ? <a href={getValidUrl(cert.link)} target="_blank" rel="noreferrer" className="hover:text-indigo-600 hover:underline">{cert.title}</a> : cert.title}
-                      <span className="font-normal text-slate-500 ml-1">by {cert.issuer}</span>
-                    </span>
-                    <span>{cert.year}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      );
-    }
-
-    if (template === "modern") {
-      return (
-        <div className="flex bg-white" ref={resumeRef} style={{ minHeight: "297mm", fontFamily: "Inter, sans-serif" }}>
-          {/* Left Sidebar */}
-          <div className="w-[35%] bg-indigo-900 text-white p-6">
-            <h1 className="text-2xl font-bold leading-tight mb-2 uppercase tracking-wide">{data.personal.name || "Your Name"}</h1>
-
-            <div className="mt-6 mb-8 text-indigo-100 text-xs space-y-4">
-              {data.personal.email && <div><strong className="block text-white mb-0.5 uppercase tracking-wider text-[10px]">Email</strong><a href={`mailto:${data.personal.email}`} style={{ color: 'inherit', textDecoration: 'none' }}><FiMail size={12} style={{ display: 'inline-block', position: 'relative', top: '2px', marginRight: '6px' }} />{data.personal.email}</a></div>}
-              {data.personal.phone && <div><strong className="block text-white mb-0.5 uppercase tracking-wider text-[10px]">Phone</strong>{data.personal.phone}</div>}
-              {data.personal.linkedin && <div><strong className="block text-white mb-0.5 uppercase tracking-wider text-[10px]">LinkedIn</strong><a href={getValidUrl(data.personal.linkedin)} target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}><FiLinkedin size={12} style={{ display: 'inline-block', position: 'relative', top: '2px', marginRight: '6px' }} />{formatUrl(data.personal.linkedin, 'linkedin')}</a></div>}
-              {data.personal.github && <div><strong className="block text-white mb-0.5 uppercase tracking-wider text-[10px]">GitHub</strong><a href={getValidUrl(data.personal.github)} target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}><FiGithub size={12} style={{ display: 'inline-block', position: 'relative', top: '2px', marginRight: '6px' }} />{formatUrl(data.personal.github, 'github')}</a></div>}
-              {data.personal.portfolio && <div><strong className="block text-white mb-0.5 uppercase tracking-wider text-[10px]">Portfolio</strong>{data.personal.portfolio}</div>}
-            </div>
-
-            {(data.skills.technical || data.skills.soft) && (
-              <div className="mb-6">
-                <h3 className="text-[11px] font-bold uppercase tracking-widest border-b border-indigo-700 pb-1 mb-3 text-indigo-300">Skills</h3>
-                {data.skills.technical && <div className="text-xs text-white whitespace-pre-wrap leading-relaxed">{data.skills.technical}</div>}
-                {data.skills.soft && <div className="mt-3 text-xs text-white whitespace-pre-wrap leading-relaxed">{data.skills.soft}</div>}
-              </div>
-            )}
-
-            {data.education.length > 0 && (
-              <div>
-                <h3 className="text-[11px] font-bold uppercase tracking-widest border-b border-indigo-700 pb-1 mb-3 text-indigo-300">Education</h3>
-                {data.education.map((edu, i) => (
-                  <div key={i} className="mb-4 text-xs">
-                    <div className="font-bold text-white text-[13px]">{edu.degree}</div>
-                    <div className="text-indigo-200 mt-1">{edu.college}</div>
-                    <div className="text-indigo-300 mt-1 flex justify-between">
-                      <span>{edu.year}</span>
-                      <span>{edu.gpa}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
 
-          {/* Right Main Content */}
-          <div className="w-[65%] p-8 bg-white">
+          {/* Right Column - 65% */}
+          <div className="w-[65%] p-8 pt-10">
             {data.personal.summary && (
-              <div className="mb-6">
-                <h2 className="text-sm font-bold uppercase tracking-widest text-indigo-900 border-b-2 border-indigo-100 pb-1 mb-3">Profile</h2>
-                <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{data.personal.summary}</p>
+              <div className="mb-8">
+                <p className="text-[14px] text-slate-600 leading-relaxed font-medium">{data.personal.summary}</p>
               </div>
             )}
 
             {data.experience.length > 0 && (
-              <div className="mb-6">
-                <h2 className="text-sm font-bold uppercase tracking-widest text-indigo-900 border-b-2 border-indigo-100 pb-1 mb-3">Experience</h2>
-                {data.experience.map((exp, i) => (
-                  <div key={i} className="mb-5">
-                    <div className="flex justify-between items-baseline mb-1">
-                      <h4 className="font-bold text-slate-900 text-sm">{exp.role}</h4>
-                      <span className="text-xs text-indigo-600 font-semibold">{exp.duration}</span>
+              <div className="mb-8">
+                <h2 className="text-xl font-bold text-slate-900 mb-5 pb-2 border-b border-slate-100 flex items-center gap-2">
+                  <div className="w-1.5 h-6 bg-indigo-600 rounded-full"></div> Experience
+                </h2>
+                <div className="space-y-6">
+                  {data.experience.map((exp, i) => (
+                    <div key={i}>
+                      <div className="flex justify-between items-start mb-1">
+                        <div>
+                          <h4 className="font-bold text-slate-900 text-[15px]">{exp.role}</h4>
+                          <div className="text-[13px] font-semibold text-indigo-600 mt-0.5">{exp.company}</div>
+                        </div>
+                        <span className="text-[11px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded uppercase tracking-wider">{exp.duration}</span>
+                      </div>
+                      <p className="text-[13px] text-slate-600 leading-relaxed mt-2 whitespace-pre-wrap">{exp.description}</p>
                     </div>
-                    <div className="text-sm font-medium text-slate-700 mb-2">{exp.company}</div>
-                    <p className="text-xs text-slate-600 whitespace-pre-wrap leading-relaxed">{exp.description}</p>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             )}
 
             {data.projects.length > 0 && (
-              <div className="mb-6">
-                <h2 className="text-sm font-bold uppercase tracking-widest text-indigo-900 border-b-2 border-indigo-100 pb-1 mb-3">Projects</h2>
-                {data.projects.map((proj, i) => (
-                  <div key={i} className="mb-5">
-                    <div className="flex justify-between items-start gap-4 mb-1">
-                      <h4 className="font-bold text-slate-900 text-sm leading-tight flex-1">
-                        {proj.link ? <a href={getValidUrl(proj.link)} target="_blank" rel="noreferrer" className="hover:text-indigo-600 hover:underline">{proj.title}</a> : proj.title}
-                      </h4>
-                      {proj.techStack && <span className="text-[10px] bg-indigo-50 text-indigo-700 px-2 py-1 rounded font-bold uppercase tracking-wider text-right shrink-0">{proj.techStack}</span>}
+              <div className="mb-8">
+                <h2 className="text-xl font-bold text-slate-900 mb-5 pb-2 border-b border-slate-100 flex items-center gap-2">
+                  <div className="w-1.5 h-6 bg-emerald-500 rounded-full"></div> Projects
+                </h2>
+                <div className="space-y-6">
+                  {data.projects.map((proj, i) => (
+                    <div key={i}>
+                      <div className="flex justify-between items-start mb-1">
+                        <h4 className="font-bold text-slate-900 text-[15px]">
+                          {proj.link ? <a href={getValidUrl(proj.link)} className="hover:text-emerald-600 transition-colors">{proj.title}</a> : proj.title}
+                        </h4>
+                        {proj.techStack && <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-1 rounded">{proj.techStack}</span>}
+                      </div>
+                      <p className="text-[13px] text-slate-600 leading-relaxed mt-1.5 whitespace-pre-wrap">{proj.description}</p>
                     </div>
-                    <p className="text-xs text-slate-600 whitespace-pre-wrap mt-1 leading-relaxed">{proj.description}</p>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             )}
 
             {data.certifications.length > 0 && (
               <div>
-                <h2 className="text-sm font-bold uppercase tracking-widest text-indigo-900 border-b-2 border-indigo-100 pb-1 mb-3">Certifications</h2>
-                {data.certifications.map((cert, i) => (
-                  <div key={i} className="mb-2 flex justify-between items-center text-sm">
-                    <div>
-                      <strong className="text-slate-900">
-                        {cert.link ? <a href={getValidUrl(cert.link)} target="_blank" rel="noreferrer" className="hover:text-indigo-600 hover:underline">{cert.title}</a> : cert.title}
-                      </strong>
-                      <span className="text-slate-400 mx-2">|</span>
-                      <span className="text-slate-600">{cert.issuer}</span>
+                <h2 className="text-xl font-bold text-slate-900 mb-5 pb-2 border-b border-slate-100 flex items-center gap-2">
+                  <div className="w-1.5 h-6 bg-amber-500 rounded-full"></div> Certifications
+                </h2>
+                <div className="grid grid-cols-2 gap-4">
+                  {data.certifications.map((cert, i) => (
+                    <div key={i} className="p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                      <div className="font-bold text-slate-900 text-[13px] mb-0.5">{cert.title}</div>
+                      <div className="text-[11px] font-medium text-slate-500 flex justify-between">
+                        <span>{cert.issuer}</span>
+                        <span>{cert.year}</span>
+                      </div>
                     </div>
-                    <span className="text-xs font-medium text-slate-500 bg-slate-50 px-2 py-1 rounded">{cert.year}</span>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -445,126 +502,104 @@ const ResumeBuilder = () => {
       );
     }
 
-    // Professional Template (Serif)
+    // -------------------------------------------------------------
+    // 3. PROFESSIONAL (Classic Ivy League / Wall Street format)
+    // -------------------------------------------------------------
     return (
-      <div className="bg-white p-10" ref={resumeRef} style={{ minHeight: "297mm", fontFamily: "'Times New Roman', Times, serif" }}>
-        <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2 uppercase tracking-wide">{data.personal.name || "Your Name"}</h1>
-          <p className="text-sm text-slate-700 text-center" style={{ lineHeight: '2' }}>
+      <div className="bg-white p-12" ref={resumeRef} style={{ minHeight: "297mm", fontFamily: "'Times New Roman', Times, serif", color: "#000" }}>
+        <div className="text-center mb-4">
+          <h1 className="text-3xl font-normal mb-1">{data.personal.name || "Your Name"}</h1>
+          <div className="text-[12px] flex justify-center items-center flex-wrap">
             {data.personal.email && (
-              <span style={{ marginRight: '12px' }}>
-                <a href={`mailto:${data.personal.email}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <FiMail size={14} style={{ display: 'inline-block', position: 'relative', top: '2px', marginRight: '5px' }} />{data.personal.email}
-                </a>
-              </span>
+              <span><a href={`mailto:${data.personal.email}`} className="hover:underline">{data.personal.email}</a></span>
             )}
-            {data.personal.phone && <span style={{ marginRight: '15px' }}>| {data.personal.phone}</span>}
+            {data.personal.phone && (
+              <span className="before:content-['|'] before:mx-2 before:text-gray-400">{data.personal.phone}</span>
+            )}
             {data.personal.linkedin && (
-              <span style={{ marginRight: '12px' }}>
-                | <a href={getValidUrl(data.personal.linkedin)} target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit', marginLeft: '4px' }}>
-                  <FiLinkedin size={14} style={{ display: 'inline-block', position: 'relative', top: '2px', marginRight: '5px' }} />{formatUrl(data.personal.linkedin, 'linkedin')}
-                </a>
-              </span>
+              <span className="before:content-['|'] before:mx-2 before:text-gray-400"><a href={getValidUrl(data.personal.linkedin)} className="hover:underline">{formatUrl(data.personal.linkedin, 'linkedin')}</a></span>
             )}
             {data.personal.github && (
-              <span>
-                | <a href={getValidUrl(data.personal.github)} target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit', marginLeft: '4px' }}>
-                  <FiGithub size={14} style={{ display: 'inline-block', position: 'relative', top: '2px', marginRight: '5px' }} />{formatUrl(data.personal.github, 'github')}
-                </a>
-              </span>
+              <span className="before:content-['|'] before:mx-2 before:text-gray-400"><a href={getValidUrl(data.personal.github)} className="hover:underline">{formatUrl(data.personal.github, 'github')}</a></span>
             )}
-          </p>
+          </div>
         </div>
 
         {data.personal.summary && (
-          <div className="mb-5">
-            <h2 className="text-sm font-bold uppercase text-slate-800 border-b border-slate-800 pb-1 mb-2 tracking-widest">Professional Summary</h2>
-            <p className="text-sm text-slate-800 leading-relaxed whitespace-pre-wrap">{formatText(data.personal.summary)}</p>
+          <div className="mb-4">
+            <h2 className="text-[13px] font-bold uppercase tracking-wider border-b-[1.5px] border-black pb-0.5 mb-2">Summary</h2>
+            <p className="text-[12px] leading-relaxed text-justify">{data.personal.summary}</p>
           </div>
         )}
 
-        {data.experience.length > 0 && (
-          <div className="mb-5">
-            <h2 className="text-sm font-bold uppercase text-slate-800 border-b border-slate-800 pb-1 mb-3 tracking-widest">Experience</h2>
-            {data.experience.map((exp, i) => (
-              <div key={i} className="mb-4">
-                <div className="flex justify-between font-bold text-slate-900 text-sm">
-                  <span>{exp.role}</span>
-                  <span>{exp.duration}</span>
+        {data.education.length > 0 && (
+          <div className="mb-4">
+            <h2 className="text-[13px] font-bold uppercase tracking-wider border-b-[1.5px] border-black pb-0.5 mb-2">Education</h2>
+            {data.education.map((edu, i) => (
+              <div key={i} className="mb-2">
+                <div className="flex justify-between items-baseline">
+                  <strong className="text-[13px]">{edu.college}</strong>
+                  <span className="text-[12px]">{edu.year}</span>
                 </div>
-                <div className="italic text-slate-700 text-sm mb-2">{exp.company}</div>
-                <p className="text-sm text-slate-800 whitespace-pre-wrap leading-relaxed pl-4 border-l border-slate-300">{formatText(exp.description)}</p>
+                <div className="flex justify-between items-baseline mt-0.5">
+                  <span className="text-[12px] italic">{edu.degree}</span>
+                  {edu.gpa && <span className="text-[12px]">GPA: {edu.gpa}</span>}
+                </div>
               </div>
             ))}
           </div>
         )}
 
-        {data.education.length > 0 && (
-          <div className="mb-5">
-            <h2 className="text-sm font-bold uppercase text-slate-800 border-b border-slate-800 pb-1 mb-3 tracking-widest">Education</h2>
-            {data.education.map((edu, i) => (
-              <div key={i} className="mb-3 flex justify-between text-sm">
-                <div>
-                  <strong className="block text-slate-900">{edu.degree}</strong>
-                  <span className="text-slate-700">{edu.college}</span>
+        {data.experience.length > 0 && (
+          <div className="mb-4">
+            <h2 className="text-[13px] font-bold uppercase tracking-wider border-b-[1.5px] border-black pb-0.5 mb-2">Experience</h2>
+            {data.experience.map((exp, i) => (
+              <div key={i} className="mb-3">
+                <div className="flex justify-between items-baseline">
+                  <strong className="text-[13px]">{exp.company}</strong>
+                  <span className="text-[12px]">{exp.duration}</span>
                 </div>
-                <div className="text-right">
-                  <strong className="block text-slate-900">{edu.year}</strong>
-                  <span className="text-slate-600">GPA: {edu.gpa}</span>
-                </div>
+                <div className="text-[12px] italic mt-0.5 mb-1">{exp.role}</div>
+                <div className="text-[12px] leading-relaxed text-justify whitespace-pre-wrap ml-3">{exp.description}</div>
               </div>
             ))}
           </div>
         )}
 
         {data.projects.length > 0 && (
-          <div className="mb-5">
-            <h2 className="text-sm font-bold uppercase text-slate-800 border-b border-slate-800 pb-1 mb-3 tracking-widest">Projects</h2>
+          <div className="mb-4">
+            <h2 className="text-[13px] font-bold uppercase tracking-wider border-b-[1.5px] border-black pb-0.5 mb-2">Projects</h2>
             {data.projects.map((proj, i) => (
               <div key={i} className="mb-3">
-                <div className="flex justify-between items-start gap-4 mb-1">
-                  <strong className="text-slate-900 text-sm leading-tight flex-1">
-                    {proj.link ? <a href={getValidUrl(proj.link)} target="_blank" rel="noreferrer" className="hover:text-slate-600 hover:underline">{proj.title}</a> : proj.title}
+                <div className="flex justify-between items-baseline mb-0.5">
+                  <strong className="text-[13px]">
+                    {proj.title} {proj.link && <span className="font-normal italic">| <a href={getValidUrl(proj.link)} className="hover:underline">{formatUrl(proj.link, 'github')}</a></span>}
                   </strong>
-                  {proj.techStack && <span className="text-xs text-slate-600 font-sans shrink-0 text-right">{proj.techStack}</span>}
+                  {proj.techStack && <span className="text-[11px]">{proj.techStack}</span>}
                 </div>
-                <p className="text-sm text-slate-800 leading-relaxed whitespace-pre-wrap">{formatText(proj.description)}</p>
+                <div className="text-[12px] leading-relaxed text-justify whitespace-pre-wrap ml-3">{proj.description}</div>
               </div>
             ))}
           </div>
         )}
 
         {(data.skills.technical || data.skills.soft) && (
-          <div className="mb-5">
-            <h2 className="text-sm font-bold uppercase text-slate-800 border-b border-slate-800 pb-1 mb-3 tracking-widest">Skills</h2>
-            {data.skills.technical && (
-              <div className="text-sm text-slate-800 mb-1">
-                {formatSkillText(data.skills.technical)}
-              </div>
-            )}
-            {data.skills.soft && (
-              <div className="text-sm text-slate-800">
-                <strong className="text-slate-900">Soft: </strong>{data.skills.soft}
-              </div>
-            )}
-          </div>
-        )}
-
-        {data.certifications.length > 0 && (
-          <div className="mb-5">
-            <h2 className="text-sm font-bold uppercase text-slate-800 border-b border-slate-800 pb-1 mb-3 tracking-widest">Certifications</h2>
-            {data.certifications.map((cert, i) => (
-              <div key={i} className="mb-2 flex justify-between items-center text-sm">
+          <div className="mb-4">
+            <h2 className="text-[13px] font-bold uppercase tracking-wider border-b-[1.5px] border-black pb-0.5 mb-2">Skills & Certifications</h2>
+            <div className="text-[12px] space-y-1">
+              {data.skills.technical && (
+                <div><strong>Technical: </strong> {data.skills.technical}</div>
+              )}
+              {data.skills.soft && (
+                <div><strong>Soft Skills: </strong> {data.skills.soft}</div>
+              )}
+              {data.certifications.length > 0 && (
                 <div>
-                  <strong className="text-slate-900">
-                    {cert.link ? <a href={getValidUrl(cert.link)} target="_blank" rel="noreferrer" className="hover:text-slate-600 hover:underline">{cert.title}</a> : cert.title}
-                  </strong>
-                  <span className="text-slate-400 mx-2">|</span>
-                  <span className="text-slate-700 italic">{cert.issuer}</span>
+                  <strong>Certifications: </strong>
+                  {data.certifications.map((c, i) => `${c.title} (${c.issuer})${i !== data.certifications.length - 1 ? ', ' : ''}`)}
                 </div>
-                <span className="text-xs text-slate-600 font-sans">{cert.year}</span>
-              </div>
-            ))}
+              )}
+            </div>
           </div>
         )}
       </div>
