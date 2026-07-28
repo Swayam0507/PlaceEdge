@@ -129,7 +129,7 @@ const ResumeBuilder = () => {
   };
 
   const downloadPDF = useReactToPrint({
-    content: () => resumeRef.current,
+    contentRef: resumeRef,
     documentTitle: `${resumeData.personal.name || 'Student'}_Resume`,
     onBeforeGetContent: () => {
       setIsGenerating(true);
