@@ -42,7 +42,7 @@ const PracticeHub = () => {
         
         {/* Header Section */}
         <div className="mb-10 text-center md:text-left">
-          <h1 className="font-display font-bold text-3xl md:text-4xl text-ink tracking-tight mb-2">Practice Center</h1>
+          <h1 className="font-bold text-3xl md:text-4xl text-ink tracking-tight mb-2">Practice Center</h1>
           <p className="text-ink-soft text-lg font-medium max-w-2xl">Your unified workspace for skill assessment, interview prep, and performance tracking.</p>
         </div>
 
@@ -60,7 +60,7 @@ const PracticeHub = () => {
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-white text-xs font-bold uppercase tracking-wider mb-6 backdrop-blur-sm">
                   <Zap size={14} className="text-amber-400" /> Unified Arena
                 </div>
-                <h2 className="font-display font-bold text-3xl md:text-5xl text-white mb-4 leading-tight">
+                <h2 className="font-bold text-3xl md:text-5xl text-white mb-4 leading-tight tracking-tight">
                   Master Your Skills <br /> With AI Assessments
                 </h2>
                 <p className="text-indigo-200 text-lg max-w-md font-medium mb-8">
@@ -91,7 +91,7 @@ const PracticeHub = () => {
               <div className="space-y-6">
                 <div>
                   <div className="text-sm font-bold text-muted uppercase tracking-wider mb-1">Global Rank</div>
-                  <div className="text-3xl font-display font-bold text-ink">#428</div>
+                  <div className="text-3xl font-bold text-ink tracking-tight">#428</div>
                   <div className="text-xs text-emerald-600 font-medium mt-1">↑ Top 15% this week</div>
                 </div>
                 
@@ -99,7 +99,7 @@ const PracticeHub = () => {
                 
                 <div>
                   <div className="text-sm font-bold text-muted uppercase tracking-wider mb-1">Tests Completed</div>
-                  <div className="text-3xl font-display font-bold text-ink">24</div>
+                  <div className="text-3xl font-bold text-ink tracking-tight">24</div>
                   <div className="text-xs text-indigo-600 font-medium mt-1">4 tests in last 7 days</div>
                 </div>
               </div>
@@ -116,7 +116,7 @@ const PracticeHub = () => {
           
           {/* Specialized Prep */}
           <div>
-            <h3 className="font-display font-bold text-2xl text-ink mb-6 flex items-center gap-2">
+            <h3 className="font-bold text-2xl text-ink mb-6 flex items-center gap-2 tracking-tight">
               <Target className="text-indigo-500" /> Specialized Preparation
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -139,7 +139,7 @@ const PracticeHub = () => {
 
           {/* Tracking & Library */}
           <div>
-            <h3 className="font-display font-bold text-2xl text-ink mb-6 flex items-center gap-2">
+            <h3 className="font-bold text-2xl text-ink mb-6 flex items-center gap-2 tracking-tight">
               <Bookmark className="text-indigo-500" /> Your Library
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -163,39 +163,48 @@ const PracticeHub = () => {
 
       {/* Unified Test Configuration Modal */}
       {showConfig && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/40 backdrop-blur-sm animate-fade-in" onClick={() => setShowConfig(false)}>
-          <div className="bg-white rounded-3xl shadow-floating w-full max-w-xl overflow-hidden" onClick={e => e.stopPropagation()}>
-            <div className="px-8 py-6 border-b border-line flex items-center justify-between bg-surface">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/30 backdrop-blur-sm animate-fade-in" onClick={() => setShowConfig(false)}>
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
+            {/* Modal Header */}
+            <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-white/50">
               <div>
-                <h2 className="font-display font-bold text-2xl text-ink">Configure Assessment</h2>
-                <p className="text-sm text-ink-soft font-medium mt-1">Select your topic and difficulty</p>
+                <h2 className="font-bold text-2xl text-slate-900 tracking-tight">Configure Assessment</h2>
+                <p className="text-sm text-slate-500 font-medium mt-1">Select your topic and difficulty</p>
               </div>
               <button 
                 onClick={() => setShowConfig(false)}
-                className="w-10 h-10 rounded-full bg-white border border-line flex items-center justify-center text-muted hover:text-ink hover:bg-surface transition-colors"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
               >
                 <X size={20} />
               </button>
             </div>
             
-            <div className="p-8 space-y-8">
+            {/* Modal Body */}
+            <div className="p-8 overflow-y-auto space-y-8">
               {/* Category Selection */}
               <div>
-                <label className="block text-sm font-bold text-ink uppercase tracking-wider mb-4">1. Select Category</label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-widest mb-4">Category</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {TEST_CATEGORIES.map(cat => (
                     <button
                       key={cat.id}
                       onClick={() => setSelectedCategory(cat.id)}
-                      className={`flex flex-col items-start p-4 rounded-2xl border-2 text-left transition-all duration-200 ${
+                      className={`relative flex flex-col items-start p-5 rounded-2xl text-left transition-all duration-200 ${
                         selectedCategory === cat.id 
-                          ? 'border-indigo-600 bg-indigo-50/50 shadow-sm' 
-                          : 'border-line bg-white hover:border-indigo-200 hover:bg-surface'
+                          ? 'bg-indigo-50/50 ring-2 ring-indigo-600 shadow-sm' 
+                          : 'bg-white ring-1 ring-slate-200 hover:ring-indigo-300 hover:shadow-sm hover:bg-slate-50/50'
                       }`}
                     >
-                      <cat.icon size={24} className={`mb-3 ${selectedCategory === cat.id ? 'text-indigo-600' : cat.color}`} />
-                      <span className="font-bold text-ink text-sm mb-1">{cat.title}</span>
-                      <span className="text-xs text-ink-soft font-medium">{cat.desc}</span>
+                      <cat.icon size={26} strokeWidth={2} className={`mb-3 ${selectedCategory === cat.id ? 'text-indigo-600' : 'text-slate-600'}`} />
+                      <span className="font-bold text-slate-900 text-sm mb-1 tracking-tight">{cat.title}</span>
+                      <span className="text-xs text-slate-500 font-medium leading-relaxed">{cat.desc}</span>
+                      
+                      {/* Custom Radio Circle */}
+                      <div className={`absolute top-5 right-5 w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${
+                        selectedCategory === cat.id ? 'border-indigo-600 bg-indigo-600' : 'border-slate-300'
+                      }`}>
+                        {selectedCategory === cat.id && <div className="w-2 h-2 rounded-full bg-white"></div>}
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -203,16 +212,16 @@ const PracticeHub = () => {
 
               {/* Difficulty Selection */}
               <div>
-                <label className="block text-sm font-bold text-ink uppercase tracking-wider mb-4">2. Select Difficulty</label>
-                <div className="flex bg-surface p-1.5 rounded-xl border border-line">
+                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-widest mb-4">Difficulty Level</label>
+                <div className="inline-flex bg-slate-100/80 p-1.5 rounded-2xl w-full sm:w-auto">
                   {['easy', 'medium', 'hard'].map(level => (
                     <button
                       key={level}
                       onClick={() => setDifficulty(level)}
-                      className={`flex-1 py-2.5 px-4 rounded-lg font-bold text-sm capitalize transition-all ${
+                      className={`flex-1 sm:w-32 py-2.5 px-4 rounded-xl font-bold text-sm capitalize transition-all duration-200 ${
                         difficulty === level
-                          ? 'bg-white text-indigo-600 shadow-sm'
-                          : 'text-muted hover:text-ink hover:bg-white/50'
+                          ? 'bg-white text-indigo-700 shadow-sm ring-1 ring-slate-900/5'
+                          : 'text-slate-500 hover:text-slate-900 hover:bg-slate-200/50'
                       }`}
                     >
                       {level}
@@ -222,24 +231,25 @@ const PracticeHub = () => {
               </div>
 
               {/* Notice */}
-              <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-100 rounded-xl text-amber-800 text-sm font-medium">
-                <Clock size={20} className="shrink-0 text-amber-500" />
-                <p>This assessment is timed (typically 30 mins) and will automatically submit when time expires. Ensure you have a stable connection.</p>
+              <div className="flex items-start gap-3.5 p-5 bg-slate-50 rounded-2xl border border-slate-100 text-sm font-medium text-slate-600 leading-relaxed">
+                <Clock size={20} className="shrink-0 text-slate-400 mt-0.5" />
+                <p>This assessment is timed and will automatically submit when time expires. Please ensure you have a stable connection.</p>
               </div>
             </div>
 
-            <div className="p-6 border-t border-line bg-surface flex justify-end gap-3">
+            {/* Modal Footer */}
+            <div className="px-8 py-6 border-t border-slate-100 bg-slate-50/50 flex justify-end gap-3">
               <button 
                 onClick={() => setShowConfig(false)}
-                className="px-6 py-3 rounded-xl font-bold text-ink bg-white border border-line hover:bg-gray-50 transition-colors"
+                className="px-6 py-2.5 rounded-xl font-semibold text-slate-600 hover:bg-slate-200/50 hover:text-slate-900 transition-colors"
               >
                 Cancel
               </button>
               <button 
                 onClick={startTest}
-                className="flex items-center gap-2 px-8 py-3 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md transition-colors"
+                className="flex items-center gap-2 px-8 py-2.5 rounded-xl font-semibold text-white bg-slate-900 hover:bg-slate-800 shadow-md shadow-slate-900/10 hover:shadow-lg hover:shadow-slate-900/20 transition-all duration-200"
               >
-                <Play fill="currentColor" size={16} /> Begin Test
+                Begin Assessment <ChevronRight size={18} className="opacity-80" />
               </button>
             </div>
           </div>
