@@ -221,7 +221,7 @@ const PlacementPredictor = () => {
                   </div>
                   
                   <div className={`px-6 py-2 rounded-full font-bold text-white shadow-lg flex items-center gap-2 ${
-                    result.prediction === "Placed" ? "bg-gradient-to-r from-emerald-500 to-emerald-400 shadow-emerald-500/20" : "bg-gradient-to-r from-coral to-red-400 shadow-coral/20"
+                    result.prediction === "Placed" ? "bg-gradient-to-r from-green-500 to-green-400 shadow-green-500/20" : "bg-gradient-to-r from-red-500 to-red-400 shadow-red-500/20"
                   }`}>
                     {result.prediction === "Placed" ? <CheckCircle2 size={18} /> : <AlertTriangle size={18} />}
                     {result.prediction}
