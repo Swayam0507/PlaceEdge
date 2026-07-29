@@ -1,8 +1,9 @@
 import React, { useState, useRef } from "react";
-import { FiDownload, FiPlus, FiTrash2, FiUser, FiBook, FiBriefcase, FiCode, FiAward, FiFileText, FiLinkedin, FiGithub, FiZap, FiMail, FiPhone, FiGlobe } from "react-icons/fi";
+import { FiDownload, FiPlus, FiTrash2, FiUser, FiBook, FiBriefcase, FiCode, FiAward, FiFileText, FiLinkedin, FiGithub, FiZap, FiMail, FiPhone, FiGlobe, FiUploadCloud, FiCheckCircle } from "react-icons/fi";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useAuth } from "../context/AuthContext";
+import { uploadResume } from "../services/api";
 
 const formatText = (text) => {
   if (!text) return null;
@@ -58,7 +59,36 @@ const ResumeBuilder = () => {
   const [activeTab, setActiveTab] = useState("personal");
   const [template, setTemplate] = useState("modern");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [mode, setMode] = useState("upload"); // "upload" or "build"
+  const [resumeFile, setResumeFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadMsg, setUploadMsg] = useState("");
   const resumeRef = useRef(null);
+
+  const handleUploadFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setResumeFile(e.target.files[0]);
+    }
+  };
+
+  const handleUploadSubmit = async () => {
+    if (!resumeFile) return;
+    setUploading(true);
+    setUploadMsg("");
+    try {
+      const formData = new FormData();
+      formData.append("resume", resumeFile);
+      const res = await uploadResume(formData);
+      if (res.data.success) {
+        setUploadMsg("Resume uploaded and parsed successfully! 🎉 Your Journey Map is updated.");
+        setTimeout(() => setUploadMsg(""), 5000);
+      }
+    } catch (err) {
+      setUploadMsg(err.response?.data?.message || "Failed to upload resume.");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handlePersonalChange = (e) => {
     setResumeData({
@@ -608,50 +638,125 @@ const ResumeBuilder = () => {
   // -------------------------------------------------------------
   // RENDER IMMERSIVE WORKSPACE
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] bg-surface overflow-hidden animate-fade-in">
+    <div className="flex flex-col h-[calc(100vh-64px)] bg-surface overflow-hidden animate-fade-in font-body">
       
       {/* STICKY GLASSMORPHISM HEADER */}
-      <header className="shrink-0 flex items-center justify-between px-6 py-4 bg-paper/80 backdrop-blur-xl border-b border-line z-10">
+      <header className="shrink-0 flex flex-col md:flex-row items-center justify-between px-6 py-4 bg-paper/80 backdrop-blur-xl border-b border-line z-10 gap-4">
         <div>
           <h1 className="font-display text-2xl font-bold text-ink flex items-center gap-3">
             <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg"><FiFileText size={20} /></div>
             Resume Workspace
           </h1>
-          <p className="font-body text-muted text-sm mt-1">Design, edit, and export your ATS-friendly resume.</p>
+          <p className="font-body text-muted text-sm mt-1">Upload your existing resume or build a new ATS-friendly one.</p>
         </div>
         
-        <div className="flex items-center gap-4">
-          <div className="flex items-center bg-paper-raised p-1 rounded-xl border border-line">
-            {["modern", "minimalist", "professional"].map(tmp => (
-              <button 
-                key={tmp}
-                onClick={() => setTemplate(tmp)}
-                className={`px-4 py-2 text-sm font-semibold rounded-lg capitalize transition-all ${template === tmp ? 'bg-white shadow-sm text-ink ring-1 ring-line' : 'text-muted hover:text-ink hover:bg-slate-50'}`}
-              >
-                {tmp}
-              </button>
-            ))}
-          </div>
-
-          <button
-            onClick={loadSampleData}
-            className="flex items-center gap-2 px-4 py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-deep border border-amber/20 rounded-xl font-semibold transition-all hover:-translate-y-0.5"
+        {/* MODE TOGGLE */}
+        <div className="flex items-center bg-paper-raised p-1 rounded-xl border border-line">
+          <button 
+            onClick={() => setMode("upload")}
+            className={`px-6 py-2 text-sm font-bold rounded-lg transition-all ${mode === "upload" ? 'bg-white shadow-sm text-indigo-600 ring-1 ring-line' : 'text-muted hover:text-ink hover:bg-slate-50'}`}
           >
-            <FiZap /> Demo Data
+            Upload PDF
           </button>
-          <button
-            onClick={downloadPDF}
-            disabled={isGenerating}
-            className="flex items-center gap-2 px-6 py-2.5 bg-ink hover:bg-ink-soft text-white rounded-xl font-semibold transition-all hover:-translate-y-0.5 disabled:opacity-70 disabled:hover:translate-y-0 shadow-lg shadow-ink/10"
+          <button 
+            onClick={() => setMode("build")}
+            className={`px-6 py-2 text-sm font-bold rounded-lg transition-all ${mode === "build" ? 'bg-white shadow-sm text-indigo-600 ring-1 ring-line' : 'text-muted hover:text-ink hover:bg-slate-50'}`}
           >
-            <FiDownload /> {isGenerating ? "Exporting..." : "Export PDF"}
+            Build with AI
           </button>
         </div>
+        
+        {mode === "build" && (
+          <div className="flex items-center gap-4">
+            <div className="flex items-center bg-paper-raised p-1 rounded-xl border border-line hidden lg:flex">
+              {["modern", "minimalist", "professional"].map(tmp => (
+                <button 
+                  key={tmp}
+                  onClick={() => setTemplate(tmp)}
+                  className={`px-4 py-2 text-sm font-semibold rounded-lg capitalize transition-all ${template === tmp ? 'bg-white shadow-sm text-ink ring-1 ring-line' : 'text-muted hover:text-ink hover:bg-slate-50'}`}
+                >
+                  {tmp}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={loadSampleData}
+              className="flex items-center gap-2 px-4 py-2 bg-amber-50 hover:bg-amber-100 text-amber-deep border border-amber/20 rounded-xl font-semibold transition-all hover:-translate-y-0.5"
+            >
+              <FiZap /> Demo
+            </button>
+            <button
+              onClick={downloadPDF}
+              disabled={isGenerating}
+              className="flex items-center gap-2 px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition-all hover:-translate-y-0.5 disabled:opacity-70 disabled:hover:translate-y-0 shadow-lg shadow-indigo-600/20"
+            >
+              <FiDownload /> {isGenerating ? "Exporting..." : "Export"}
+            </button>
+          </div>
+        )}
       </header>
 
       {/* WORKSPACE AREA */}
       <div className="flex-1 flex overflow-hidden">
         
+        {mode === "upload" ? (
+          <div className="flex-1 flex items-center justify-center p-8 bg-slate-50 overflow-y-auto">
+            <div className="bg-white max-w-2xl w-full rounded-[2rem] shadow-xl shadow-slate-200/50 p-10 md:p-16 text-center border border-slate-100">
+              <div className="w-24 h-24 bg-indigo-50 text-indigo-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner">
+                <FiUploadCloud size={40} />
+              </div>
+              <h2 className="font-display font-black text-3xl text-slate-800 mb-4 tracking-tight">Upload Your Resume</h2>
+              <p className="text-slate-500 font-medium mb-10 max-w-md mx-auto">Upload your latest PDF resume to update your Placement Journey and let our ATS extract your skills.</p>
+              
+              {uploadMsg && (
+                <div className={`mb-8 p-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 ${uploadMsg.includes('successfully') ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-red-50 text-red-600 border border-red-100'}`}>
+                  {uploadMsg.includes('successfully') && <FiCheckCircle size={18} />} {uploadMsg}
+                </div>
+              )}
+
+              <div className="border-2 border-dashed border-slate-200 rounded-3xl p-10 bg-slate-50/50 hover:bg-slate-50 transition-colors">
+                <input 
+                  type="file" 
+                  id="resume-upload" 
+                  className="hidden" 
+                  accept=".pdf,application/pdf" 
+                  onChange={handleUploadFileChange} 
+                />
+                <label 
+                  htmlFor="resume-upload" 
+                  className="cursor-pointer inline-flex items-center gap-2 bg-white text-indigo-600 border border-slate-200 font-bold py-3 px-8 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
+                >
+                  Choose PDF File
+                </label>
+                
+                {resumeFile && (
+                  <div className="mt-6 flex flex-col items-center">
+                    <div className="flex items-center gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-sm w-full max-w-sm justify-between">
+                      <div className="flex items-center gap-3 overflow-hidden">
+                        <FiFileText className="text-indigo-500 shrink-0" size={20} />
+                        <span className="text-sm font-bold text-slate-700 truncate">{resumeFile.name}</span>
+                      </div>
+                      <FiCheckCircle className="text-emerald-500 shrink-0" size={20} />
+                    </div>
+                    
+                    <button 
+                      onClick={handleUploadSubmit}
+                      disabled={uploading}
+                      className="mt-8 flex items-center justify-center w-full max-w-sm gap-2 bg-indigo-600 text-white font-bold py-4 px-8 rounded-xl hover:bg-indigo-700 hover:scale-[1.02] transition-all shadow-lg shadow-indigo-600/20 disabled:opacity-70 disabled:hover:scale-100"
+                    >
+                      {uploading ? (
+                        <><div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> Uploading & Parsing...</>
+                      ) : (
+                        <><FiUploadCloud size={20} /> Upload & Extract Skills</>
+                      )}
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
         {/* LEFT PANEL: EDITOR */}
         <div className="w-[450px] shrink-0 bg-paper border-r border-line flex flex-col z-10 shadow-2xl shadow-ink/5">
           {/* Editor Tabs (Vertical or segmented) */}
@@ -913,6 +1018,8 @@ const ResumeBuilder = () => {
           </div>
         </div>
 
+          </>
+        )}
       </div>
     </div>
   );
