@@ -80,9 +80,9 @@ const JourneyMap = ({ journeyData }) => {
   };
 
   return (
-    <div className="bg-white rounded-[28px] border border-slate-200 shadow-sm p-8 pb-6 mb-6 relative overflow-hidden transition-all hover:shadow-md">
+    <div className="w-full relative overflow-hidden">
       <div className="flex justify-between items-baseline mb-2">
-        <h2 className="font-bold text-[20px] text-slate-900">Your prep journey</h2>
+        <h2 className="font-display font-black text-2xl text-slate-800 tracking-tight">Your prep journey</h2>
         <span className="text-[13px] font-medium text-slate-500">5 stages · {completedCount} completed</span>
       </div>
       
