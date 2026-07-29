@@ -52,13 +52,7 @@ const JourneyMap = ({ journeyData }) => {
                       : "bg-white border-2 border-slate-200 text-slate-400"
                 }`}
               >
-                {isCompleted ? (
-                  <Check size={20} strokeWidth={3} />
-                ) : isCurrent ? (
-                  <span className="font-display font-black text-lg">{idx + 1}</span>
-                ) : (
-                  <Lock size={18} />
-                )}
+                <span className="font-display font-black text-lg">{idx + 1}</span>
               </div>
               
               {/* Label */}

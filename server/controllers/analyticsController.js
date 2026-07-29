@@ -132,14 +132,15 @@ const getDashboardAnalytics = async (req, res) => {
           )
         : 0;
 
-    // Fetch user's interview practice count
-    const currentUser = await User.findById(userId).select("interviewPracticeCount").lean();
+    // Fetch user's interview practice count and profile fields
+    const currentUser = await User.findById(userId).select("interviewPracticeCount bio skills linkedin github").lean();
     const interviewPracticeCount = currentUser?.interviewPracticeCount || 0;
+    const isProfileComplete = (currentUser?.skills?.length > 0) || (currentUser?.bio && currentUser?.bio.length > 0) || (currentUser?.linkedin && currentUser?.linkedin.length > 0) || (currentUser?.github && currentUser?.github.length > 0);
 
     // Stage completion rules
     const aptitudeDone = aptitudeCount >= 3 && aptitudeAvg >= 40;
     const codingDone = codingCount >= 2 && codingAvg >= 40;
-    const resumeDone = resumeCount > 0;
+    const resumeDone = resumeCount > 0 || isProfileComplete;
     const interviewDone = interviewPracticeCount >= 5;
     const allDone = aptitudeDone && codingDone && resumeDone && interviewDone;
 
@@ -176,9 +177,9 @@ const getDashboardAnalytics = async (req, res) => {
             ? `${codingCount} test${codingCount > 1 ? "s" : ""} · ${codingAvg}% avg`
             : `0/${2} tests`;
         case 2:
-          return resumeCount > 0
-            ? `${resumeCount} resume uploaded`
-            : "No resume yet";
+          if (resumeCount > 0) return `${resumeCount} resume uploaded`;
+          if (isProfileComplete) return "Profile updated";
+          return "No resume yet";
         case 3:
           return interviewPracticeCount > 0
             ? `${interviewPracticeCount}/5 practiced`
