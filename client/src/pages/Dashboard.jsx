@@ -176,10 +176,9 @@ const Dashboard = () => {
           </div>
 
           {/* Journey Map (Spans 2 columns) */}
-          <div className="md:col-span-2 xl:col-span-2 bg-white/80 backdrop-blur-xl border border-white rounded-3xl shadow-sm hover:shadow-md transition-all overflow-hidden relative">
+          <div className="md:col-span-2 xl:col-span-2 bg-white/80 backdrop-blur-xl border border-white rounded-3xl shadow-sm hover:shadow-md transition-all overflow-hidden relative flex flex-col justify-center">
             <div className="absolute inset-0 bg-gradient-to-b from-slate-50/50 to-transparent pointer-events-none"></div>
-            <div className="relative z-10 -m-6 scale-[0.9] origin-top-left w-[110%]">
-               {/* Note: In a real app we'd rewrite JourneyMap entirely, but to reuse it, we just scale it to fit the bento cell nicely */}
+            <div className="relative z-10 w-full h-full">
                <JourneyMap journeyData={journeyData} />
             </div>
           </div>
