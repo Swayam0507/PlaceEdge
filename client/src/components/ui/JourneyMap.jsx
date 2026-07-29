@@ -29,7 +29,7 @@ const JourneyMap = ({ journeyData }) => {
         
         {/* Active connector line */}
         <div 
-          className="absolute top-6 left-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full -z-10 transition-all duration-1000"
+          className="absolute top-6 left-0 h-1 bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full -z-10 transition-all duration-1000"
           style={{ width: `${(completedCount / (stages.length - 1)) * 100}%` }}
         ></div>
 
