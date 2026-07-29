@@ -25,28 +25,33 @@ const JourneyMap = ({ journeyData }) => {
       
       <div className="relative flex justify-between items-start w-full">
         {/* Background connector line */}
-        <div className="absolute top-6 left-0 w-full h-1 bg-slate-100 rounded-full -z-10"></div>
+        <div className="absolute top-6 left-0 w-full h-1 bg-slate-200 rounded-full -z-20"></div>
         
-        {/* Active connector line */}
-        <div 
-          className="absolute top-6 left-0 h-1 bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full -z-10 transition-all duration-1000"
-          style={{ width: `${(completedCount / (stages.length - 1)) * 100}%` }}
-        ></div>
+        {/* Active connector segments */}
+        {[0, 1, 2, 3].map((i) => {
+          const isSegmentActive = stages[i].status === "completed" && stages[i+1].status === "completed";
+          return (
+            <div 
+              key={`segment-${i}`}
+              className={`absolute top-6 h-1 transition-all duration-1000 -z-10 ${isSegmentActive ? 'bg-gradient-to-r from-emerald-400 to-emerald-500' : 'bg-transparent'}`}
+              style={{ left: `${i * 25}%`, width: '25%' }}
+            ></div>
+          );
+        })}
 
         {stages.map((stage, idx) => {
           const isCompleted = stage.status === "completed";
           const isCurrent = stage.status === "current";
-          const isLocked = stage.status === "locked";
-
+          
           return (
-            <div key={idx} className="flex flex-col items-center relative group">
+            <div key={idx} className="flex flex-col items-center relative group w-1/5">
               {/* Icon / Circle */}
               <div 
-                className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-3 shadow-sm transition-transform duration-300 ${
+                className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-3 shadow-sm transition-transform duration-300 z-10 ${
                   isCurrent ? "scale-110" : "group-hover:scale-105"
                 } ${
                   isCompleted 
-                    ? "bg-gradient-to-br from-emerald-400 to-emerald-500 text-white" 
+                    ? "bg-gradient-to-br from-emerald-400 to-emerald-500 text-white shadow-emerald-500/30" 
                     : isCurrent 
                       ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white ring-4 ring-blue-100 shadow-blue-500/30" 
                       : "bg-white border-2 border-slate-200 text-slate-400"
@@ -56,13 +61,13 @@ const JourneyMap = ({ journeyData }) => {
               </div>
               
               {/* Label */}
-              <div className="text-center">
-                <p className={`font-bold text-[13px] sm:text-sm tracking-tight mb-0.5 ${
+              <div className="text-center w-full">
+                <p className={`font-bold text-[13px] sm:text-sm tracking-tight mb-0.5 truncate ${
                   isCompleted || isCurrent ? "text-slate-900" : "text-slate-400"
                 }`}>
                   {stage.label}
                 </p>
-                <p className="text-[10px] sm:text-[11px] font-semibold text-slate-400">
+                <p className="text-[10px] sm:text-[11px] font-semibold text-slate-400 whitespace-nowrap">
                   {stage.sublabel}
                 </p>
               </div>

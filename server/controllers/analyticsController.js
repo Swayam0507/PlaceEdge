@@ -137,11 +137,11 @@ const getDashboardAnalytics = async (req, res) => {
     const interviewPracticeCount = currentUser?.interviewPracticeCount || 0;
     const isProfileComplete = (currentUser?.skills?.length > 0) || (currentUser?.bio && currentUser?.bio.length > 0) || (currentUser?.linkedin && currentUser?.linkedin.length > 0) || (currentUser?.github && currentUser?.github.length > 0);
 
-    // Stage completion rules (Strictly Sequential)
+    // Stage completion rules (Independent)
     const aptitudeDone = aptitudeCount >= 3 && aptitudeAvg >= 40;
-    const codingDone = aptitudeDone && codingCount >= 2 && codingAvg >= 40;
-    const resumeDone = codingDone && (resumeCount > 0 || isProfileComplete);
-    const interviewDone = resumeDone && interviewPracticeCount >= 5;
+    const codingDone = codingCount >= 2 && codingAvg >= 40;
+    const resumeDone = resumeCount > 0 || isProfileComplete;
+    const interviewDone = interviewPracticeCount >= 5;
     const allDone = aptitudeDone && codingDone && resumeDone && interviewDone;
 
     // Determine statuses — stages unlock sequentially
