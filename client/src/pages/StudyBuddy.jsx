@@ -2,6 +2,9 @@ import { useState, useRef, useEffect } from "react";
 import { FiSend, FiCpu, FiBook, FiCode, FiUsers, FiTarget, FiZap, FiMessageSquare } from "react-icons/fi";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
 import { chatWithAI } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { Loader2 } from "lucide-react";
@@ -37,6 +40,26 @@ const StudyBuddy = () => {
   const [activeCategory, setActiveCategory] = useState(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+
+  const resetChat = (categoryKey = null) => {
+    const catLabel = categoryKey ? CATEGORIES.find(c => c.key === categoryKey)?.label : null;
+    const greeting = catLabel 
+      ? `Switched to **${catLabel}**. How can I help you with this topic today?`
+      : `Hey ${user?.name?.split(" ")[0] || "there"}! 👋 I'm your **AI Study Buddy**.\n\nI'm here to help you prepare for placements. Pick a topic below or ask me anything!\n\n• **DSA & Coding** — Algorithms, Data Structures, Problems\n• **Aptitude** — Quantitative, Logical Reasoning\n• **System Design** — Architecture, Scalability\n• **HR & Behavioral** — Interview Questions, Soft Skills`;
+
+    setMessages([
+      {
+        role: "ai",
+        text: greeting,
+      },
+    ]);
+  };
+
+  const handleCategoryClick = (key) => {
+    const newCat = activeCategory === key ? null : key;
+    setActiveCategory(newCat);
+    resetChat(newCat);
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -169,7 +192,7 @@ const StudyBuddy = () => {
               return (
                 <button
                   key={cat.key}
-                  onClick={() => setActiveCategory(isActive ? null : cat.key)}
+                  onClick={() => handleCategoryClick(cat.key)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all border ${
                     isActive 
                       ? `${cat.bg} ${cat.color} ${cat.border} shadow-sm ring-2 ring-offset-2 ring-${cat.border.split('-')[1]}-200` 
@@ -241,7 +264,8 @@ const StudyBuddy = () => {
                         th: ({ children }) => <th className="px-4 py-3 font-semibold border border-slate-200">{children}</th>,
                         td: ({ children }) => <td className="px-4 py-3 border border-slate-200">{children}</td>,
                       }}
-                      remarkPlugins={[remarkGfm]}
+                      remarkPlugins={[remarkGfm, remarkMath]}
+                      rehypePlugins={[rehypeKatex]}
                     >
                       {msg.text}
                     </ReactMarkdown>

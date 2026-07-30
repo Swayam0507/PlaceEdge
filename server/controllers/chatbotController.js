@@ -127,12 +127,13 @@ exports.generateExam = async (req, res) => {
 
         const prompt = `Generate exactly ${limit} multiple choice questions for the category "${category}" at a "${difficulty}" difficulty level.
 The questions should be relevant for a placement or interview preparation exam.
+CRITICAL: If the category involves Mathematics, Quantitative Aptitude, or Logical Reasoning, you MUST ensure that the question is mathematically sound, the numbers make logical sense, and exactly one of the provided options is the unequivocally correct answer. Double-check your calculations step-by-step internally before finalizing the output.
 Respond ONLY with a valid JSON array of objects. Each object MUST have the following structure:
 {
   "question": "The question text",
   "options": ["Option A", "Option B", "Option C", "Option D"], // Exactly 4 options
   "correctAnswer": 0, // Integer 0-3 representing the index of the correct option
-  "explanation": "Explanation for the correct answer"
+  "explanation": "Step-by-step explanation for the correct answer to prove it is mathematically correct."
 }`;
 
         const response = await ai.models.generateContent({

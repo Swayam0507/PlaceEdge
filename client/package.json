@@ -25,7 +25,9 @@
     "react-markdown": "^9.0.1",
     "react-router-dom": "^7.15.1",
     "react-to-print": "^3.3.0",
-    "remark-gfm": "^4.0.1"
+    "rehype-katex": "^7.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

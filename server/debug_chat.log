@@ -2,13 +2,13 @@
   "hasFile": false,
   "mimetype": null,
   "fileTextLength": 0,
-  "finalText": "Give me 5 aptitude problems on Percentages",
+  "finalText": "[Context: The user has strictly selected the \"DSA & Coding\" category. You MUST ONLY answer questions related to this specific category. If the user asks something completely unrelated to this category, politely decline and ask them to switch the category or stick to the current topic.]\n\nTime complexity of all sorting algorithms",
   "historyPayload": [
     {
       "role": "model",
       "parts": [
         {
-          "text": "Hey Arnav! 👋 I'm your **AI Study Buddy**.\n\nI'm here to help you prepare for placements. Pick a topic below or ask me anything!\n\n• **DSA & Coding** — Algorithms, Data Structures, Problems\n• **Aptitude** — Quantitative, Logical Reasoning\n• **System Design** — Architecture, Scalability\n• **HR & Behavioral** — Interview Questions, Soft Skills"
+          "text": "Switched to **DSA & Coding**. How can I help you with this topic today?"
         }
       ]
     }
