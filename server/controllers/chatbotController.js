@@ -3,7 +3,8 @@ const pdfParse = require('pdf-parse');
 const mammoth = require('mammoth');
 const { SYSTEM_INSTRUCTION, allTools } = require('../utils/aiTools');
 
-const ai = new GoogleGenAI({});
+// Single API key - simple setup
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 exports.chat = async (req, res) => {
     try {
@@ -70,10 +71,10 @@ exports.chat = async (req, res) => {
         // ---------------------
 
         const chat = ai.chats.create({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3.5-flash-lite',
             config: {
                 systemInstruction: SYSTEM_INSTRUCTION,
-                tools: allTools, // Registering ALL tools
+                tools: allTools,
                 temperature: 0.7,
             },
             history: formattedHistory
@@ -109,6 +110,9 @@ exports.chat = async (req, res) => {
 
     } catch (error) {
         console.error("Chatbot Error:", error);
+        if (error.status === 429) {
+            return res.status(429).json({ success: false, message: "Rate limit exceeded. Please wait a few seconds and try again." });
+        }
         res.status(500).json({ success: false, message: error.message || "Failed to generate AI response." });
     }
 };
@@ -132,7 +136,7 @@ Respond ONLY with a valid JSON array of objects. Each object MUST have the follo
 }`;
 
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3.5-flash-lite',
             contents: prompt,
             config: {
                 responseMimeType: "application/json",
@@ -238,7 +242,7 @@ Generate a personalized career advice JSON object. The JSON MUST have exactly th
 Respond ONLY with the valid JSON object.`;
 
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3.5-flash-lite',
             contents: prompt,
             config: {
                 responseMimeType: "application/json",
@@ -328,7 +332,7 @@ ${fileText}
 `;
 
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3.5-flash-lite',
             contents: prompt,
             config: {
                 temperature: 0.2,
@@ -386,7 +390,7 @@ Make sure the percentages in difficulty add up to 100.
 Provide around 6 most asked topics and 10 top questions specifically tailored to ${companyName}'s known interview patterns.`;
 
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3.5-flash-lite',
             contents: prompt,
             config: {
                 temperature: 0.3,

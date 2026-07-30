@@ -2,77 +2,13 @@
   "hasFile": false,
   "mimetype": null,
   "fileTextLength": 0,
-  "finalText": "it",
+  "finalText": "Give me 5 aptitude problems on Percentages",
   "historyPayload": [
     {
       "role": "model",
       "parts": [
         {
-          "text": "Hi Kavya! 👋 I'm your PlaceEdge AI Mentor. How can I help you today?\n\nI can help with:\n• Mock Interviews\n• Resume Review\n• Career Counseling\n• DSA & Coding Hints"
-        }
-      ]
-    },
-    {
-      "role": "user",
-      "parts": [
-        {
-          "text": "hii"
-        }
-      ]
-    },
-    {
-      "role": "model",
-      "parts": [
-        {
-          "text": "Hi there! How can I assist you with your placement and career preparation today? I can help with mock interviews, resume reviews, company prep, and more!"
-        }
-      ]
-    },
-    {
-      "role": "user",
-      "parts": [
-        {
-          "text": "how are you"
-        }
-      ]
-    },
-    {
-      "role": "model",
-      "parts": [
-        {
-          "text": "As an AI, I don't have feelings, but I'm ready and eager to help you with your placement and career preparation!\n\nWhat can I assist you with today regarding your studies, coding, or career goals?"
-        }
-      ]
-    },
-    {
-      "role": "user",
-      "parts": [
-        {
-          "text": "how i get my job"
-        }
-      ]
-    },
-    {
-      "role": "model",
-      "parts": [
-        {
-          "text": "That's a great question, and I can definitely help guide you through the process of getting a job! It generally involves several key steps:\n\n1.  **Skill Development & Learning:** Identify the skills required for your target roles/industries (e.g., DSA, specific programming languages, soft skills) and continuously work on mastering them.\n2.  **Resume & Cover Letter:** Create a strong, ATS-friendly resume and tailored cover letters that highlight your relevant skills and experiences.\n3.  **Networking:** Connect with professionals in your desired field, attend career fairs, and leverage platforms like LinkedIn.\n4.  **Job Search:** Actively look for openings on job portals, company websites, and through your network.\n5.  **Interview Preparation:** Practice common interview questions, technical challenges, and behavioral scenarios.\n6.  **Application & Follow-up:** Apply to suitable positions and follow up professionally when appropriate.\n\n**How PlaceEdge can help you with these steps:**\n\n*   **Resume & Cover Letter:** I can help you **generate a resume** or **check your existing resume's ATS score** against a job description.\n*   **Skill Development & Learning:** I can **generate exams** on topics like DSA or Aptitude to test your knowledge.\n*   **Interview Preparation:** I can conduct **mock interviews** and provide feedback.\n*   **Company Specific Prep:** I can **generate company prep sheets** for specific companies and roles.\n\nTo get started, what part of this process would you like to focus on first? For example, would you like to:\n*   Create a new resume?\n*   Get an ATS score for your current resume?\n*   Practice for an interview?\n*   Prepare for a specific company?"
-        }
-      ]
-    },
-    {
-      "role": "user",
-      "parts": [
-        {
-          "text": "i have 9.13 cgpa so give me list of comnies"
-        }
-      ]
-    },
-    {
-      "role": "model",
-      "parts": [
-        {
-          "text": "That's an excellent CGPA, Kavya! A 9.13 CGPA definitely makes a strong impression and opens up many opportunities.\n\nWhile a high CGPA is a fantastic asset, companies don't typically have a fixed \"CGPA requirement list\" that I can provide. Instead, they look for a combination of:\n*   **Academic performance (which your CGPA covers beautifully!)**\n*   **Relevant technical skills** (e.g., DSA, specific programming languages, machine learning, web development, etc.)\n*   **Projects and internships**\n*   **Problem-solving abilities**\n*   **Communication and soft skills**\n\nTo help you target companies effectively, it's usually better to think about:\n1.  **What kind of role are you interested in?** (e.g., Software Developer, Data Scientist, Product Manager, Consultant, etc.)\n2.  **What technologies or domains are you passionate about?** (e.g., AI/ML, Web Development, Cloud Computing, Cybersecurity, Finance Tech, etc.)\n\nOnce you have a clearer idea of the roles or industries you're aiming for, I can help you with specific company preparation. For example, if you tell me a company name and a target role, I can use my **generate_company_prep** tool to create a tailored preparation sheet for you.\n\nSo, to help me assist you best, could you tell me:\n*   What kind of **job roles** are you most interested in?\n*   Are there any specific **technologies or industries** that catch your eye?"
+          "text": "Hey Arnav! 👋 I'm your **AI Study Buddy**.\n\nI'm here to help you prepare for placements. Pick a topic below or ask me anything!\n\n• **DSA & Coding** — Algorithms, Data Structures, Problems\n• **Aptitude** — Quantitative, Logical Reasoning\n• **System Design** — Architecture, Scalability\n• **HR & Behavioral** — Interview Questions, Soft Skills"
         }
       ]
     }

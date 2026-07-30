@@ -41,9 +41,12 @@ router.post("/interview-feedback", protect, async (req, res) => {
         await User.findByIdAndUpdate(req.user._id, { $inc: { interviewPracticeCount: 1 } });
 
         const { GoogleGenAI } = require("@google/genai");
-        const ai = new GoogleGenAI({});
+        const keysStr = process.env.GEMINI_API_KEY || "";
+        const keys = keysStr.split(',').map(k => k.trim()).filter(k => k);
+        const key = keys.length > 0 ? keys[Math.floor(Math.random() * keys.length)] : "";
+        const ai = new GoogleGenAI({ apiKey: key });
         const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
+            model: "gemini-2.0-flash",
             contents: `You are an expert interview coach. Evaluate the following interview answer and provide short, direct, and constructive feedback. KEEP YOUR RESPONSE EXTREMELY CONCISE AND TO THE POINT (maximum 3-4 short sentences per section). Do not write long essays or full answers.\n\nQuestion: ${question}\n\nCandidate's Answer: ${answer}\n\nProvide short feedback in markdown format covering:\n- Strength (1 bullet)\n- Weaknesses (1-2 bullets)\n- Score (1-10)\n- Suggestions (1-2 short bullet points max)`,
         });
 

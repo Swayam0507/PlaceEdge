@@ -210,7 +210,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white/90 backdrop-blur-xl border border-white rounded-3xl p-6 shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all group flex flex-col justify-between">
+          <div onClick={() => navigate('/career/resume')} className="bg-white/90 backdrop-blur-xl border border-white rounded-3xl p-6 shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer group flex flex-col justify-between">
             <div className="flex justify-between items-start mb-2">
               <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
                 <Target size={22} strokeWidth={2.5} />

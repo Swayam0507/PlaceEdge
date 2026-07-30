@@ -29,11 +29,11 @@ const JourneyMap = ({ journeyData }) => {
         
         {/* Active connector segments */}
         {[0, 1, 2, 3].map((i) => {
-          const isSegmentActive = stages[i].status === "completed" && stages[i+1].status === "completed";
+          const isSegmentActive = stages[i].status !== "locked" && stages[i+1].status !== "locked";
           return (
             <div 
               key={`segment-${i}`}
-              className={`absolute top-6 h-1 transition-all duration-1000 -z-10 ${isSegmentActive ? 'bg-gradient-to-r from-emerald-400 to-emerald-500' : 'bg-transparent'}`}
+              className={`absolute top-6 h-1 transition-all duration-1000 -z-10 ${isSegmentActive ? 'bg-gradient-to-r from-blue-500 to-indigo-500' : 'bg-transparent'}`}
               style={{ left: `${i * 25}%`, width: '25%' }}
             ></div>
           );
@@ -51,7 +51,7 @@ const JourneyMap = ({ journeyData }) => {
                   isCurrent ? "scale-110" : "group-hover:scale-105"
                 } ${
                   isCompleted 
-                    ? "bg-gradient-to-br from-emerald-400 to-emerald-500 text-white shadow-emerald-500/30" 
+                    ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-blue-500/30" 
                     : isCurrent 
                       ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white ring-4 ring-blue-100 shadow-blue-500/30" 
                       : "bg-white border-2 border-slate-200 text-slate-400"

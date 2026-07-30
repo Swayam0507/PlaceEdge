@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { FiSend, FiCpu, FiBook, FiCode, FiUsers, FiTarget, FiZap, FiMessageSquare } from "react-icons/fi";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { chatWithAI } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { Loader2 } from "lucide-react";
@@ -50,7 +51,7 @@ const StudyBuddy = () => {
     setInput("");
 
     const contextPrefix = activeCategory
-      ? `[Context: The student is studying ${activeCategory}. Focus your answer on this topic.]\n\n`
+      ? `[Context: The user has strictly selected the "${CATEGORIES.find(c => c.key === activeCategory)?.label}" category. You MUST ONLY answer questions related to this specific category. If the user asks something completely unrelated to this category, politely decline and ask them to switch the category or stick to the current topic.]\n\n`
       : "";
 
     const userMessage = text.trim();
@@ -67,14 +68,57 @@ const StudyBuddy = () => {
       }));
       const response = await chatWithAI(aiHistory);
       if (response.data.success) {
-        setMessages([...newHistory, { role: "ai", text: response.data.reply }]);
+        if (response.data.message?.isToolCall) {
+          const { toolName, toolArgs } = response.data.message;
+          let toolResponseText = "";
+          
+          if (toolName === "generate_exam") {
+             toolResponseText = `### 📝 Here is your ${toolArgs.difficulty || ''} exam on ${toolArgs.topic || 'the topic'}:\n\n`;
+             if (toolArgs.questions && Array.isArray(toolArgs.questions)) {
+                toolArgs.questions.forEach((q, i) => {
+                   toolResponseText += `**Q${i+1}: ${q.question}**\n`;
+                   if (Array.isArray(q.options)) {
+                     q.options.forEach((opt) => {
+                        toolResponseText += `- ${opt}\n`;
+                     });
+                   }
+                   toolResponseText += `\n\n**✅ Correct Answer:** ${q.correctAnswer}\n\n`;
+                   toolResponseText += `**💡 Explanation:** ${q.explanation}\n\n---\n\n`;
+                });
+             }
+          } else if (toolName === "show_ats_score") {
+             toolResponseText = `### 📊 ATS Resume Score: ${toolArgs.score}/100\n\n**Missing Keywords:**\n`;
+             toolArgs.missingKeywords?.forEach(k => toolResponseText += `- ${k}\n`);
+             toolResponseText += `\n**Actionable Feedback:**\n`;
+             toolArgs.actionableFeedback?.forEach(f => toolResponseText += `- ${f}\n`);
+          } else if (toolName === "evaluate_interview") {
+             toolResponseText = `### 🎯 Interview Evaluation: ${toolArgs.score}/10\n\n**Strengths:**\n${toolArgs.strengths}\n\n**Improvements:**\n${toolArgs.improvements}`;
+          } else if (toolName === "generate_company_prep") {
+             toolResponseText = `### 🏢 Company Prep: ${toolArgs.companyName} (${toolArgs.role})\n\n**About:**\n${toolArgs.aboutCompany}\n\n**Interview Rounds:**\n`;
+             toolArgs.interviewRounds?.forEach(r => toolResponseText += `- ${r}\n`);
+             toolResponseText += `\n**Top Questions:**\n`;
+             toolArgs.topQuestions?.forEach(q => toolResponseText += `- ${q}\n`);
+          } else if (toolName === "generate_resume_ui") {
+             toolResponseText = `### 📄 Resume Details Collected\n\n**Name:** ${toolArgs.name}\n**Email:** ${toolArgs.email}\n**Phone:** ${toolArgs.phone}\n**Skills:** ${toolArgs.skills}\n\n*(You can use these details in the Resume Builder!)*`;
+          } else {
+             toolResponseText = `*Triggered tool: ${toolName}*`;
+          }
+
+          setMessages([...newHistory, { role: "ai", text: toolResponseText }]);
+        } else {
+          setMessages([...newHistory, { role: "ai", text: response.data.message?.text || "I couldn't generate a response." }]);
+        }
       } else {
         throw new Error("Failed");
       }
-    } catch {
+    } catch (err) {
+      let errorMsg = "Sorry, I'm having trouble right now. Please try again! 🔌";
+      if (err.response?.status === 429 || err.message?.includes("429")) {
+         errorMsg = "Oops! ⏳ I hit a rate limit (too many requests). Please wait 20-30 seconds and try asking again!";
+      }
       setMessages([
         ...newHistory,
-        { role: "ai", text: "Sorry, I'm having trouble right now. Please try again! 🔌" },
+        { role: "ai", text: errorMsg },
       ]);
     } finally {
       setLoading(false);
@@ -190,7 +234,14 @@ const StudyBuddy = () => {
                         ol: ({ children }) => <ol className="list-decimal pl-5 mb-3 space-y-1">{children}</ol>,
                         li: ({ children }) => <li>{children}</li>,
                         h3: ({ children }) => <h3 className="font-bold text-lg text-indigo-900 mt-4 mb-2">{children}</h3>,
+                        table: ({ children }) => <div className="overflow-x-auto my-4"><table className="min-w-full text-sm text-left border-collapse border border-slate-200 rounded-lg">{children}</table></div>,
+                        thead: ({ children }) => <thead className="bg-slate-100 text-slate-700">{children}</thead>,
+                        tbody: ({ children }) => <tbody className="bg-white divide-y divide-slate-200">{children}</tbody>,
+                        tr: ({ children }) => <tr className="hover:bg-slate-50 transition-colors">{children}</tr>,
+                        th: ({ children }) => <th className="px-4 py-3 font-semibold border border-slate-200">{children}</th>,
+                        td: ({ children }) => <td className="px-4 py-3 border border-slate-200">{children}</td>,
                       }}
+                      remarkPlugins={[remarkGfm]}
                     >
                       {msg.text}
                     </ReactMarkdown>
