@@ -39,7 +39,7 @@ const SkillGapAnalyzer = ({ requiredSkills, userSkills }) => {
 
   return (
     <div className="mt-4 p-5 bg-gray-900 rounded-xl border border-gray-700 w-full animate-fade-in-up">
-      <div className="flex flex-col md:flex-row gap-6 items-center">
+      <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-center">
         
         {/* Circular Progress */}
         <div className="relative w-24 h-24 flex-shrink-0 flex items-center justify-center">
@@ -67,19 +67,19 @@ const SkillGapAnalyzer = ({ requiredSkills, userSkills }) => {
 
         {/* Skills Breakdown */}
         <div className="flex-1 w-full">
-          <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
+          <h4 className="text-white font-semibold mb-4 flex flex-wrap items-center gap-3 text-lg">
             Skill-Gap Analysis
             {matchPercentage < 100 && (
-              <span className="bg-primary/20 text-primary-light text-xs px-2 py-0.5 rounded border border-primary/30">
+              <span className="bg-primary/20 text-primary-light text-xs font-medium px-2.5 py-1 rounded-md border border-primary/30 whitespace-nowrap">
                 Action Required
               </span>
             )}
           </h4>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div className="flex flex-col sm:flex-row gap-6 text-sm">
             {/* Matched Skills */}
-            <div>
-              <p className="text-gray-400 mb-2 text-xs uppercase tracking-wider">You Have ({matchedSkills.length})</p>
+            <div className="flex-1">
+              <p className="text-gray-400 mb-2 text-xs uppercase tracking-wider font-semibold">You Have ({matchedSkills.length})</p>
               <div className="flex flex-wrap gap-2">
                 {matchedSkills.map(skill => (
                   <span key={skill} className="flex items-center gap-1 bg-green-500/10 text-green-400 px-2 py-1 rounded border border-green-500/20">
@@ -90,8 +90,8 @@ const SkillGapAnalyzer = ({ requiredSkills, userSkills }) => {
             </div>
 
             {/* Missing Skills */}
-            <div>
-              <p className="text-gray-400 mb-2 text-xs uppercase tracking-wider">Missing ({missingSkills.length})</p>
+            <div className="flex-1">
+              <p className="text-gray-400 mb-2 text-xs uppercase tracking-wider font-semibold">Missing ({missingSkills.length})</p>
               <div className="flex flex-wrap gap-2">
                 {missingSkills.map(skill => (
                   <span key={skill} className="flex items-center gap-1 bg-red-500/10 text-red-400 px-2 py-1 rounded border border-red-500/20">
@@ -105,14 +105,14 @@ const SkillGapAnalyzer = ({ requiredSkills, userSkills }) => {
         
         {/* Call to Action */}
         {missingSkills.length > 0 && (
-          <div className="flex-shrink-0 w-full md:w-auto flex flex-col gap-2">
+          <div className="flex-shrink-0 w-full lg:w-auto flex flex-col gap-2 mt-4 lg:mt-0">
             <button 
               onClick={() => window.location.href = '/practice'}
-              className="flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-accent hover:opacity-90 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-all shadow-lg shadow-primary/20"
+              className="flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-accent hover:opacity-90 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-lg shadow-primary/20 whitespace-nowrap"
             >
               <FaBookOpen /> Prepare Module
             </button>
-            <p className="text-xs text-gray-400 text-center">Estimated Prep: 3 days</p>
+            <p className="text-xs text-gray-400 text-center font-medium">Estimated Prep: 3 days</p>
           </div>
         )}
       </div>
