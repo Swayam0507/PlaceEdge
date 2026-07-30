@@ -81,74 +81,76 @@ const sendTestResultEmail = async (req, res) => {
       <html>
       <head>
         <style>
-          body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; color: #e2e8f0; margin: 0; padding: 0; }
-          .container { max-width: 600px; margin: 0 auto; padding: 30px; }
-          .header { background: linear-gradient(135deg, #6366f1, #8b5cf6); padding: 30px; border-radius: 16px 16px 0 0; text-align: center; }
-          .header h1 { color: #fff; margin: 0; font-size: 24px; }
-          .header p { color: #c7d2fe; margin: 10px 0 0; }
-          .body { background: #1e293b; padding: 30px; border-radius: 0 0 16px 16px; }
-          .score-card { background: #0f172a; border-radius: 12px; padding: 25px; text-align: center; margin: 20px 0; }
-          .score { font-size: 48px; font-weight: bold; color: ${scoreColor}; }
-          .score-label { color: #94a3b8; font-size: 14px; margin-top: 5px; }
-          .stats { display: flex; justify-content: space-around; margin: 20px 0; }
-          .stat { text-align: center; }
-          .stat-value { font-size: 20px; font-weight: bold; color: #f8fafc; }
-          .stat-label { font-size: 12px; color: #94a3b8; margin-top: 4px; }
-          .footer { text-align: center; margin-top: 20px; color: #64748b; font-size: 12px; }
-          .btn { display: inline-block; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; padding: 12px 30px; border-radius: 8px; text-decoration: none; margin-top: 20px; }
+          body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; background: #f1f5f9; color: #334155; margin: 0; padding: 40px 0; }
+          .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+          .header { background: linear-gradient(135deg, #2563eb, #7c3aed); padding: 40px 30px; text-align: center; }
+          .header h1 { color: #ffffff; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+          .header p { color: #e0e7ff; margin: 10px 0 0; font-size: 15px; font-weight: 500; }
+          .body { padding: 40px 30px; }
+          .greeting { font-size: 18px; font-weight: 600; color: #0f172a; margin-bottom: 20px; }
+          .intro { color: #475569; font-size: 15px; line-height: 1.6; margin-bottom: 30px; }
+          .score-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 30px; text-align: center; margin-bottom: 30px; }
+          .score { font-size: 56px; font-weight: 900; color: ${scoreColor}; line-height: 1; margin-bottom: 8px; }
+          .score-label { color: #64748b; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+          .stats-table { width: 100%; border-collapse: separate; border-spacing: 12px 0; margin-bottom: 30px; }
+          .stat-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px 15px; text-align: center; width: 33%; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+          .stat-value { font-size: 22px; font-weight: 800; color: #0f172a; margin-bottom: 4px; }
+          .stat-label { font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; }
+          .feedback { background: ${attempt.percentage >= 70 ? '#ecfdf5' : attempt.percentage >= 40 ? '#fffbeb' : '#fef2f2'}; border: 1px solid ${attempt.percentage >= 70 ? '#a7f3d0' : attempt.percentage >= 40 ? '#fde68a' : '#fecaca'}; padding: 20px; border-radius: 12px; text-align: center; color: ${attempt.percentage >= 70 ? '#065f46' : attempt.percentage >= 40 ? '#92400e' : '#991b1b'}; font-weight: 500; font-size: 15px; margin-bottom: 35px; }
+          .btn-container { text-align: center; }
+          .btn { display: inline-block; background: linear-gradient(135deg, #2563eb, #7c3aed); color: #ffffff; padding: 14px 32px; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 4px 14px rgba(37,99,235,0.25); }
+          .footer { background: #f8fafc; padding: 25px 30px; text-align: center; color: #94a3b8; font-size: 13px; border-top: 1px solid #e2e8f0; }
+          .footer p { margin: 5px 0; }
         </style>
       </head>
       <body>
         <div class="container">
           <div class="header">
             <h1>📋 Test Result Report</h1>
-            <p>Smart Placement Preparation Platform</p>
+            <p>PlaceEdge Preparation Platform</p>
           </div>
           <div class="body">
-            <p>Hi <strong>${user.name}</strong>,</p>
-            <p>Here's your performance summary for the <strong>${attempt.category.toUpperCase()}</strong> test:</p>
+            <div class="greeting">Hi <strong>${user.name}</strong>,</div>
+            <div class="intro">Here's your performance summary for the <strong>${attempt.category.toUpperCase()}</strong> test you recently completed.</div>
 
             <div class="score-card">
               <div class="score">${gradeEmoji} ${attempt.percentage}%</div>
               <div class="score-label">Overall Score</div>
             </div>
 
-            <table width="100%" cellpadding="10" style="margin: 20px 0;">
+            <table class="stats-table">
               <tr>
-                <td style="text-align:center; background: #0f172a; border-radius: 8px; padding: 15px;">
-                  <div style="font-size: 22px; font-weight: bold; color: #f8fafc;">${attempt.score}</div>
-                  <div style="font-size: 12px; color: #94a3b8;">Correct</div>
+                <td class="stat-box">
+                  <div class="stat-value">${attempt.score}</div>
+                  <div class="stat-label">Correct</div>
                 </td>
-                <td style="text-align:center; background: #0f172a; border-radius: 8px; padding: 15px;">
-                  <div style="font-size: 22px; font-weight: bold; color: #f8fafc;">${attempt.totalQuestions}</div>
-                  <div style="font-size: 12px; color: #94a3b8;">Total Questions</div>
+                <td class="stat-box">
+                  <div class="stat-value">${attempt.totalQuestions}</div>
+                  <div class="stat-label">Total Qs</div>
                 </td>
-                <td style="text-align:center; background: #0f172a; border-radius: 8px; padding: 15px;">
-                  <div style="font-size: 22px; font-weight: bold; color: #f8fafc;">${attempt.difficulty || "medium"}</div>
-                  <div style="font-size: 12px; color: #94a3b8;">Difficulty</div>
+                <td class="stat-box">
+                  <div class="stat-value" style="text-transform: capitalize;">${attempt.difficulty || "Medium"}</div>
+                  <div class="stat-label">Level</div>
                 </td>
               </tr>
             </table>
 
-            <p style="color: #94a3b8;">
+            <div class="feedback">
               ${attempt.percentage >= 70
-                ? "🎉 Excellent performance! Keep up the great work."
+                ? "🎉 Excellent performance! You're well on your way to mastering this topic."
                 : attempt.percentage >= 40
-                ? "💡 Good effort! Focus on your weak areas to improve further."
-                : "📖 Keep practicing! Review the topics and try again."
+                ? "💡 Good effort! Focus on reviewing your weak areas to improve your score."
+                : "📖 Keep practicing! Don't give up, review the concepts and try again."
               }
-            </p>
-
-            <div style="text-align: center;">
-              <a href="${clientUrl}/test-history" class="btn">
-                View Full History →
-              </a>
             </div>
 
-            <div class="footer">
-              <p>This is an automated email from Smart Placement Platform.</p>
-              <p>© ${new Date().getFullYear()} PlaceEdge. All rights reserved.</p>
+            <div class="btn-container">
+              <a href="${clientUrl}/test-history" class="btn">View Detailed Analysis →</a>
             </div>
+          </div>
+          <div class="footer">
+            <p>This is an automated email from PlaceEdge Platform.</p>
+            <p>© ${new Date().getFullYear()} PlaceEdge. All rights reserved.</p>
           </div>
         </div>
       </body>
