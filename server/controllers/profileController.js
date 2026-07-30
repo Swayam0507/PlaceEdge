@@ -140,7 +140,7 @@ const toggleTheme = async (req, res) => {
 const completeOnboarding = async (req, res) => {
   try {
     const { track, targetCompany } = req.body;
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user._id).select('+password');
 
     user.onboardingTrack = track || "general";
     user.targetCompany = targetCompany || "";
@@ -238,7 +238,7 @@ ${fileText}`;
 const toggleRoadmapTask = async (req, res) => {
   try {
     const { taskId, completed } = req.body;
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user.id).select('+password');
 
     if (!user || !user.customRoadmap) {
       return res.status(404).json({ success: false, message: "Roadmap not found" });
