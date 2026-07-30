@@ -50,6 +50,7 @@ export const resetPassword = (token, data) => API.put(`/auth/reset-password/${to
 export const getProfile = () => API.get("/profile");
 export const updateProfile = (data) => API.put("/profile", data);
 export const toggleTheme = (theme) => API.put("/profile/theme", { theme });
+export const toggleRoadmapTask = (taskId, completed) => API.put("/profile/roadmap/task", { taskId, completed });
 
 // ---------- Resume API ----------
 export const uploadResume = (formData) =>

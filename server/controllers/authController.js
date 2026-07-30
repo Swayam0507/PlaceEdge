@@ -58,6 +58,10 @@ const register = async (req, res) => {
         theme: user.theme,
         streak: user.streak,
         badges: user.badges,
+        isOnboardingComplete: user.isOnboardingComplete,
+        onboardingTrack: user.onboardingTrack,
+        targetCompany: user.targetCompany,
+        customRoadmap: user.customRoadmap,
         createdAt: user.createdAt,
       },
     });
@@ -138,6 +142,10 @@ const login = async (req, res) => {
         theme: user.theme,
         streak: user.streak,
         badges: user.badges,
+        isOnboardingComplete: user.isOnboardingComplete,
+        onboardingTrack: user.onboardingTrack,
+        targetCompany: user.targetCompany,
+        customRoadmap: user.customRoadmap,
         createdAt: user.createdAt,
       },
     });
@@ -211,6 +219,10 @@ const getMe = async (req, res) => {
         theme: user.theme,
         streak: user.streak,
         badges: user.badges,
+        isOnboardingComplete: user.isOnboardingComplete,
+        onboardingTrack: user.onboardingTrack,
+        targetCompany: user.targetCompany,
+        customRoadmap: user.customRoadmap,
         createdAt: user.createdAt,
       },
     });

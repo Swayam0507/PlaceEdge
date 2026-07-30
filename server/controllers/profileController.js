@@ -1,6 +1,11 @@
 const User = require("../models/User");
 const TestAttempt = require("../models/TestAttempt");
 const Resume = require("../models/Resume");
+const { GoogleGenAI } = require("@google/genai");
+const pdfParse = require("pdf-parse");
+const mammoth = require("mammoth");
+
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 /**
  * @desc    Update user profile
@@ -127,4 +132,161 @@ const toggleTheme = async (req, res) => {
   }
 };
 
-module.exports = { updateProfile, getProfile, toggleTheme };
+/**
+ * @desc    Complete onboarding
+ * @route   POST /api/profile/onboarding
+ * @access  Private
+ */
+const completeOnboarding = async (req, res) => {
+  try {
+    const { track, targetCompany } = req.body;
+    const user = await User.findById(req.user._id);
+
+    user.onboardingTrack = track || "general";
+    user.targetCompany = targetCompany || "";
+    user.isOnboardingComplete = true;
+
+    // If company track and a resume was uploaded
+    if (track === "company" && targetCompany && req.file) {
+      let fileText = "";
+      const mimeType = req.file.mimetype;
+      
+      if (mimeType === "application/pdf") {
+        const pdfData = await pdfParse(req.file.buffer);
+        fileText = pdfData.text;
+      } else if (
+        mimeType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || 
+        req.file.originalname.endsWith(".docx")
+      ) {
+        const result = await mammoth.extractRawText({ buffer: req.file.buffer });
+        fileText = result.value;
+      }
+
+      if (fileText) {
+        const prompt = `You are an expert tech recruiter and career coach.
+Analyze the provided resume against the typical hiring requirements for a software engineering role at ${targetCompany}.
+Generate a personalized 4-week custom roadmap specifically tailored to bridge the gaps in the candidate's resume for ${targetCompany}.
+Respond ONLY with a valid JSON object strictly matching this format:
+{
+  "gapAnalysis": "A 2-3 sentence summary of what the resume is missing for ${targetCompany}.",
+  "missingSkills": ["Skill 1", "Skill 2"],
+  "weeks": [
+    {
+      "week": 1,
+      "title": "Focus Title for Week 1",
+      "tasks": ["Task 1", "Task 2", "Task 3"]
+    },
+    {
+      "week": 2,
+      "title": "Focus Title for Week 2",
+      "tasks": ["Task 1", "Task 2", "Task 3"]
+    },
+    {
+      "week": 3,
+      "title": "Focus Title for Week 3",
+      "tasks": ["Task 1", "Task 2", "Task 3"]
+    },
+    {
+      "week": 4,
+      "title": "Focus Title for Week 4",
+      "tasks": ["Task 1", "Task 2", "Task 3"]
+    }
+  ]
+}
+
+Resume Text:
+${fileText}`;
+
+        const response = await ai.models.generateContent({
+          model: 'gemini-3.5-flash-lite',
+          contents: prompt,
+          config: {
+            temperature: 0.2,
+            responseMimeType: "application/json"
+          }
+        });
+
+        try {
+          user.customRoadmap = JSON.parse(response.text);
+        } catch (e) {
+          console.error("Failed to parse Gemini roadmap:", e);
+        }
+      }
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Onboarding completed successfully.",
+      user: {
+        isOnboardingComplete: user.isOnboardingComplete,
+        onboardingTrack: user.onboardingTrack,
+        targetCompany: user.targetCompany,
+        customRoadmap: user.customRoadmap
+      }
+    });
+  } catch (error) {
+    console.error("Complete Onboarding Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to complete onboarding."
+    });
+  }
+};
+
+const toggleRoadmapTask = async (req, res) => {
+  try {
+    const { taskId, completed } = req.body;
+    const user = await User.findById(req.user.id);
+
+    if (!user || !user.customRoadmap) {
+      return res.status(404).json({ success: false, message: "Roadmap not found" });
+    }
+
+    let completedTasks = user.customRoadmap.completedTasks || [];
+    
+    if (completed) {
+      if (!completedTasks.includes(taskId)) {
+        completedTasks.push(taskId);
+      }
+    } else {
+      completedTasks = completedTasks.filter(id => id !== taskId);
+    }
+    
+    user.customRoadmap.completedTasks = completedTasks;
+    
+    // Progressive Skill Gap Logic
+    let totalTasks = 0;
+    user.customRoadmap.weeks.forEach(w => {
+      totalTasks += w.tasks ? w.tasks.length : 0;
+    });
+    
+    if (!user.customRoadmap.originalMissingSkills) {
+      user.customRoadmap.originalMissingSkills = user.customRoadmap.missingSkills ? [...user.customRoadmap.missingSkills] : [];
+    }
+    
+    const totalSkills = user.customRoadmap.originalMissingSkills.length;
+    const progressPercent = totalTasks > 0 ? completedTasks.length / totalTasks : 0;
+    
+    const skillsToDrop = Math.floor(progressPercent * totalSkills);
+    const skillsToKeep = totalSkills - skillsToDrop;
+    
+    user.customRoadmap.missingSkills = user.customRoadmap.originalMissingSkills.slice(0, skillsToKeep);
+    
+    // Need to tell mongoose that the mixed type changed
+    user.markModified('customRoadmap');
+    await user.save();
+    
+    res.status(200).json({
+      success: true,
+      customRoadmap: user.customRoadmap
+    });
+
+  } catch (error) {
+    console.error("Toggle Roadmap Task Error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+module.exports = { updateProfile, getProfile, toggleTheme, completeOnboarding, toggleRoadmapTask };

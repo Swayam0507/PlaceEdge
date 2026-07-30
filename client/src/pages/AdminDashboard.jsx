@@ -192,7 +192,7 @@ const AdminDashboard = () => {
         label: 'Average Score (%)',
         data: analytics?.categoryPerformance?.map(cat => cat.avgScore) || [],
         backgroundColor: 'rgba(99, 102, 241, 0.7)',
-        borderColor: '#6366f1',
+        borderColor: '#ea580c',
         borderWidth: 1,
         borderRadius: 6,
       },
@@ -287,12 +287,12 @@ const AdminDashboard = () => {
       {
         label: 'New Registrations',
         data: recentRegs?.map(r => r.count) || [],
-        borderColor: '#6366f1',
+        borderColor: '#ea580c',
         backgroundColor: 'rgba(99,102,241,0.1)',
         fill: true,
         tension: 0.4,
         pointRadius: 3,
-        pointBackgroundColor: '#6366f1',
+        pointBackgroundColor: '#ea580c',
       },
       {
         label: 'Tests Taken',
@@ -319,7 +319,7 @@ const AdminDashboard = () => {
 
   // Stat cards config
   const statCards = [
-    { label: 'Total Students', value: overview.totalStudents || 0, icon: Users, color: '#6366f1', target: 'top-performers' },
+    { label: 'Total Students', value: overview.totalStudents || 0, icon: Users, color: '#ea580c', target: 'top-performers' },
     { label: 'Questions', value: overview.totalQuestions || 0, icon: FileText, color: '#ea580c', target: 'questions-category' },
     { label: 'Test Attempts', value: overview.totalTests || 0, icon: List, color: '#0891b2', target: 'category-performance' },
     { label: 'Avg Score', value: `${overview.avgScore || 0}%`, icon: TrendingUp, color: '#dc2626', target: 'score-distribution' },
@@ -338,7 +338,7 @@ const AdminDashboard = () => {
       <div className="flex flex-col space-y-8">
 
         {/* Welcome Section */}
-        <div className="bg-gradient-to-br from-indigo-500/10 to-cyan-500/5 border border-indigo-500/20 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm">
+        <div className="bg-gradient-to-br from-amber-deep/10 to-emerald/5 border border-amber-deep/20 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm">
           <div>
             <h1 className="font-display font-bold text-2xl text-ink mb-1">
               Welcome back, Admin
@@ -351,12 +351,12 @@ const AdminDashboard = () => {
           </div>
           <div className="flex items-center gap-3 flex-wrap">
             {/* Date Range */}
-            <div className="flex bg-white rounded-xl border border-line overflow-hidden shadow-sm">
+            <div className="flex bg-paper rounded-xl border border-line overflow-hidden shadow-sm">
               {DATE_RANGES.map(r => (
                 <button
                   key={r.days}
                   onClick={() => setDateRange(r.days)}
-                  className={`px-3 py-1.5 text-xs font-bold transition-colors ${dateRange === r.days ? 'bg-ink text-white' : 'text-muted hover:bg-gray-50'}`}
+                  className={`px-3 py-1.5 text-xs font-bold transition-colors ${dateRange === r.days ? 'bg-ink text-white' : 'text-muted hover:bg-surface'}`}
                 >
                   {r.label}
                 </button>
@@ -366,14 +366,14 @@ const AdminDashboard = () => {
             <button
               onClick={() => fetchAnalytics(true)}
               disabled={refreshing}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-white border border-line rounded-xl text-ink-soft hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-70"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-paper border border-line rounded-xl text-ink-soft hover:bg-surface transition-colors shadow-sm disabled:opacity-70"
               title={`Last updated: ${getTimeAgo()}`}
             >
               <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
               {getTimeAgo() || 'Refresh'}
             </button>
             {/* Export buttons */}
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-white border border-line rounded-xl text-ink-soft hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-70" onClick={() => handleExport("users")} disabled={!!exporting}>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-paper border border-line rounded-xl text-ink-soft hover:bg-surface transition-colors shadow-sm disabled:opacity-70" onClick={() => handleExport("users")} disabled={!!exporting}>
               <Download size={14} /> {exporting === "users" ? "..." : "CSV"}
             </button>
             <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-ink text-white rounded-xl hover:bg-ink-soft transition-colors shadow-sm" onClick={handlePDFExport}>
@@ -411,12 +411,12 @@ const AdminDashboard = () => {
         {(recentRegs?.length > 0 || recentTests?.length > 0) && (
           <div id="recent-activity" className="scroll-mt-24">
             <h2 className="flex items-center gap-2 font-display font-bold text-xl text-ink mb-4">
-              <Clock className="text-indigo-500" /> Platform Activity
+              <Clock className="text-amber-deep" /> Platform Activity
               <span className="text-xs font-semibold text-muted ml-auto uppercase tracking-wider">
                 {dateRange > 0 ? `Last ${dateRange} days` : 'All time'}
               </span>
             </h2>
-            <div className="h-80 p-5 bg-white rounded-2xl border border-line shadow-sm">
+            <div className="h-80 p-5 bg-paper rounded-2xl border border-line shadow-sm">
               <Line data={activityChartData} options={activityChartOptions} />
             </div>
           </div>
@@ -426,9 +426,9 @@ const AdminDashboard = () => {
         {analytics?.categoryPerformance?.length > 0 && (
           <div id="category-performance" className="scroll-mt-24">
             <h2 className="flex items-center gap-2 font-display font-bold text-xl text-ink mb-4">
-              <BarChart2 className="text-indigo-500" /> Category Performance
+              <BarChart2 className="text-amber-deep" /> Category Performance
             </h2>
-            <div className="h-80 p-5 bg-white rounded-2xl border border-line shadow-sm">
+            <div className="h-80 p-5 bg-paper rounded-2xl border border-line shadow-sm">
               <Bar data={categoryChartData} options={categoryChartOptions} />
             </div>
           </div>
@@ -440,7 +440,7 @@ const AdminDashboard = () => {
             <h2 className="flex items-center gap-2 font-display font-bold text-xl text-ink mb-4">
               <PieChart className="text-sky-500" /> Score Distribution
             </h2>
-            <div className="h-80 p-5 bg-white rounded-2xl border border-line shadow-sm">
+            <div className="h-80 p-5 bg-paper rounded-2xl border border-line shadow-sm">
               <Bar data={scoreChartData} options={scoreChartOptions} />
             </div>
           </div>
@@ -452,11 +452,11 @@ const AdminDashboard = () => {
             <h2 className="flex items-center gap-2 font-display font-bold text-xl text-ink mb-4">
               <Award className="text-amber-500" /> Top Performers
             </h2>
-            <div className="bg-white rounded-2xl border border-line shadow-sm overflow-hidden">
+            <div className="bg-paper rounded-2xl border border-line shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-gray-50/50 border-b border-line text-xs uppercase tracking-wider text-muted font-semibold">
+                    <tr className="bg-surface/50 border-b border-line text-xs uppercase tracking-wider text-muted font-semibold">
                       <th className="p-4">#</th>
                       <th className="p-4">Name</th>
                       <th className="p-4">Email</th>
@@ -466,9 +466,9 @@ const AdminDashboard = () => {
                   </thead>
                   <tbody className="divide-y divide-line">
                     {analytics.topPerformers.map((perf, i) => (
-                      <tr key={i} className="hover:bg-gray-50/50 transition-colors">
+                      <tr key={i} className="hover:bg-surface/50 transition-colors">
                         <td className="p-4">
-                          <span className={`inline-flex items-center justify-center px-2.5 py-1 rounded-md font-bold text-xs ${i === 0 ? 'bg-amber-100 text-amber-600' : i === 1 ? 'bg-gray-100 text-gray-600' : i === 2 ? 'bg-orange-100 text-orange-600' : 'bg-indigo-50 text-indigo-600'}`}>
+                          <span className={`inline-flex items-center justify-center px-2.5 py-1 rounded-md font-bold text-xs ${i === 0 ? 'bg-amber-100 text-amber-600' : i === 1 ? 'bg-line text-muted' : i === 2 ? 'bg-orange-100 text-orange-600' : 'bg-amber/10 text-amber-deep'}`}>
                             {i === 0 ? "1st" : i === 1 ? "2nd" : i === 2 ? "3rd" : `#${i + 1}`}
                           </span>
                         </td>
@@ -494,9 +494,9 @@ const AdminDashboard = () => {
           {analytics?.categoryDistribution?.length > 0 && (
             <div>
               <h2 className="flex items-center gap-2 font-display font-bold text-xl text-ink mb-4">
-                <BookOpen className="text-blue-500" /> Questions by Category
+                <BookOpen className="text-emerald" /> Questions by Category
               </h2>
-              <div className="h-72 p-5 bg-white rounded-2xl border border-line shadow-sm">
+              <div className="h-72 p-5 bg-paper rounded-2xl border border-line shadow-sm">
                 <Doughnut data={qCategoryData} options={doughnutOptions} />
               </div>
             </div>
@@ -507,7 +507,7 @@ const AdminDashboard = () => {
               <h2 className="flex items-center gap-2 font-display font-bold text-xl text-ink mb-4">
                 <Zap className="text-amber-500" /> Questions by Difficulty
               </h2>
-              <div className="h-72 p-5 bg-white rounded-2xl border border-line shadow-sm">
+              <div className="h-72 p-5 bg-paper rounded-2xl border border-line shadow-sm">
                 <Doughnut data={qDifficultyData} options={doughnutOptions} />
               </div>
             </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getCompanies, checkEligibility, createCompany, deleteCompanyApi } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { formatDate } from "../utils/helpers";
+import { Building2, IndianRupee, Calendar, GraduationCap, Target, ChevronRight, Plus, Trash2, Globe, CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
 
 const CompanyTracker = () => {
   const { user } = useAuth();
@@ -55,7 +56,7 @@ const CompanyTracker = () => {
   };
 
   const statusColors = {
-    upcoming: { bg: "rgba(99,102,241,0.15)", color: "#818cf8" },
+    upcoming: { bg: "rgba(245,158,11,0.15)", color: "#fbbf24" },
     ongoing: { bg: "rgba(16,185,129,0.15)", color: "#10b981" },
     completed: { bg: "rgba(100,116,139,0.15)", color: "#94a3b8" },
     cancelled: { bg: "rgba(239,68,68,0.15)", color: "#ef4444" },
@@ -66,25 +67,32 @@ const CompanyTracker = () => {
       <div className="max-w-[1440px] mx-auto px-4 sm:px-7 pt-8 sm:pt-12">
         
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="font-display font-semibold text-3xl mb-1">🏢 Company Tracker</h1>
-            <p className="text-ink-soft font-body text-sm">Track placement drives, check eligibility, and stay informed</p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 p-8 rounded-2xl bg-gradient-to-br from-amber-deep/10 to-emerald/5 border border-line shadow-sm">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-deep to-amber-500 text-white flex items-center justify-center shadow-md">
+              <Building2 size={24} />
+            </div>
+            <div>
+              <h1 className="font-display font-bold text-3xl mb-1 text-ink">Company Tracker</h1>
+              <p className="text-muted font-body text-sm font-medium">Track placement drives, check eligibility, and stay informed</p>
+            </div>
           </div>
           {isAdmin && (
             <button 
-              className={`px-5 py-2.5 rounded-xl font-medium text-sm transition-all shadow-sm ${showAdd ? 'bg-white border border-line text-ink hover:bg-gray-50' : 'bg-ink text-paper hover:bg-ink-soft'}`}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm ${showAdd ? 'bg-paper border border-line text-ink hover:bg-surface' : 'bg-ink text-paper hover:bg-ink-soft'}`}
               onClick={() => setShowAdd(!showAdd)}
             >
-              {showAdd ? "Cancel" : "➕ Add Company"}
+              {showAdd ? "Cancel" : <><Plus size={18} /> Add Company</>}
             </button>
           )}
         </div>
 
         {/* Admin Add Form */}
         {showAdd && isAdmin && (
-          <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-card border border-line mb-10 animate-fade-in">
-            <h2 className="font-display font-semibold text-xl mb-6 border-b border-line pb-4">➕ Add Company Drive</h2>
+          <div className="bg-paper p-6 sm:p-8 rounded-2xl shadow-card border border-line mb-10 animate-fade-in">
+            <h2 className="font-display font-semibold text-xl mb-6 border-b border-line pb-4 flex items-center gap-2 text-ink">
+              <Plus size={20} className="text-amber-deep" /> Add Company Drive
+            </h2>
             <form onSubmit={handleCreate} className="space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
@@ -157,7 +165,7 @@ const CompanyTracker = () => {
           {["", "upcoming", "ongoing", "completed", "cancelled"].map((s) => (
             <button 
               key={s} 
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${statusFilter === s ? "bg-ink text-paper shadow-sm" : "bg-white text-ink-soft border border-line hover:bg-paper hover:text-ink"}`}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${statusFilter === s ? "bg-ink text-paper shadow-sm" : "bg-paper text-ink-soft border border-line hover:bg-paper hover:text-ink"}`}
               onClick={() => setStatusFilter(s)}
             >
               {s ? s.charAt(0).toUpperCase() + s.slice(1) : "All"}
@@ -172,15 +180,17 @@ const CompanyTracker = () => {
             <p className="text-ink-soft font-medium">Loading companies...</p>
           </div>
         ) : companies.length === 0 ? (
-          <div className="bg-white border border-line border-dashed rounded-2xl p-12 text-center">
-            <div className="text-4xl mb-4">🏢</div>
+          <div className="bg-paper border border-line border-dashed rounded-2xl p-12 text-center flex flex-col items-center">
+            <div className="w-16 h-16 rounded-full bg-surface flex items-center justify-center text-muted mb-4">
+              <Building2 size={32} />
+            </div>
             <h3 className="font-display font-semibold text-lg text-ink mb-2">No companies found</h3>
             <p className="text-ink-soft text-sm">{isAdmin ? "Add a company drive to get started!" : "Check back later for upcoming drives."}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {companies.map((company) => (
-              <div key={company._id} className="bg-white rounded-2xl shadow-sm border border-line p-6 flex flex-col transition-all hover:shadow-md">
+              <div key={company._id} className="bg-paper rounded-2xl shadow-sm border border-line p-6 flex flex-col transition-all hover:shadow-md">
                 
                 <div className="flex justify-between items-start mb-4">
                   <div>
@@ -197,25 +207,29 @@ const CompanyTracker = () => {
 
                 {company.description && <p className="text-sm text-ink-soft mb-5">{company.description}</p>}
 
-                <div className="grid grid-cols-2 gap-y-3 gap-x-4 mb-5 p-4 bg-paper rounded-xl border border-line/50">
+                <div className="grid grid-cols-2 gap-y-3 gap-x-4 mb-5 p-4 bg-surface rounded-xl border border-line">
                   {company.package?.max > 0 && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <span>💰</span><span className="font-medium">₹{company.package.min}-{company.package.max} LPA</span>
+                    <div className="flex items-center gap-2 text-sm text-ink">
+                      <div className="text-emerald"><IndianRupee size={16} /></div>
+                      <span className="font-semibold">₹{company.package.min}-{company.package.max} LPA</span>
                     </div>
                   )}
                   {company.visitDate && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <span>📅</span><span className="font-medium">{formatDate(company.visitDate)}</span>
+                    <div className="flex items-center gap-2 text-sm text-ink">
+                      <div className="text-blue-500"><Calendar size={16} /></div>
+                      <span className="font-semibold">{formatDate(company.visitDate)}</span>
                     </div>
                   )}
                   {company.eligibility?.minCGPA > 0 && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <span>📊</span><span className="font-medium">Min CGPA: {company.eligibility.minCGPA}</span>
+                    <div className="flex items-center gap-2 text-sm text-ink">
+                      <div className="text-amber-deep"><Target size={16} /></div>
+                      <span className="font-semibold">Min CGPA: {company.eligibility.minCGPA}</span>
                     </div>
                   )}
                   {company.studentsPlaced > 0 && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <span>🎓</span><span className="font-medium">{company.studentsPlaced} placed</span>
+                    <div className="flex items-center gap-2 text-sm text-ink">
+                      <div className="text-purple-500"><GraduationCap size={16} /></div>
+                      <span className="font-semibold">{company.studentsPlaced} placed</span>
                     </div>
                   )}
                 </div>
@@ -234,8 +248,8 @@ const CompanyTracker = () => {
                   <div className="text-sm text-ink-soft mb-6">
                     <span className="font-semibold text-ink">Process:</span>{" "}
                     {company.selectionProcess.map((s, i) => (
-                      <span key={i}>
-                        {s}{i < company.selectionProcess.length - 1 && " → "}
+                      <span key={i} className="inline-flex items-center gap-1.5">
+                        {s}{i < company.selectionProcess.length - 1 && <ChevronRight size={14} className="text-muted" />}
                       </span>
                     ))}
                   </div>
@@ -246,14 +260,14 @@ const CompanyTracker = () => {
                   {!isAdmin ? (
                     <div className="flex-1 mr-4">
                       <button 
-                        className={`w-full py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                        className={`w-full py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2 ${
                           eligibility[company._id] 
-                            ? (eligibility[company._id].eligible ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-red-50 text-red-600 border border-red-200") 
-                            : "bg-paper border border-line text-ink hover:bg-gray-100"
+                            ? (eligibility[company._id].eligible ? "bg-emerald/10 text-emerald border border-emerald/20" : "bg-coral/10 text-coral border border-coral/20") 
+                            : "bg-paper border border-line text-ink hover:bg-surface"
                         }`}
                         onClick={() => handleCheckEligibility(company._id)}
                       >
-                        {eligibility[company._id] ? (eligibility[company._id].eligible ? "✅ Eligible" : "❌ Not Eligible") : "Check Eligibility"}
+                        {eligibility[company._id] ? (eligibility[company._id].eligible ? <><CheckCircle2 size={18} /> Eligible</> : <><XCircle size={18} /> Not Eligible</>) : "Check Eligibility"}
                       </button>
                     </div>
                   ) : (
@@ -262,11 +276,11 @@ const CompanyTracker = () => {
                   
                   {isAdmin && (
                     <button 
-                      className="p-2.5 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors border border-red-100" 
+                      className="p-2.5 rounded-xl bg-coral/10 text-coral hover:bg-coral/20 transition-colors border border-coral/20 flex items-center justify-center" 
                       onClick={() => handleDelete(company._id)}
                       title="Delete Company"
                     >
-                      🗑️
+                      <Trash2 size={18} />
                     </button>
                   )}
                 </div>
@@ -275,8 +289,8 @@ const CompanyTracker = () => {
                 {!isAdmin && eligibility[company._id] && !eligibility[company._id].eligible && (
                   <div className="mt-3 flex flex-wrap gap-2">
                     {eligibility[company._id].issues?.map((issue, i) => (
-                      <span key={i} className="text-xs text-amber-deep bg-amber/10 px-2.5 py-1 rounded-md border border-amber/20">
-                        ⚠️ {issue}
+                      <span key={i} className="text-xs text-coral bg-coral/10 px-2.5 py-1.5 rounded-md border border-coral/20 flex items-center gap-1.5 font-medium">
+                        <AlertTriangle size={14} /> {issue}
                       </span>
                     ))}
                   </div>

@@ -1,8 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Search, Flame, BarChart2, Edit, Users, Briefcase, Sparkles } from "lucide-react";
+import { Search, Flame, BarChart2, Edit, Users, Briefcase, Sparkles, MessageSquare } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import ProfileDropdown from "./ProfileDropdown";
+import Logo from "../ui/Logo";
 
 const STUDENT_LINKS = [
   { label: "Dashboard", path: "/dashboard" },
@@ -16,6 +17,7 @@ const ADMIN_LINKS = [
   { label: "Companies", path: "/career/companies", icon: Briefcase },
   { label: "Questions", path: "/admin/questions", icon: Edit },
   { label: "Students", path: "/admin/users", icon: Users },
+  { label: "Interviews", path: "/admin/interview-questions", icon: MessageSquare },
 ];
 
 const TopNav = ({ onOpenCommandPalette }) => {
@@ -39,14 +41,7 @@ const TopNav = ({ onOpenCommandPalette }) => {
         
         {/* Left: Branding */}
         <div className="flex-1 flex justify-start">
-          <Link to={isAuthenticated ? (isAdmin ? "/admin" : "/dashboard") : "/"} className="flex items-center gap-2 transition-transform hover:scale-105">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center text-white shadow-md">
-              <Sparkles size={16} />
-            </div>
-            <span className="font-bold text-lg text-slate-900 tracking-tight">
-              PlaceEdge{isAdmin ? " Admin" : ""}
-            </span>
-          </Link>
+          <Logo />
         </div>
 
         {/* Center/Primary Nav Links (Desktop) */}

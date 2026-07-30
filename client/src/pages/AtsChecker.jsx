@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import api from "../services/api";
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { FiUploadCloud, FiFileText, FiCpu, FiCheckCircle, FiChevronRight, FiChevronLeft } from "react-icons/fi";
 import Card from "../components/ui/Card";
 import ProgressRing from "../components/ui/ProgressRing";
@@ -65,7 +66,7 @@ const AtsChecker = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-8 px-4 animate-fade-in">
+    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 animate-fade-in">
       <div className="mb-10 text-center">
         <h1 className="font-display text-3xl font-bold text-ink flex items-center justify-center gap-3">
           <div className="p-2 bg-amber/10 text-amber-deep rounded-lg"><FiCpu size={24} /></div>
@@ -182,7 +183,7 @@ const AtsChecker = () => {
         <div className="flex flex-col lg:flex-row gap-6 items-start">
           
           {/* Score Sidebar */}
-          <div className="w-full lg:w-1/3 flex flex-col gap-6 sticky top-24">
+          <div className="w-full lg:w-1/4 flex flex-col gap-6 sticky top-24">
             <Card className="flex flex-col items-center text-center py-10">
               <h3 className="font-display font-semibold text-lg text-ink mb-6">ATS Match Score</h3>
               <ProgressRing progress={score} size={160} strokeWidth={12} color={score > 80 ? 'emerald' : score > 60 ? 'amber' : 'coral'} />
@@ -202,10 +203,10 @@ const AtsChecker = () => {
           </div>
 
           {/* Feedback Content */}
-          <Card className="w-full lg:w-2/3 p-6 sm:p-10">
+          <Card className="w-full lg:w-3/4 p-6 sm:p-10">
             <h2 className="font-display text-2xl font-semibold text-ink mb-6 pb-4 border-b border-line">Detailed Feedback</h2>
             <div className="prose prose-slate max-w-none font-body text-ink-soft prose-headings:font-display prose-headings:text-ink prose-a:text-amber-deep">
-              <ReactMarkdown>{feedback}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{feedback}</ReactMarkdown>
             </div>
           </Card>
         </div>

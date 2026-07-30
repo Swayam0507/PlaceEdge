@@ -8,6 +8,7 @@ import {
   ArrowRight, Sparkles, TrendingUp
 } from "lucide-react";
 import JourneyMap from "../components/ui/JourneyMap";
+import CustomRoadmapWidget from "../components/ui/CustomRoadmapWidget";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -61,7 +62,19 @@ const Dashboard = () => {
   };
 
   const getFocusContent = () => {
-    if (!currentStage) return { title: "Start your journey", description: "Take your first aptitude test to begin.", cta: "Practice Now", route: "/practice" };
+    // 1. Company Track overrides
+    if (user?.onboardingTrack === 'company' && user?.customRoadmap?.weeks?.length > 0) {
+      const currentWeek = user.customRoadmap.weeks[0];
+      return {
+        title: `Focus: ${currentWeek.title}`,
+        description: currentWeek.tasks.join(" • "),
+        cta: "Start Practice",
+        route: "/practice",
+        category: "dsa"
+      };
+    }
+
+    if (!currentStage) return { title: "Start your journey", description: "Take your first aptitude test to begin.", cta: "Practice Now", route: "/practice", category: "aptitude" };
     
     const dynamicDesc = overview.focusRecommendation || "Continue your placement preparation.";
     
@@ -79,13 +92,14 @@ const Dashboard = () => {
         title: `Work on your ${displayCategory}`, 
         description: "Focus on practicing this area to improve your overall readiness score.", 
         cta: "Start Practice", 
-        route: "/practice" 
+        route: "/practice",
+        category: (rawCategory === 'quantitative' || rawCategory === 'logical' || rawCategory === 'verbal') ? 'aptitude' : 'dsa'
       };
     }
     
     switch (currentStage.key) {
-      case "aptitude": return { title: "Sharpen your aptitude skills", description: dynamicDesc, cta: "Take a Test", route: "/practice" };
-      case "coding": return { title: "Level up your coding", description: dynamicDesc, cta: "Practice Coding", route: "/practice" };
+      case "aptitude": return { title: "Sharpen your aptitude skills", description: dynamicDesc, cta: "Take a Test", route: "/practice", category: "aptitude" };
+      case "coding": return { title: "Level up your coding", description: dynamicDesc, cta: "Practice Coding", route: "/practice", category: "dsa" };
       case "resume": return { title: "Your Resume needs a tune-up", description: dynamicDesc, cta: "Update Resume", route: "/career/resume" };
       case "interview": return { title: "Ace the mock interview", description: dynamicDesc, cta: "Start Prep", route: "/practice/interview" };
       case "placed": return { title: "You're almost there! 🎉", description: dynamicDesc, cta: "View Jobs", route: "/career/jobs" };
@@ -141,7 +155,16 @@ const Dashboard = () => {
             </p>
           </div>
           
-          {analytics?.upcomingEvent && (
+          {user?.onboardingTrack === 'company' ? (
+            <div className="relative z-10 flex items-center gap-5 bg-white/10 backdrop-blur-md border border-white/10 px-6 py-5 rounded-3xl shadow-xl cursor-default">
+              <div className="w-12 h-12 flex items-center justify-center bg-blue-500/20 rounded-full shrink-0">
+                <Target size={24} className="text-blue-300" />
+              </div>
+              <div className="text-sm text-slate-300 font-medium leading-snug">
+                Targeting<br /><strong className="text-white font-bold text-lg tracking-wide">{user.targetCompany || 'Dream Company'}</strong>
+              </div>
+            </div>
+          ) : analytics?.upcomingEvent && (
             <div className="relative z-10 flex items-center gap-5 bg-white/10 backdrop-blur-md border border-white/10 px-6 py-5 rounded-3xl shadow-xl hover:bg-white/15 transition-colors cursor-default">
               <div className="font-display text-5xl font-black text-blue-300 drop-shadow-md">{analytics.upcomingEvent.daysLeft}</div>
               <div className="text-sm text-slate-300 font-medium leading-snug">
@@ -151,11 +174,10 @@ const Dashboard = () => {
           )}
         </div>
 
-        {/* 2. Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-          
-          {/* Focus Card (Spans 2 columns) */}
-          <div className="md:col-span-2 xl:col-span-2 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl shadow-blue-900/10 flex flex-col justify-between group">
+        {/* 2. Main Progress / Map Area */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-6">
+          {/* Main Focus Card (Spans 2 columns) */}
+          <div className="md:col-span-2 xl:col-span-2 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl shadow-blue-900/10 flex flex-col justify-between group hover:shadow-2xl transition-all">
             <div className="absolute -right-20 -top-20 w-64 h-64 bg-white/20 rounded-full blur-[80px] pointer-events-none group-hover:bg-white/30 transition-all duration-700"></div>
             
             <div className="relative z-10">
@@ -163,26 +185,30 @@ const Dashboard = () => {
                 <span className="w-2 h-2 rounded-full bg-blue-300 animate-pulse"></span>
                 Today's Focus
               </div>
-              <h3 className="font-display font-black text-3xl mb-3 tracking-tight">{focusContent.title}</h3>
+              <h3 className="font-display font-black text-3xl sm:text-4xl tracking-tight leading-tight mb-4">{focusContent.title}</h3>
               <p className="text-[15px] text-blue-100 max-w-md leading-relaxed font-medium mb-8">{focusContent.description}</p>
             </div>
             
             <button
-              onClick={() => navigate(focusContent.route)}
+              onClick={() => navigate(focusContent.route, { state: { openModal: true, category: focusContent.category || 'aptitude' } })}
               className="relative z-10 self-start bg-white text-blue-700 px-6 py-3 rounded-2xl font-bold text-[14px] flex items-center gap-2 transition-all hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] shadow-lg"
             >
               {focusContent.cta} <ArrowRight size={18} />
             </button>
           </div>
 
-          {/* Journey Map (Spans 2 columns) */}
-          <div className="md:col-span-2 xl:col-span-2 bg-white/80 backdrop-blur-xl border border-white rounded-3xl shadow-sm hover:shadow-md transition-all overflow-hidden relative flex flex-col justify-center">
-            <div className="absolute inset-0 bg-gradient-to-b from-slate-50/50 to-transparent pointer-events-none"></div>
-            <div className="relative z-10 w-full h-full">
-               <JourneyMap journeyData={journeyData} />
-            </div>
+          {/* Journey Map / Custom Roadmap (Spans 2 columns) */}
+          <div className="md:col-span-2 xl:col-span-2 bg-white/80 backdrop-blur-xl border border-white rounded-3xl shadow-sm hover:shadow-md transition-all overflow-hidden min-h-[300px]">
+            {user?.onboardingTrack === 'company' ? (
+              <CustomRoadmapWidget user={user} />
+            ) : (
+              <JourneyMap journeyData={journeyData} />
+            )}
           </div>
+        </div>
 
+        {/* 3. Stats Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
           {/* Stat Cards Row */}
           <div onClick={() => setActiveStatModal('tests')} className="bg-white/90 backdrop-blur-xl border border-white rounded-3xl p-6 shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer group flex flex-col justify-between">
             <div className="flex justify-between items-start mb-4">

@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { getDashboardAnalytics } from "../services/api";
 import { createPortal } from "react-dom";
 import { 
   BrainCircuit, Code2, Users2, Target, Play, X, LayoutDashboard, 
@@ -28,9 +29,35 @@ const TRACKING_TOOLS = [
 
 const PracticeHub = () => {
   const navigate = useNavigate();
-  const [showConfig, setShowConfig] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("aptitude");
+  const location = useLocation();
+  const [showConfig, setShowConfig] = useState(location.state?.openModal || false);
+  const [stats, setStats] = useState({ rank: "N/A", tests: 0 });
+  const [selectedCategory, setSelectedCategory] = useState(location.state?.category || "aptitude");
   const [difficulty, setDifficulty] = useState("medium");
+
+  // Clean up location state on mount to prevent re-opening on manual refresh
+  useEffect(() => {
+    if (location.state?.openModal) {
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const { data } = await getDashboardAnalytics();
+        if (data.success && data.analytics?.overview) {
+          setStats({
+            rank: data.analytics.overview.globalRank ? `#${data.analytics.overview.globalRank}` : "N/A",
+            tests: data.analytics.overview.totalTests || 0
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch stats", err);
+      }
+    };
+    fetchStats();
+  }, []);
 
   const startTest = () => {
     // Navigate to the unified exam route with difficulty as state if needed
@@ -92,16 +119,16 @@ const PracticeHub = () => {
               <div className="space-y-6">
                 <div>
                   <div className="text-sm font-bold text-muted uppercase tracking-wider mb-1">Global Rank</div>
-                  <div className="text-3xl font-bold text-ink tracking-tight">#428</div>
-                  <div className="text-xs text-emerald-600 font-medium mt-1">↑ Top 15% this week</div>
+                  <div className="text-3xl font-bold text-ink tracking-tight">{stats.rank}</div>
+                  <div className="text-xs text-emerald-600 font-medium mt-1">Global Placement Standing</div>
                 </div>
                 
                 <div className="h-px bg-line w-full"></div>
                 
                 <div>
                   <div className="text-sm font-bold text-muted uppercase tracking-wider mb-1">Tests Completed</div>
-                  <div className="text-3xl font-bold text-ink tracking-tight">24</div>
-                  <div className="text-xs text-indigo-600 font-medium mt-1">4 tests in last 7 days</div>
+                  <div className="text-3xl font-bold text-ink tracking-tight">{stats.tests}</div>
+                  <div className="text-xs text-indigo-600 font-medium mt-1">Keep practicing!</div>
                 </div>
               </div>
               

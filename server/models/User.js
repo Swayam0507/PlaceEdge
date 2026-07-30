@@ -97,6 +97,24 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    // Onboarding tracking
+    onboardingTrack: {
+      type: String,
+      enum: ["general", "company"],
+      default: "general"
+    },
+    targetCompany: {
+      type: String,
+      default: ""
+    },
+    customRoadmap: {
+      type: mongoose.Schema.Types.Mixed, // To store the parsed JSON roadmap
+      default: null
+    },
+    isOnboardingComplete: {
+      type: Boolean,
+      default: false
+    },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
   },

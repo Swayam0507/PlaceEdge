@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import Logo from "../components/ui/Logo";
 import { 
   BrainCircuit, 
   Target, 
@@ -66,12 +67,7 @@ const LandingPage = () => {
       {/* Navbar Minimal */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
         <div className="max-w-[1440px] mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
-              <Sparkles size={20} />
-            </div>
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700">PlaceEdge</span>
-          </div>
+          <Logo showAdminText={false} />
           <div className="flex items-center gap-4">
             <Link to="/login" className="px-5 py-2.5 text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors">Sign In</Link>
             <Link to="/register" className="px-5 py-2.5 text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-full transition-all hover:shadow-lg hover:shadow-slate-900/20 flex items-center gap-2">
@@ -121,13 +117,10 @@ const LandingPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            className="flex justify-center"
           >
-            <Link to="/register" className="w-full sm:w-auto px-8 py-4 text-base font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-full transition-all shadow-xl shadow-blue-600/20 flex items-center justify-center gap-2">
+            <Link to="/register" className="px-8 py-4 text-base font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-full transition-all shadow-xl shadow-blue-600/20 flex items-center justify-center gap-2">
               Start Preparing Free <ArrowRight size={18} />
-            </Link>
-            <Link to="/login" className="w-full sm:w-auto px-8 py-4 text-base font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-full transition-all flex items-center justify-center">
-              View Demo
             </Link>
           </motion.div>
         </div>
@@ -225,12 +218,9 @@ const LandingPage = () => {
             </Link>
           </div>
           
-          <div className="mt-16 pt-8 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between text-slate-400 text-sm">
-            <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <Sparkles size={16} className="text-blue-500" />
-              <span className="font-bold text-white text-lg">PlaceEdge</span>
-            </div>
-            <p>© {new Date().getFullYear()} PlaceEdge Platform. All rights reserved.</p>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-slate-800">
+            <Logo variant="dark" className="scale-90 opacity-80 hover:opacity-100 transition-all" showAdminText={false} />
+            <p className="text-sm text-slate-500">© {new Date().getFullYear()} PlaceEdge Platform. All rights reserved.</p>
           </div>
         </div>
       </section>

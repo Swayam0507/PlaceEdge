@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { resetPassword } from "../services/api";
 import { useAuth } from "../context/AuthContext";
@@ -38,7 +38,7 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-paper animate-fade-in p-4">
+    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-paper animate-fade-in p-4">
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-sm border border-line">
         <h2 className="font-display font-bold text-2xl text-ink mb-2 text-center">Reset Password</h2>
         <p className="text-muted text-sm text-center mb-8">
@@ -53,7 +53,7 @@ const ResetPassword = () => {
             <label className="block text-sm font-bold text-ink mb-2">New Password</label>
             <input
               type="password"
-              placeholder="••••••••"
+              placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -65,7 +65,7 @@ const ResetPassword = () => {
             <label className="block text-sm font-bold text-ink mb-2">Confirm New Password</label>
             <input
               type="password"
-              placeholder="••••••••"
+              placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
@@ -83,3 +83,4 @@ const ResetPassword = () => {
 };
 
 export default ResetPassword;
+

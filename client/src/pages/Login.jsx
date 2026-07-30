@@ -35,7 +35,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-paper animate-fade-in">
+    <div className="min-h-[calc(100vh-64px)] flex bg-paper animate-fade-in">
       {/* Left panel - Branding */}
       <div className="hidden lg:flex flex-col justify-between w-1/2 bg-ink p-12 text-paper relative overflow-hidden">
         {/* Animated background elements */}
@@ -43,13 +43,7 @@ const Login = () => {
         <div className="absolute bottom-[-10%] right-[-10%] w-[30rem] h-[30rem] bg-emerald/10 rounded-full blur-3xl"></div>
         
         <div className="relative z-10">
-          <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mb-8 backdrop-blur-sm border border-white/10">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-              <path d="M6 12v5c3 3 9 3 12 0v-5" />
-            </svg>
-          </div>
-          <h1 className="font-display font-bold text-5xl leading-tight mb-4">Welcome Back</h1>
+          <h1 className="font-display font-bold text-5xl leading-tight mb-4 mt-8">Welcome Back</h1>
           <p className="text-white/70 text-lg max-w-md">
             Continue your placement preparation journey. Your progress is waiting for you.
           </p>
