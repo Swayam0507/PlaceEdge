@@ -71,7 +71,7 @@ exports.chat = async (req, res) => {
         // ---------------------
 
         const chat = ai.chats.create({
-            model: 'gemini-2.0-flash',
+            model: 'gemini-flash-latest',
             config: {
                 systemInstruction: SYSTEM_INSTRUCTION,
                 tools: allTools,
@@ -137,7 +137,7 @@ Respond ONLY with a valid JSON array of objects. Each object MUST have the follo
 }`;
 
         const response = await ai.models.generateContent({
-            model: 'gemini-2.0-flash',
+            model: 'gemini-flash-latest',
             contents: prompt,
             config: {
                 responseMimeType: "application/json",
@@ -243,7 +243,7 @@ Generate a personalized career advice JSON object. The JSON MUST have exactly th
 Respond ONLY with the valid JSON object.`;
 
         const response = await ai.models.generateContent({
-            model: 'gemini-2.0-flash',
+            model: 'gemini-flash-latest',
             contents: prompt,
             config: {
                 responseMimeType: "application/json",
@@ -333,7 +333,7 @@ ${fileText}
 `;
 
         const response = await ai.models.generateContent({
-            model: 'gemini-2.0-flash',
+            model: 'gemini-flash-latest',
             contents: prompt,
             config: {
                 temperature: 0.2,
@@ -391,7 +391,7 @@ Make sure the percentages in difficulty add up to 100.
 Provide around 6 most asked topics and 10 top questions specifically tailored to ${companyName}'s known interview patterns.`;
 
         const response = await ai.models.generateContent({
-            model: 'gemini-2.0-flash',
+            model: 'gemini-flash-latest',
             contents: prompt,
             config: {
                 temperature: 0.3,
