@@ -111,6 +111,15 @@ const path = require("path");
 
 // --------------- Routes ---------------
 
+// Root route
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Smart Placement Platform API is running",
+    timestamp: new Date().toISOString(),
+  });
+});
+
 // Health check
 app.get("/api/health", (req, res) => {
   res.status(200).json({

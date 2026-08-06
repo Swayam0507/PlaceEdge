@@ -34,8 +34,6 @@ const getLeaderboard = async (req, res) => {
           totalQuestions: { $sum: "$totalQuestions" },
         },
       },
-      { $sort: { avgScore: -1, totalTests: -1 } },
-      { $limit: parseInt(limit) },
       {
         $lookup: {
           from: "users",
@@ -53,20 +51,24 @@ const getLeaderboard = async (req, res) => {
       pipeline.push({ $match: { "user.branch": branch } });
     }
 
-    pipeline.push({
-      $project: {
-        _id: 1,
-        name: "$user.name",
-        branch: "$user.branch",
-        semester: "$user.semester",
-        avgScore: { $round: ["$avgScore", 1] },
-        bestScore: 1,
-        totalTests: 1,
-        accuracy: {
-          $round: [{ $multiply: [{ $divide: ["$totalCorrect", { $max: ["$totalQuestions", 1] }] }, 100] }, 1],
-        },
-      },
-    });
+    pipeline.push(
+      { $sort: { avgScore: -1, totalTests: -1, _id: 1 } },
+      { $limit: parseInt(limit) },
+      {
+        $project: {
+          _id: 1,
+          name: "$user.name",
+          branch: "$user.branch",
+          semester: "$user.semester",
+          avgScore: { $round: ["$avgScore", 1] },
+          bestScore: 1,
+          totalTests: 1,
+          accuracy: {
+            $round: [{ $multiply: [{ $divide: ["$totalCorrect", { $max: ["$totalQuestions", 1] }] }, 100] }, 1],
+          },
+        }
+      }
+    );
 
     const leaderboard = await TestAttempt.aggregate(pipeline);
 

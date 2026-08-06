@@ -2,16 +2,14 @@ const mongoose = require("mongoose");
 const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, "./.env") });
 
+const connectDB = require("./config/db");
 const User = require("./models/User");
 const TestAttempt = require("./models/TestAttempt");
 
-const MONGODB_URI = process.env.MONGO_URI;
-
 const fixStudentData = async () => {
   try {
-    console.log("Connecting to MongoDB...");
-    await mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, family: 4 });
-    console.log("Connected to MongoDB.");
+    console.log("Connecting to MongoDB via connectDB...");
+    await connectDB();
 
     // Delete old test attempts to start fresh
     await TestAttempt.deleteMany({});
@@ -38,20 +36,26 @@ const fixStudentData = async () => {
       // Stage 3: Aptitude + Coding + Resume done
       // Stage 4: Everything done
 
+      // Helper for random fluctuations
+      const rOffset = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+      const rScore = (base, max) => Math.min(Math.max(base + rOffset(-3, 3), 1), max);
+      const rPct = (base) => Math.min(Math.max(base + rOffset(-12, 12), 20), 100);
+      const rTime = (base) => Math.max(base + rOffset(-180, 180), 60);
+
       if (stage >= 1) {
         // Complete Aptitude
         await TestAttempt.insertMany([
-          { userId: student._id, category: "quantitative", difficulty: "medium", score: 12, totalQuestions: 15, percentage: 80, timeTaken: 600 },
-          { userId: student._id, category: "logical", difficulty: "hard", score: 10, totalQuestions: 15, percentage: 66, timeTaken: 750 },
-          { userId: student._id, category: "quantitative", difficulty: "easy", score: 14, totalQuestions: 15, percentage: 93, timeTaken: 400 }
+          { userId: student._id, category: "quantitative", difficulty: "medium", score: rScore(12, 15), totalQuestions: 15, percentage: rPct(80), timeTaken: rTime(600) },
+          { userId: student._id, category: "logical", difficulty: "hard", score: rScore(10, 15), totalQuestions: 15, percentage: rPct(66), timeTaken: rTime(750) },
+          { userId: student._id, category: "quantitative", difficulty: "easy", score: rScore(14, 15), totalQuestions: 15, percentage: rPct(93), timeTaken: rTime(400) }
         ]);
       }
 
       if (stage >= 2) {
         // Complete Coding
         await TestAttempt.insertMany([
-          { userId: student._id, category: "technical", difficulty: "medium", score: 15, totalQuestions: 20, percentage: 75, timeTaken: 1200 },
-          { userId: student._id, category: "technical", difficulty: "hard", score: 18, totalQuestions: 20, percentage: 90, timeTaken: 1500 }
+          { userId: student._id, category: "technical", difficulty: "medium", score: rScore(15, 20), totalQuestions: 20, percentage: rPct(75), timeTaken: rTime(1200) },
+          { userId: student._id, category: "technical", difficulty: "hard", score: rScore(18, 20), totalQuestions: 20, percentage: rPct(90), timeTaken: rTime(1500) }
         ]);
       }
 
@@ -65,18 +69,18 @@ const fixStudentData = async () => {
 
       if (stage >= 4) {
         // Complete Interview
-        student.interviewPracticeCount = 5;
+        student.interviewPracticeCount = 5 + rOffset(-2, 5);
       }
 
       // Add a couple of random test attempts that are incomplete for some realism
       if (stage === 0) {
         await TestAttempt.insertMany([
-          { userId: student._id, category: "quantitative", difficulty: "easy", score: 5, totalQuestions: 15, percentage: 33, timeTaken: 300 }
+          { userId: student._id, category: "quantitative", difficulty: "easy", score: rScore(5, 15), totalQuestions: 15, percentage: rPct(33), timeTaken: rTime(300) }
         ]);
         student.interviewPracticeCount = 1; // 1 mock interview
       } else if (stage === 1) {
         await TestAttempt.insertMany([
-          { userId: student._id, category: "technical", difficulty: "easy", score: 6, totalQuestions: 20, percentage: 30, timeTaken: 500 }
+          { userId: student._id, category: "technical", difficulty: "easy", score: rScore(6, 20), totalQuestions: 20, percentage: rPct(30), timeTaken: rTime(500) }
         ]);
         student.interviewPracticeCount = 2; // 2 mock interviews
       } else if (stage === 2) {

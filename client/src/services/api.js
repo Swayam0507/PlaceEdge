@@ -119,6 +119,12 @@ export const createCompany = (data) => API.post("/companies", data);
 export const updateCompany = (id, data) => API.put(`/companies/${id}`, data);
 export const deleteCompanyApi = (id) => API.delete(`/companies/${id}`);
 
+// ---------- Placement API ----------
+export const searchStudentsForPlacement = (q) => API.get("/companies/students/search", { params: { q } });
+export const getCompanyPlacements = (companyId) => API.get(`/companies/${companyId}/placements`);
+export const addCompanyPlacement = (companyId, data) => API.post(`/companies/${companyId}/placements`, data);
+export const removeCompanyPlacement = (companyId, placementId) => API.delete(`/companies/${companyId}/placements/${placementId}`);
+
 // ---------- Interview Prep API ----------
 export const getInterviewQuestions = (params) => API.get("/interview", { params });
 export const getInterviewCompanies = () => API.get("/interview/companies");

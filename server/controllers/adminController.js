@@ -230,7 +230,6 @@ const getAdminAnalytics = async (req, res) => {
       { $sort: { _id: 1 } },
     ]);
 
-    // Top performers
     const topPerformers = await TestAttempt.aggregate([
       {
         $group: {
@@ -240,8 +239,6 @@ const getAdminAnalytics = async (req, res) => {
         },
       },
       { $match: { totalTests: { $gte: 2 } } },
-      { $sort: { avgScore: -1 } },
-      { $limit: 10 },
       {
         $lookup: {
           from: "users",
@@ -251,6 +248,9 @@ const getAdminAnalytics = async (req, res) => {
         },
       },
       { $unwind: "$user" },
+      { $match: { "user.role": "student" } },
+      { $sort: { avgScore: -1, totalTests: -1, _id: 1 } },
+      { $limit: 10 },
       {
         $project: {
           name: "$user.name",
@@ -261,11 +261,19 @@ const getAdminAnalytics = async (req, res) => {
       },
     ]);
 
-    // Score distribution (buckets)
+    // Score distribution (unique students bucketed by their average score)
     const scoreDistribution = await TestAttempt.aggregate([
+      // First compute each student's average score
+      {
+        $group: {
+          _id: "$userId",
+          avgScore: { $avg: "$percentage" },
+        },
+      },
+      // Then bucket students by their average score
       {
         $bucket: {
-          groupBy: "$percentage",
+          groupBy: "$avgScore",
           boundaries: [0, 20, 40, 60, 80, 101],
           default: "other",
           output: { count: { $sum: 1 } },
