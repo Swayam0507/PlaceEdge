@@ -1,7 +1,8 @@
 const { GoogleGenAI } = require('@google/genai');
+const Groq = require("groq-sdk");
 const pdfParse = require('pdf-parse');
 const mammoth = require('mammoth');
-const { SYSTEM_INSTRUCTION, allTools } = require('../utils/aiTools');
+const { SYSTEM_INSTRUCTION, allTools, allToolsGroq } = require('../utils/aiTools');
 
 // Single API key - simple setup
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -19,7 +20,6 @@ exports.chat = async (req, res) => {
             return res.status(400).json({ success: false, message: "Messages array is required." });
         }
 
-        // Handle file upload (ATS Check)
         let fileText = "";
         if (req.file) {
             const mimeType = req.file.mimetype;
@@ -56,63 +56,94 @@ exports.chat = async (req, res) => {
 
         let currentMessage = formattedHistory.pop();
         if (fileText) {
-            // Append the extracted text to the user's prompt so the AI can evaluate it
             currentMessage.parts[0].text += `\n\n--- EXTRACTED RESUME TEXT ---\n${fileText}`;
         }
-        
-        // --- DEBUG LOGGING ---
-        require('fs').writeFileSync('debug_chat.log', JSON.stringify({
-            hasFile: !!req.file,
-            mimetype: req.file ? req.file.mimetype : null,
-            fileTextLength: fileText.length,
-            finalText: currentMessage.parts[0].text.substring(0, 500),
-            historyPayload: formattedHistory
-        }, null, 2));
-        // ---------------------
 
-        const chat = ai.chats.create({
-            model: 'gemini-flash-latest',
-            config: {
-                systemInstruction: SYSTEM_INSTRUCTION,
-                tools: allTools,
-                temperature: 0.7,
-            },
-            history: formattedHistory
-        });
-
-        const response = await chat.sendMessage({
-            message: currentMessage.parts[0].text
-        });
-
-        if (response.functionCalls && response.functionCalls.length > 0) {
-            const functionCall = response.functionCalls[0];
+        let chatResponse;
+        try {
+            const chat = ai.chats.create({
+                model: 'gemini-1.5-flash',
+                config: {
+                    systemInstruction: SYSTEM_INSTRUCTION,
+                    tools: allTools,
+                    temperature: 0.7,
+                },
+                history: formattedHistory
+            });
+            chatResponse = await chat.sendMessage({
+                message: currentMessage.parts[0].text
+            });
             
+            if (chatResponse.functionCalls && chatResponse.functionCalls.length > 0) {
+                const functionCall = chatResponse.functionCalls[0];
+                return res.status(200).json({
+                    success: true,
+                    extractedText: fileText || undefined,
+                    message: { role: "ai", isToolCall: true, toolName: functionCall.name, toolArgs: functionCall.args }
+                });
+            }
+
+            let cleanText = chatResponse.text || "I couldn't process that.";
+            cleanText = cleanText.replace(/<function[^>]*>[\s\S]*?<\/function>/gi, '').trim();
+
             return res.status(200).json({
                 success: true,
                 extractedText: fileText || undefined,
-                message: {
-                    role: "ai",
-                    isToolCall: true,
-                    toolName: functionCall.name,
-                    toolArgs: functionCall.args
+                message: { role: "ai", text: cleanText }
+            });
+
+        } catch (geminiError) {
+            console.log("⚠️ Gemini API failed (Likely Rate Limit). Falling back to Groq LLaMA...", geminiError.message);
+            
+            // --- FALLBACK TO GROQ ---
+            const groqMessages = [{ role: "system", content: SYSTEM_INSTRUCTION }];
+            messages.forEach(msg => {
+                if (msg.isToolCall) {
+                    groqMessages.push({ role: "system", content: `I triggered the ${msg.toolName} tool with arguments ${JSON.stringify(msg.toolArgs || {})}` });
+                } else {
+                    let text = msg.text || " ";
+                    if (msg.hiddenText) text += `\n\n--- EXTRACTED RESUME TEXT ---\n${msg.hiddenText}`;
+                    groqMessages.push({ role: msg.role === 'ai' ? 'assistant' : 'user', content: text });
                 }
+            });
+            if (fileText) {
+                groqMessages[groqMessages.length - 1].content += `\n\n--- EXTRACTED RESUME TEXT ---\n${fileText}`;
+            }
+
+            const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+            const chatCompletion = await groq.chat.completions.create({
+                messages: groqMessages,
+                model: "llama-3.3-70b-versatile",
+                tools: allToolsGroq,
+                tool_choice: "auto",
+                temperature: 0.7,
+            });
+
+            const responseMessage = chatCompletion.choices[0]?.message;
+
+            if (responseMessage?.tool_calls && responseMessage.tool_calls.length > 0) {
+                const functionCall = responseMessage.tool_calls[0].function;
+                let args = {};
+                try { args = JSON.parse(functionCall.arguments); } catch(e) {}
+                return res.status(200).json({
+                    success: true,
+                    extractedText: fileText || undefined,
+                    message: { role: "ai", isToolCall: true, toolName: functionCall.name, toolArgs: args }
+                });
+            }
+
+            let cleanText = responseMessage?.content || "I couldn't process that.";
+            cleanText = cleanText.replace(/<function[^>]*>[\s\S]*?<\/function>/gi, '').trim();
+
+            return res.status(200).json({
+                success: true,
+                extractedText: fileText || undefined,
+                message: { role: "ai", text: cleanText }
             });
         }
 
-        return res.status(200).json({
-            success: true,
-            extractedText: fileText || undefined,
-            message: {
-                role: "ai",
-                text: response.text
-            }
-        });
-
     } catch (error) {
         console.error("Chatbot Error:", error);
-        if (error.status === 429) {
-            return res.status(429).json({ success: false, message: "Rate limit exceeded. Please wait a few seconds and try again." });
-        }
         res.status(500).json({ success: false, message: error.message || "Failed to generate AI response." });
     }
 };
@@ -136,18 +167,32 @@ Respond ONLY with a valid JSON array of objects. Each object MUST have the follo
   "explanation": "Step-by-step explanation for the correct answer to prove it is mathematically correct."
 }`;
 
-        const response = await ai.models.generateContent({
-            model: 'gemini-flash-latest',
-            contents: prompt,
-            config: {
-                responseMimeType: "application/json",
+        let responseText = "";
+        try {
+            const response = await ai.models.generateContent({
+                model: 'gemini-flash-latest',
+                contents: prompt,
+                config: {
+                    responseMimeType: "application/json",
+                    temperature: 0.7,
+                }
+            });
+            responseText = response.text;
+        } catch (geminiError) {
+            console.log("⚠️ Gemini API failed for Exam. Falling back to Groq...", geminiError.message);
+            const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+            const groqResponse = await groq.chat.completions.create({
+                messages: [{ role: "user", content: prompt }],
+                model: "llama-3.3-70b-versatile",
                 temperature: 0.7,
-            }
-        });
+                response_format: { type: "json_object" }
+            });
+            responseText = groqResponse.choices[0]?.message?.content || "{}";
+        }
 
         let questionsData = [];
         try {
-            questionsData = JSON.parse(response.text);
+            questionsData = JSON.parse(responseText);
         } catch (e) {
             console.error("Failed to parse Gemini response as JSON", response.text);
             return res.status(500).json({ success: false, message: "Failed to generate valid exam questions." });
@@ -242,18 +287,32 @@ Generate a personalized career advice JSON object. The JSON MUST have exactly th
 }
 Respond ONLY with the valid JSON object.`;
 
-        const response = await ai.models.generateContent({
-            model: 'gemini-flash-latest',
-            contents: prompt,
-            config: {
-                responseMimeType: "application/json",
+        let responseText = "";
+        try {
+            const response = await ai.models.generateContent({
+                model: 'gemini-flash-latest',
+                contents: prompt,
+                config: {
+                    responseMimeType: "application/json",
+                    temperature: 0.7,
+                }
+            });
+            responseText = response.text;
+        } catch (geminiError) {
+            console.log("⚠️ Gemini API failed for Career Advice. Falling back to Groq...", geminiError.message);
+            const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+            const groqResponse = await groq.chat.completions.create({
+                messages: [{ role: "user", content: prompt }],
+                model: "llama-3.3-70b-versatile",
                 temperature: 0.7,
-            }
-        });
+                response_format: { type: "json_object" }
+            });
+            responseText = groqResponse.choices[0]?.message?.content || "{}";
+        }
 
         let adviceData = {};
         try {
-            adviceData = JSON.parse(response.text);
+            adviceData = JSON.parse(responseText);
         } catch (e) {
             console.error("Failed to parse Gemini response for career advice", response.text);
             return res.status(500).json({ success: false, message: "Failed to generate valid career advice." });
@@ -332,17 +391,30 @@ Resume:
 ${fileText}
 `;
 
-        const response = await ai.models.generateContent({
-            model: 'gemini-flash-latest',
-            contents: prompt,
-            config: {
-                temperature: 0.2,
-            }
-        });
+        let feedbackText = "";
+        try {
+            const response = await ai.models.generateContent({
+                model: 'gemini-flash-latest',
+                contents: prompt,
+                config: {
+                    temperature: 0.2,
+                }
+            });
+            feedbackText = response.text;
+        } catch (geminiError) {
+            console.log("⚠️ Gemini API failed for ATS Check. Falling back to Groq...", geminiError.message);
+            const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+            const groqResponse = await groq.chat.completions.create({
+                messages: [{ role: "user", content: prompt }],
+                model: "llama-3.3-70b-versatile",
+                temperature: 0.2
+            });
+            feedbackText = groqResponse.choices[0]?.message?.content || "Could not generate ATS analysis.";
+        }
 
         return res.status(200).json({ 
             success: true, 
-            feedback: response.text 
+            feedback: feedbackText 
         });
 
     } catch (error) {
@@ -390,16 +462,30 @@ The JSON object must perfectly match this structure:
 Make sure the percentages in difficulty add up to 100.
 Provide around 6 most asked topics and 10 top questions specifically tailored to ${companyName}'s known interview patterns.`;
 
-        const response = await ai.models.generateContent({
-            model: 'gemini-flash-latest',
-            contents: prompt,
-            config: {
+        let responseText = "";
+        try {
+            const response = await ai.models.generateContent({
+                model: 'gemini-flash-latest',
+                contents: prompt,
+                config: {
+                    temperature: 0.3,
+                    responseMimeType: "application/json"
+                }
+            });
+            responseText = response.text;
+        } catch (geminiError) {
+            console.log("⚠️ Gemini API failed for Company Prep. Falling back to Groq...", geminiError.message);
+            const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+            const groqResponse = await groq.chat.completions.create({
+                messages: [{ role: "user", content: prompt }],
+                model: "llama-3.3-70b-versatile",
                 temperature: 0.3,
-                responseMimeType: "application/json"
-            }
-        });
+                response_format: { type: "json_object" }
+            });
+            responseText = groqResponse.choices[0]?.message?.content || "{}";
+        }
 
-        const data = JSON.parse(response.text);
+        const data = JSON.parse(responseText);
 
         return res.status(200).json({ 
             success: true, 

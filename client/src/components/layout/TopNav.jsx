@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Search, Flame, BarChart2, Edit, Users, Briefcase, Sparkles, MessageSquare } from "lucide-react";
+import { Search, Flame, BarChart2, Globe, Users, Briefcase, Sparkles, MessageSquare } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import ProfileDropdown from "./ProfileDropdown";
 import Logo from "../ui/Logo";
@@ -15,9 +15,8 @@ const STUDENT_LINKS = [
 const ADMIN_LINKS = [
   { label: "Analytics", path: "/admin", icon: BarChart2 },
   { label: "Companies", path: "/career/companies", icon: Briefcase },
-  { label: "Questions", path: "/admin/questions", icon: Edit },
+  { label: "Forum Mod", path: "/admin/forum", icon: Globe },
   { label: "Students", path: "/admin/users", icon: Users },
-  { label: "Interviews", path: "/admin/interview-questions", icon: MessageSquare },
 ];
 
 const TopNav = ({ onOpenCommandPalette }) => {

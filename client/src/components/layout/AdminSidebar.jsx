@@ -1,13 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
 import {
-  FiBarChart2, FiEdit, FiUsers, FiMessageSquare,
+  FiBarChart2, FiGlobe, FiUsers, FiMessageSquare,
   FiChevronLeft, FiChevronRight, FiLogOut, FiSettings
 } from "react-icons/fi";
 import { useAuth } from "../../context/AuthContext";
 
 const ADMIN_NAV = [
   { label: "Analytics", path: "/admin", icon: FiBarChart2 },
-  { label: "Questions", path: "/admin/questions", icon: FiEdit },
+  { label: "Forum Moderation", path: "/admin/forum", icon: FiGlobe },
   { label: "Students", path: "/admin/users", icon: FiUsers },
   { label: "Interview Q&A", path: "/admin/interview-questions", icon: FiMessageSquare },
 ];

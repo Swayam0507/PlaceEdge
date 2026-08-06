@@ -5,9 +5,14 @@ const {
 } = require("../controllers/forumController");
 const { protect, authorize } = require("../middleware/auth");
 
+
+
 router.get("/", protect, getPosts);
 router.get("/:id", protect, getPost);
 router.post("/", protect, createPost);
+
+
+
 router.delete("/:id", protect, deletePost);
 router.post("/:id/upvote", protect, upvotePost);
 router.post("/:id/reply", protect, addReply);

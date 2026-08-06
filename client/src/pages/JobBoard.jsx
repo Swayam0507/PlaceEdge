@@ -3,8 +3,53 @@ import api from "../services/api";
 import { FiBriefcase, FiMapPin, FiClock, FiExternalLink, FiBarChart2, FiSearch } from "react-icons/fi";
 import { BiBuildingHouse } from "react-icons/bi";
 import SkillGapAnalyzer from "../components/SkillGapAnalyzer";
+import { useAuth } from "../context/AuthContext";
+
+const COMMON_SKILLS = {
+  "React": ["react", "react.js", "reactjs", "frontend"],
+  "Node.js": ["node", "node.js", "nodejs", "backend", "express"],
+  "Python": ["python", "django", "flask", "data scientist", "ml"],
+  "Java": ["java", "spring", "springboot"],
+  "MongoDB": ["mongodb", "mongo", "nosql"],
+  "SQL": ["sql", "mysql", "postgresql", "database", "data analyst"],
+  "AWS": ["aws", "cloud"],
+  "Docker": ["docker", "kubernetes", "devops"],
+  "TypeScript": ["typescript", "ts"],
+  "JavaScript": ["javascript", "js", "web developer"],
+  "Angular": ["angular"],
+  "C++": ["c++", "cpp"],
+  "HTML/CSS": ["html", "css", "web"],
+  "Machine Learning": ["machine learning", "ml", "ai", "artificial intelligence"],
+  "Data Structures": ["data structures", "algorithms", "dsa"],
+  "System Design": ["system design", "architecture", "architect"]
+};
+
+const getRequiredSkills = (job) => {
+  const textToSearch = (job.title + " " + (job.description || "")).toLowerCase();
+  const foundSkills = [];
+  
+  Object.keys(COMMON_SKILLS).forEach(skill => {
+    if (COMMON_SKILLS[skill].some(kw => textToSearch.includes(kw))) {
+      foundSkills.push(skill);
+    }
+  });
+
+  if (foundSkills.length === 0) {
+    if (textToSearch.includes("data") || textToSearch.includes("analyst")) {
+      return ["Python", "SQL", "Data Analysis", "Statistics"];
+    } else if (textToSearch.includes("backend")) {
+      return ["Node.js", "Java", "SQL", "System Design"];
+    } else if (textToSearch.includes("frontend") || textToSearch.includes("ui")) {
+      return ["JavaScript", "React", "HTML/CSS"];
+    }
+    return ["Problem Solving", "Communication", "Teamwork", "Software Development"];
+  }
+
+  return foundSkills.slice(0, 6);
+};
 
 const JobBoard = () => {
+  const { user } = useAuth();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -226,8 +271,8 @@ const JobBoard = () => {
                       {analyzingJobId === idx && (
                         <div className="w-full rounded-xl border border-indigo-100 bg-indigo-50/50 p-4 animate-in slide-in-from-top-4 duration-300">
                           <SkillGapAnalyzer 
-                            requiredSkills={["React", "Node.js", "MongoDB", "Express", "TypeScript"]} 
-                            userSkills={["React", "HTML", "CSS", "JavaScript"]}
+                            requiredSkills={getRequiredSkills(job)} 
+                            userSkills={user?.skills || ["React", "JavaScript", "HTML/CSS"]}
                           />
                         </div>
                       )}

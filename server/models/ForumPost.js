@@ -39,7 +39,7 @@ const forumPostSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ["placement-tips", "company-reviews", "doubt-clearing", "resources", "general"],
+      enum: ["placement-tips", "company-reviews", "doubt-clearing", "resources", "general", "announcement"],
       default: "general",
     },
     tags: [{ type: String, trim: true }],

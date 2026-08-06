@@ -14,8 +14,10 @@ const SkillGapAnalyzer = ({ requiredSkills, userSkills }) => {
       
     const currentSkills = userSkills || ["JavaScript", "HTML", "CSS"];
 
-    const matched = targetSkills.filter(skill => currentSkills.includes(skill));
-    const missing = targetSkills.filter(skill => !currentSkills.includes(skill));
+    const normalizedCurrent = currentSkills.map(s => s.toLowerCase());
+
+    const matched = targetSkills.filter(skill => normalizedCurrent.includes(skill.toLowerCase()));
+    const missing = targetSkills.filter(skill => !normalizedCurrent.includes(skill.toLowerCase()));
     
     setMatchedSkills(matched);
     setMissingSkills(missing);

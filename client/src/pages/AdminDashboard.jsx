@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { getAdminAnalytics, exportReport } from "../services/api";
 import {
   PieChart, Download, Users, FileText,
-  List, TrendingUp, BarChart2, Award, BookOpen, Zap,
+  List, TrendingUp, BarChart2, Award,
   RefreshCw, Calendar, ArrowUp, ArrowDown, Clock
 } from "lucide-react";
 import {
@@ -11,7 +11,7 @@ import {
   PointElement, LineElement, Filler,
   Title, Tooltip, Legend,
 } from 'chart.js';
-import { Bar, Doughnut, Line } from 'react-chartjs-2';
+import { Bar, Line } from 'react-chartjs-2';
 import toast from 'react-hot-toast';
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -251,29 +251,7 @@ const AdminDashboard = () => {
     scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
   };
 
-  const qCategoryData = {
-    labels: analytics?.categoryDistribution?.map(c => c.category.charAt(0).toUpperCase() + c.category.slice(1)) || [],
-    datasets: [{
-      data: analytics?.categoryDistribution?.map(c => c.count) || [],
-      backgroundColor: ['rgba(99,102,241,0.75)', 'rgba(16,185,129,0.75)', 'rgba(245,158,11,0.75)', 'rgba(239,68,68,0.75)', 'rgba(14,165,233,0.75)'],
-      borderWidth: 0,
-    }]
-  };
 
-  const qDifficultyData = {
-    labels: analytics?.difficultyStats?.map(d => d.difficulty.charAt(0).toUpperCase() + d.difficulty.slice(1)) || [],
-    datasets: [{
-      data: analytics?.difficultyStats?.map(d => d.count) || [],
-      backgroundColor: ['rgba(16,185,129,0.75)', 'rgba(245,158,11,0.75)', 'rgba(239,68,68,0.75)'],
-      borderWidth: 0,
-    }]
-  };
-
-  const doughnutOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: { legend: { position: 'right' } }
-  };
 
   // Recent Activity Line Chart
   const activityLabels = recentRegs?.map(r => {
@@ -320,7 +298,6 @@ const AdminDashboard = () => {
   // Stat cards config
   const statCards = [
     { label: 'Total Students', value: overview.totalStudents || 0, icon: Users, color: '#ea580c', target: 'top-performers' },
-    { label: 'Questions', value: overview.totalQuestions || 0, icon: FileText, color: '#ea580c', target: 'questions-category' },
     { label: 'Test Attempts', value: overview.totalTests || 0, icon: List, color: '#0891b2', target: 'category-performance' },
     { label: 'Avg Score', value: `${overview.avgScore || 0}%`, icon: TrendingUp, color: '#dc2626', target: 'score-distribution' },
   ];
@@ -489,30 +466,7 @@ const AdminDashboard = () => {
           </div>
         )}
 
-        {/* Question Distribution */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 scroll-mt-24" id="questions-category">
-          {analytics?.categoryDistribution?.length > 0 && (
-            <div>
-              <h2 className="flex items-center gap-2 font-display font-bold text-xl text-ink mb-4">
-                <BookOpen className="text-emerald" /> Questions by Category
-              </h2>
-              <div className="h-72 p-5 bg-paper rounded-2xl border border-line shadow-sm">
-                <Doughnut data={qCategoryData} options={doughnutOptions} />
-              </div>
-            </div>
-          )}
 
-          {analytics?.difficultyStats?.length > 0 && (
-            <div>
-              <h2 className="flex items-center gap-2 font-display font-bold text-xl text-ink mb-4">
-                <Zap className="text-amber-500" /> Questions by Difficulty
-              </h2>
-              <div className="h-72 p-5 bg-paper rounded-2xl border border-line shadow-sm">
-                <Doughnut data={qDifficultyData} options={doughnutOptions} />
-              </div>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );

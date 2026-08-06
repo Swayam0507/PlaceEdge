@@ -1,4 +1,5 @@
 const Resume = require("../models/Resume");
+const User = require("../models/User");
 const path = require("path");
 const fs = require("fs");
 const pdf = require("pdf-parse");
@@ -27,14 +28,19 @@ const SKILL_KEYWORDS = [
 ];
 
 /**
- * Extract skills from raw text content (basic keyword matching)
+ * Extract skills from raw text content (keyword matching with word boundaries)
  */
 const extractSkills = (text) => {
   if (!text) return [];
-  const lowerText = text.toLowerCase();
   const found = [];
   for (const skill of SKILL_KEYWORDS) {
-    if (lowerText.includes(skill) && !found.includes(skill)) {
+    // Escape special characters in skill (like ++ in c++)
+    const escapedSkill = skill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // Use word boundaries \b to ensure we only match whole words
+    // For skills that start/end with non-word characters (like c++), we handle boundaries carefully
+    const regex = new RegExp(`(?:^|\\s|\\b)${escapedSkill}(?:$|\\s|\\b)`, 'i');
+    
+    if (regex.test(text) && !found.includes(skill)) {
       // Capitalize nicely
       found.push(skill.replace(/\b\w/g, (c) => c.toUpperCase()));
     }
@@ -111,6 +117,20 @@ const uploadResume = async (req, res) => {
       atsScore: calculatedAtsScore,
       parsed: parsedSkills.length > 0,
     });
+
+    // Sync extracted skills with the User's profile
+    if (parsedSkills.length > 0) {
+      const currentUser = await User.findById(req.user._id);
+      if (currentUser) {
+        const existingSkillsLower = currentUser.skills.map(s => s.toLowerCase());
+        const newSkills = parsedSkills.filter(s => !existingSkillsLower.includes(s.toLowerCase()));
+        
+        if (newSkills.length > 0) {
+          currentUser.skills = [...currentUser.skills, ...newSkills];
+          await currentUser.save();
+        }
+      }
+    }
 
     res.status(201).json({
       success: true,

@@ -122,6 +122,7 @@ export const deleteCompanyApi = (id) => API.delete(`/companies/${id}`);
 // ---------- Interview Prep API ----------
 export const getInterviewQuestions = (params) => API.get("/interview", { params });
 export const getInterviewCompanies = () => API.get("/interview/companies");
+export const generateInterviewQuestions = (data) => API.post("/interview/generate", data);
 export const addInterviewQuestion = (data) => API.post("/interview", data);
 export const bulkAddInterviewQuestions = (questions) =>
   API.post("/interview/bulk", { questions });

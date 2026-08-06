@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require("multer");
 const { protect } = require("../middleware/auth");
 const chatbotController = require("../controllers/chatbotController");
+const { GoogleGenAI } = require("@google/genai");
 
 // Configure multer for memory storage
 const upload = multer({ storage: multer.memoryStorage() });
@@ -40,19 +41,35 @@ router.post("/interview-feedback", protect, async (req, res) => {
         const User = require("../models/User");
         await User.findByIdAndUpdate(req.user._id, { $inc: { interviewPracticeCount: 1 } });
 
-        const { GoogleGenAI } = require("@google/genai");
-        const keysStr = process.env.GEMINI_API_KEY || "";
-        const keys = keysStr.split(',').map(k => k.trim()).filter(k => k);
-        const key = keys.length > 0 ? keys[Math.floor(Math.random() * keys.length)] : "";
-        const ai = new GoogleGenAI({ apiKey: key });
-        const response = await ai.models.generateContent({
-            model: "gemini-2.0-flash",
-            contents: `You are an expert interview coach. Evaluate the following interview answer and provide short, direct, and constructive feedback. KEEP YOUR RESPONSE EXTREMELY CONCISE AND TO THE POINT (maximum 3-4 short sentences per section). Do not write long essays or full answers.\n\nQuestion: ${question}\n\nCandidate's Answer: ${answer}\n\nProvide short feedback in markdown format covering:\n- Strength (1 bullet)\n- Weaknesses (1-2 bullets)\n- Score (1-10)\n- Suggestions (1-2 short bullet points max)`,
-        });
+        const Groq = require("groq-sdk");
+        const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+        const prompt = `You are an expert interview coach. Evaluate the following interview answer and provide short, direct, and constructive feedback. KEEP YOUR RESPONSE EXTREMELY CONCISE AND TO THE POINT (maximum 3-4 short sentences per section). Do not write long essays or full answers.\n\nQuestion: ${question}\n\nCandidate's Answer: ${answer}\n\nProvide short feedback in markdown format covering:\n- Strength (1 bullet)\n- Weaknesses (1-2 bullets)\n- Score (1-10)\n- Suggestions (1-2 short bullet points max)`;
+
+        let feedbackText = "";
+        try {
+            const chatCompletion = await groq.chat.completions.create({
+                messages: [{ role: "user", content: prompt }],
+                model: "llama-3.1-8b-instant",
+                temperature: 0.5,
+                max_tokens: 500,
+            });
+            feedbackText = chatCompletion.choices[0]?.message?.content;
+        } catch (groqError) {
+            console.log("⚠️ Groq API failed for Interview Feedback. Falling back to Gemini...", groqError.message);
+            const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+            const response = await ai.models.generateContent({
+                model: 'gemini-1.5-flash',
+                contents: prompt,
+                config: {
+                    temperature: 0.5,
+                }
+            });
+            feedbackText = response.text;
+        }
 
         res.status(200).json({
             success: true,
-            feedback: response.text,
+            feedback: feedbackText,
         });
     } catch (error) {
         console.error("Interview Feedback Error:", error);

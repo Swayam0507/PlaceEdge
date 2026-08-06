@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { getForumPosts, createForumPost, upvoteForumPost, addForumReply, deleteForumPost } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { formatDate } from "../utils/helpers";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import LinkPreview from "../components/common/LinkPreview";
 import { 
   ClipboardList, Target, Building2, HelpCircle, BookOpen, 
   MessageSquare, Edit3, Send, Search, Eye, Pin, ChevronUp, Trash2, X, Hash
@@ -211,9 +214,26 @@ const Forum = () => {
                         </div>
 
                         {/* Collapsed view snippet or Expanded content */}
-                        <div className={`text-ink-soft text-[15px] font-medium leading-relaxed ${!isExpanded && "line-clamp-3"}`}>
-                          {post.content}
+                        <div 
+                          className={`text-ink-soft text-[15px] font-medium leading-relaxed transition-all ${!isExpanded ? "line-clamp-3 overflow-hidden cursor-pointer hover:text-ink group-hover:text-ink" : ""}`}
+                          onClick={() => !isExpanded && setExpandedId(post._id)}
+                        >
+                          <div className={`prose prose-sm sm:prose-base max-w-none prose-indigo prose-a:text-indigo-600 hover:prose-a:text-indigo-800 prose-img:rounded-xl ${!isExpanded ? "prose-p:m-0 prose-pre:m-0 prose-headings:m-0 pointer-events-none" : ""}`}>
+                            <ReactMarkdown 
+                              remarkPlugins={[remarkGfm]}
+                              components={{
+                                a: ({node, ...props}) => <a {...props} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} />
+                              }}
+                            >
+                              {post.content}
+                            </ReactMarkdown>
+                          </div>
                         </div>
+                        
+                        {/* Link Preview (Extract first URL) */}
+                        {isExpanded && post.content.match(/(https?:\/\/[^\s]+)/) && (
+                          <LinkPreview url={post.content.match(/(https?:\/\/[^\s]+)/)[0]} />
+                        )}
                       </div>
 
                       {/* Action Bar (Always visible) */}
@@ -260,7 +280,21 @@ const Forum = () => {
                                     </div>
                                   </div>
                                   <div className="pl-11 pr-4">
-                                    <p className="text-sm text-ink font-medium leading-relaxed bg-surface inline-block p-4 rounded-2xl rounded-tl-sm">{reply.content}</p>
+                                    <div className="text-sm text-ink font-medium leading-relaxed bg-surface inline-block p-4 rounded-2xl rounded-tl-sm prose prose-sm max-w-none prose-indigo prose-a:text-indigo-600 hover:prose-a:text-indigo-800">
+                                      <ReactMarkdown 
+                                        remarkPlugins={[remarkGfm]}
+                                        components={{
+                                          a: ({node, ...props}) => <a {...props} target="_blank" rel="noopener noreferrer" />
+                                        }}
+                                      >
+                                        {reply.content}
+                                      </ReactMarkdown>
+                                    </div>
+                                    {reply.content.match(/(https?:\/\/[^\s]+)/) && (
+                                      <div className="pl-11 mt-1">
+                                        <LinkPreview url={reply.content.match(/(https?:\/\/[^\s]+)/)[0]} />
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
                               ))}

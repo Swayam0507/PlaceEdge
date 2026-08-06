@@ -37,7 +37,8 @@ const Dashboard = () => {
   const hasData = analytics && overview.totalTests > 0;
   
   // Calculate weakest topic
-  let weakestArea = analytics?.weakAreas?.[0]?.category || "General Aptitude";
+  const hasWeakAreas = analytics?.weakAreas?.length > 0;
+  let weakestArea = hasWeakAreas ? analytics.weakAreas[0].category : null;
   if (weakestArea) {
     const rawCategory = weakestArea.toLowerCase();
     weakestArea = rawCategory.charAt(0).toUpperCase() + rawCategory.slice(1);
@@ -257,8 +258,8 @@ const Dashboard = () => {
               <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50 px-2 py-1 rounded-lg">Weak Topic</div>
             </div>
             <div>
-              <h4 className="font-display font-black text-2xl text-slate-800 tracking-tight truncate pr-2">{weakestArea}</h4>
-              <p className="text-sm font-semibold text-rose-500 mt-1">Focus practice here</p>
+              <h4 className="font-display font-black text-2xl text-slate-800 tracking-tight truncate pr-2">{hasWeakAreas ? weakestArea : "None! 🎉"}</h4>
+              <p className={`text-sm font-semibold mt-1 ${hasWeakAreas ? "text-rose-500" : "text-emerald-500"}`}>{hasWeakAreas ? "Focus practice here" : "All areas strong!"}</p>
             </div>
           </div>
 

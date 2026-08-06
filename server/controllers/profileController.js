@@ -2,6 +2,7 @@ const User = require("../models/User");
 const TestAttempt = require("../models/TestAttempt");
 const Resume = require("../models/Resume");
 const { GoogleGenAI } = require("@google/genai");
+const Groq = require("groq-sdk");
 const pdfParse = require("pdf-parse");
 const mammoth = require("mammoth");
 
@@ -197,19 +198,33 @@ Respond ONLY with a valid JSON object strictly matching this format:
 Resume Text:
 ${fileText}`;
 
-        const response = await ai.models.generateContent({
-          model: 'gemini-2.0-flash',
-          contents: prompt,
-          config: {
-            temperature: 0.2,
-            responseMimeType: "application/json"
-          }
-        });
+        let responseText = "";
+        try {
+            const response = await ai.models.generateContent({
+              model: 'gemini-2.0-flash',
+              contents: prompt,
+              config: {
+                temperature: 0.2,
+                responseMimeType: "application/json"
+              }
+            });
+            responseText = response.text;
+        } catch (geminiError) {
+            console.log("⚠️ Gemini API failed for Onboarding Roadmap. Falling back to Groq...", geminiError.message);
+            const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+            const groqResponse = await groq.chat.completions.create({
+                messages: [{ role: "user", content: prompt }],
+                model: "llama-3.3-70b-versatile",
+                temperature: 0.2,
+                response_format: { type: "json_object" }
+            });
+            responseText = groqResponse.choices[0]?.message?.content || "{}";
+        }
 
         try {
-          user.customRoadmap = JSON.parse(response.text);
+          user.customRoadmap = JSON.parse(responseText);
         } catch (e) {
-          console.error("Failed to parse Gemini roadmap:", e);
+          console.error("Failed to parse AI roadmap:", e);
         }
       }
     }

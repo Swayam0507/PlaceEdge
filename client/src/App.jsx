@@ -25,9 +25,8 @@ import CompanyPrepList from "./pages/CompanyPrepList";
 import CompanyPrepDetail from "./pages/CompanyPrepDetail";
 import Bookmarks from "./pages/Bookmarks";
 import AdminDashboard from "./pages/AdminDashboard";
-import AdminQuestions from "./pages/AdminQuestions";
+import AdminForum from "./pages/AdminForum";
 import AdminUsers from "./pages/AdminUsers";
-import AdminInterviewQuestions from "./pages/AdminInterviewQuestions";
 import StudyBuddy from "./pages/StudyBuddy";
 import CareerAdvisor from "./pages/CareerAdvisor";
 import PracticeHub from "./pages/PracticeHub";
@@ -166,9 +165,8 @@ const AppContent = () => {
 
         {/* ===== Admin routes (unchanged) ===== */}
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-        <Route path="/admin/questions" element={<AdminRoute><AdminQuestions /></AdminRoute>} />
+        <Route path="/admin/forum" element={<AdminRoute><AdminForum /></AdminRoute>} />
         <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
-        <Route path="/admin/interview-questions" element={<AdminRoute><AdminInterviewQuestions /></AdminRoute>} />
 
         {/* Default redirect */}
         <Route path="*" element={<Navigate to="/" replace />} />
