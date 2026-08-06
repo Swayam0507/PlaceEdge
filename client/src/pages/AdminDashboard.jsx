@@ -3,7 +3,7 @@ import { getAdminAnalytics, exportReport } from "../services/api";
 import {
   PieChart, Download, Users, FileText,
   List, TrendingUp, BarChart2, Award,
-  RefreshCw, Calendar, ArrowUp, ArrowDown, Clock
+  RefreshCw, Calendar, ArrowUp, ArrowDown, Clock, Sparkles
 } from "lucide-react";
 import {
   Chart as ChartJS,
@@ -297,10 +297,43 @@ const AdminDashboard = () => {
 
   // Stat cards config
   const statCards = [
-    { label: 'Total Students', value: overview.totalStudents || 0, icon: Users, color: '#ea580c', target: 'top-performers' },
-    { label: 'Test Attempts', value: overview.totalTests || 0, icon: List, color: '#0891b2', target: 'category-performance' },
-    { label: 'Avg Score', value: `${overview.avgScore || 0}%`, icon: TrendingUp, color: '#dc2626', target: 'score-distribution' },
+    { 
+      label: 'Total Students', 
+      value: overview.totalStudents || 0, 
+      icon: Users, 
+      color: 'amber', 
+      target: 'top-performers' 
+    },
+    { 
+      label: 'Test Attempts', 
+      value: overview.totalTests || 0, 
+      icon: List, 
+      color: 'blue', 
+      target: 'category-performance' 
+    },
+    { 
+      label: 'Avg Score', 
+      value: `${overview.avgScore || 0}%`, 
+      icon: TrendingUp, 
+      color: 'emerald', 
+      target: 'score-distribution' 
+    },
   ];
+
+  const statColors = {
+    amber: {
+      bg: "bg-amber-50 text-amber-600 border border-amber-100",
+      bgHover: "group-hover:bg-amber-100",
+    },
+    blue: {
+      bg: "bg-blue-50 text-blue-600 border border-blue-100",
+      bgHover: "group-hover:bg-blue-100",
+    },
+    emerald: {
+      bg: "bg-emerald-50 text-emerald-600 border border-emerald-100",
+      bgHover: "group-hover:bg-emerald-100",
+    },
+  };
 
   const getTimeAgo = () => {
     if (!lastUpdated) return '';
@@ -311,73 +344,93 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="max-w-[1440px] mx-auto px-4 py-8 animate-fade-in">
+    <div className="max-w-[1440px] mx-auto px-4 py-8 animate-fade-in font-body">
       <div className="flex flex-col space-y-8">
 
         {/* Welcome Section */}
-        <div className="bg-gradient-to-br from-amber-deep/10 to-emerald/5 border border-amber-deep/20 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm">
-          <div>
-            <h1 className="font-display font-bold text-2xl text-ink mb-1">
+        <div className="relative rounded-[2rem] overflow-hidden bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-900 text-white p-8 sm:p-10 border border-slate-800 shadow-2xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+          <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-purple-500/10 rounded-full blur-[80px] translate-y-1/3 -translate-x-1/4 pointer-events-none"></div>
+          
+          <div className="relative z-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/10 text-blue-200 text-xs font-bold uppercase tracking-wider mb-4 backdrop-blur-md">
+              <Sparkles size={14} className="text-blue-300 animate-pulse" /> admin workspace
+            </div>
+            <h1 className="font-display font-black text-3xl sm:text-4xl tracking-tight mb-2">
               Welcome back, Admin
             </h1>
-            <p className="font-body text-sm text-muted font-medium">
+            <p className="text-slate-300 text-sm font-medium">
               {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
               {recentRegs?.length > 0 && ` • ${recentRegs.reduce((s, r) => s + r.count, 0)} signups in ${dateRange || 'all'} days`}
               {recentTests?.length > 0 && ` • ${recentTests.reduce((s, t) => s + t.count, 0)} tests taken`}
             </p>
           </div>
-          <div className="flex items-center gap-3 flex-wrap">
+          
+          <div className="relative z-10 flex items-center gap-3 flex-wrap">
             {/* Date Range */}
-            <div className="flex bg-paper rounded-xl border border-line overflow-hidden shadow-sm">
+            <div className="flex bg-white/5 border border-white/10 backdrop-blur-md rounded-2xl overflow-hidden shadow-sm">
               {DATE_RANGES.map(r => (
                 <button
                   key={r.days}
                   onClick={() => setDateRange(r.days)}
-                  className={`px-3 py-1.5 text-xs font-bold transition-colors ${dateRange === r.days ? 'bg-ink text-white' : 'text-muted hover:bg-surface'}`}
+                  className={`px-4 py-2.5 text-xs font-bold transition-all ${
+                    dateRange === r.days 
+                      ? 'bg-white text-indigo-950 font-extrabold shadow-sm' 
+                      : 'text-slate-300 hover:text-white hover:bg-white/5'
+                  }`}
                 >
                   {r.label}
                 </button>
               ))}
             </div>
+            
             {/* Refresh */}
             <button
               onClick={() => fetchAnalytics(true)}
               disabled={refreshing}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-paper border border-line rounded-xl text-ink-soft hover:bg-surface transition-colors shadow-sm disabled:opacity-70"
+              className="flex items-center gap-2 px-4 py-2.5 text-xs font-bold bg-white/10 border border-white/10 rounded-2xl text-white hover:bg-white/15 transition-all shadow-sm disabled:opacity-70 backdrop-blur-md"
               title={`Last updated: ${getTimeAgo()}`}
             >
               <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
               {getTimeAgo() || 'Refresh'}
             </button>
+            
             {/* Export buttons */}
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-paper border border-line rounded-xl text-ink-soft hover:bg-surface transition-colors shadow-sm disabled:opacity-70" onClick={() => handleExport("users")} disabled={!!exporting}>
+            <button 
+              className="flex items-center gap-2 px-4 py-2.5 text-xs font-bold bg-white/10 border border-white/10 rounded-2xl text-white hover:bg-white/15 transition-all shadow-sm disabled:opacity-70 backdrop-blur-md" 
+              onClick={() => handleExport("users")} 
+              disabled={!!exporting}
+            >
               <Download size={14} /> {exporting === "users" ? "..." : "CSV"}
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-ink text-white rounded-xl hover:bg-ink-soft transition-colors shadow-sm" onClick={handlePDFExport}>
+            
+            <button 
+              className="flex items-center gap-2 px-4 py-2.5 text-xs font-bold bg-blue-600 text-white rounded-2xl hover:bg-blue-700 hover:-translate-y-0.5 transition-all shadow-lg shadow-blue-500/20" 
+              onClick={handlePDFExport}
+            >
               <Download size={14} /> PDF
             </button>
           </div>
         </div>
 
         {/* Stat Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           {statCards.map((card, i) => {
             const Icon = card.icon;
+            const colors = statColors[card.color];
             return (
               <div
                 key={i}
-                className="bg-paper-raised border border-line rounded-2xl p-5 flex items-center gap-4 cursor-pointer hover:border-ink/20 hover:-translate-y-1 transition-all shadow-sm group"
+                className="bg-white border border-slate-100 rounded-3xl p-6 flex items-center gap-5 cursor-pointer hover:border-slate-200 hover:-translate-y-1 hover:shadow-floating transition-all duration-300 group"
                 onClick={() => scrollToSection(card.target)}
-                title={`Click to view details`}
+                title="Click to view details"
               >
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-sm transition-transform group-hover:scale-110 shrink-0" style={{
-                  background: `linear-gradient(135deg, ${card.color}, ${card.color}cc)`
-                }}>
-                  <Icon size={22} />
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-300 ${colors.bg} ${colors.bgHover} group-hover:scale-105`}>
+                  <Icon size={26} />
                 </div>
                 <div>
-                  <span className="block font-display font-bold text-2xl text-ink leading-none mb-1">{card.value}</span>
-                  <span className="block text-xs font-semibold text-muted uppercase tracking-wider">{card.label}</span>
+                  <span className="block font-display font-black text-3xl text-slate-800 leading-none mb-1.5">{card.value}</span>
+                  <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider">{card.label}</span>
                 </div>
               </div>
             );
@@ -387,13 +440,13 @@ const AdminDashboard = () => {
         {/* Recent Activity Line Chart */}
         {(recentRegs?.length > 0 || recentTests?.length > 0) && (
           <div id="recent-activity" className="scroll-mt-24">
-            <h2 className="flex items-center gap-2 font-display font-bold text-xl text-ink mb-4">
-              <Clock className="text-amber-deep" /> Platform Activity
-              <span className="text-xs font-semibold text-muted ml-auto uppercase tracking-wider">
+            <h2 className="flex items-center gap-2 font-display font-bold text-lg text-slate-800 mb-4">
+              <Clock className="text-indigo-500" /> Platform Activity
+              <span className="text-xs font-semibold text-slate-400 ml-auto uppercase tracking-wider">
                 {dateRange > 0 ? `Last ${dateRange} days` : 'All time'}
               </span>
             </h2>
-            <div className="h-80 p-5 bg-paper rounded-2xl border border-line shadow-sm">
+            <div className="h-96 p-6 bg-white rounded-3xl border border-slate-100 shadow-card">
               <Line data={activityChartData} options={activityChartOptions} />
             </div>
           </div>
@@ -402,10 +455,10 @@ const AdminDashboard = () => {
         {/* Category Performance */}
         {analytics?.categoryPerformance?.length > 0 && (
           <div id="category-performance" className="scroll-mt-24">
-            <h2 className="flex items-center gap-2 font-display font-bold text-xl text-ink mb-4">
-              <BarChart2 className="text-amber-deep" /> Category Performance
+            <h2 className="flex items-center gap-2 font-display font-bold text-lg text-slate-800 mb-4">
+              <BarChart2 className="text-indigo-500" /> Category Performance
             </h2>
-            <div className="h-80 p-5 bg-paper rounded-2xl border border-line shadow-sm">
+            <div className="h-96 p-6 bg-white rounded-3xl border border-slate-100 shadow-card">
               <Bar data={categoryChartData} options={categoryChartOptions} />
             </div>
           </div>
@@ -414,10 +467,10 @@ const AdminDashboard = () => {
         {/* Score Distribution */}
         {analytics?.scoreDistribution?.length > 0 && (
           <div id="score-distribution" className="scroll-mt-24">
-            <h2 className="flex items-center gap-2 font-display font-bold text-xl text-ink mb-4">
-              <PieChart className="text-sky-500" /> Score Distribution
+            <h2 className="flex items-center gap-2 font-display font-bold text-lg text-slate-800 mb-4">
+              <PieChart className="text-indigo-500" /> Score Distribution
             </h2>
-            <div className="h-80 p-5 bg-paper rounded-2xl border border-line shadow-sm">
+            <div className="h-96 p-6 bg-white rounded-3xl border border-slate-100 shadow-card">
               <Bar data={scoreChartData} options={scoreChartOptions} />
             </div>
           </div>
@@ -426,14 +479,14 @@ const AdminDashboard = () => {
         {/* Top Performers */}
         {analytics?.topPerformers?.length > 0 && (
           <div id="top-performers" className="scroll-mt-24">
-            <h2 className="flex items-center gap-2 font-display font-bold text-xl text-ink mb-4">
-              <Award className="text-amber-500" /> Top Performers
+            <h2 className="flex items-center gap-2 font-display font-bold text-lg text-slate-800 mb-4">
+              <Award className="text-indigo-500" /> Top Performers
             </h2>
-            <div className="bg-paper rounded-2xl border border-line shadow-sm overflow-hidden">
+            <div className="bg-white rounded-3xl border border-slate-100 shadow-card overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-surface/50 border-b border-line text-xs uppercase tracking-wider text-muted font-semibold">
+                    <tr className="bg-slate-50/70 border-b border-slate-100 text-xs uppercase tracking-wider text-slate-400 font-bold">
                       <th className="p-4">#</th>
                       <th className="p-4">Name</th>
                       <th className="p-4">Email</th>
@@ -441,22 +494,30 @@ const AdminDashboard = () => {
                       <th className="p-4">Tests</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-line">
+                  <tbody className="divide-y divide-slate-100">
                     {analytics.topPerformers.map((perf, i) => (
-                      <tr key={i} className="hover:bg-surface/50 transition-colors">
+                      <tr key={i} className="hover:bg-slate-50/50 transition-colors border-b border-slate-100 last:border-none">
                         <td className="p-4">
-                          <span className={`inline-flex items-center justify-center px-2.5 py-1 rounded-md font-bold text-xs ${i === 0 ? 'bg-amber-100 text-amber-600' : i === 1 ? 'bg-line text-muted' : i === 2 ? 'bg-orange-100 text-orange-600' : 'bg-amber/10 text-amber-deep'}`}>
+                          <span className={`inline-flex items-center justify-center rounded-full font-bold text-[10px] uppercase tracking-wider px-3 py-1 ${
+                            i === 0 
+                              ? 'bg-amber-50 text-amber-700 border border-amber-200' 
+                              : i === 1 
+                                ? 'bg-slate-100 text-slate-700 border border-slate-200' 
+                                : i === 2 
+                                  ? 'bg-orange-50 text-orange-700 border border-orange-200' 
+                                  : 'bg-slate-50 text-slate-500 border border-slate-100'
+                          }`}>
                             {i === 0 ? "1st" : i === 1 ? "2nd" : i === 2 ? "3rd" : `#${i + 1}`}
                           </span>
                         </td>
-                        <td className="p-4 font-semibold text-ink">{perf.name}</td>
-                        <td className="p-4 text-ink-soft">{perf.email}</td>
+                        <td className="p-4 font-semibold text-slate-800">{perf.name}</td>
+                        <td className="p-4 text-slate-500 text-sm">{perf.email}</td>
                         <td className="p-4">
-                          <span className={`font-bold ${perf.avgScore >= 70 ? "text-emerald" : perf.avgScore >= 40 ? "text-amber-deep" : "text-coral"}`}>
+                          <span className={`font-bold ${perf.avgScore >= 70 ? "text-emerald" : perf.avgScore >= 40 ? "text-amber" : "text-coral"}`}>
                             {perf.avgScore}%
                           </span>
                         </td>
-                        <td className="p-4 text-ink-soft">{perf.totalTests}</td>
+                        <td className="p-4 text-slate-500 text-sm">{perf.totalTests}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -465,7 +526,6 @@ const AdminDashboard = () => {
             </div>
           </div>
         )}
-
 
       </div>
     </div>
