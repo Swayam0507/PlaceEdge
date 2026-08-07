@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
-import { FiDownload, FiPlus, FiTrash2, FiUser, FiBook, FiBriefcase, FiCode, FiAward, FiFileText, FiLinkedin, FiGithub, FiZap, FiMail, FiPhone, FiGlobe, FiUploadCloud, FiCheckCircle } from "react-icons/fi";
+import { FiDownload, FiPlus, FiTrash2, FiUser, FiBook, FiBriefcase, FiCode, FiAward, FiFileText, FiLinkedin, FiGithub, FiZap, FiMail, FiPhone, FiGlobe, FiUploadCloud, FiCheckCircle, FiArrowLeft } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useAuth } from "../context/AuthContext";
@@ -38,6 +39,7 @@ const formatSkillText = (text) => {
 
 const ResumeBuilder = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const [resumeData, setResumeData] = useState({
     personal: {
@@ -642,12 +644,21 @@ const ResumeBuilder = () => {
       
       {/* STICKY GLASSMORPHISM HEADER */}
       <header className="shrink-0 flex flex-col md:flex-row items-center justify-between px-6 py-4 bg-paper/80 backdrop-blur-xl border-b border-line z-10 gap-4">
-        <div>
-          <h1 className="font-display text-2xl font-bold text-ink flex items-center gap-3">
-            <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg"><FiFileText size={20} /></div>
-            Resume Workspace
-          </h1>
-          <p className="font-body text-muted text-sm mt-1">Upload your existing resume or build a new ATS-friendly one.</p>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="w-10 h-10 rounded-xl bg-white border border-line text-slate-500 hover:text-ink hover:border-slate-300 flex items-center justify-center transition-all shrink-0 shadow-sm"
+            title="Go Back"
+          >
+            <FiArrowLeft size={18} strokeWidth={2.5} />
+          </button>
+          <div>
+            <h1 className="font-display text-2xl font-bold text-ink flex items-center gap-3">
+              <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg"><FiFileText size={20} /></div>
+              Resume Workspace
+            </h1>
+            <p className="font-body text-muted text-sm mt-1">Upload your existing resume or build a new ATS-friendly one.</p>
+          </div>
         </div>
         
         {/* MODE TOGGLE */}
@@ -788,11 +799,11 @@ const ResumeBuilder = () => {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-xs font-bold text-ink-soft uppercase mb-2 tracking-widest">Full Name</label>
-                    <input type="text" name="name" value={resumeData.personal.name} onChange={handlePersonalChange} className="w-full px-4 py-3 bg-paper-raised border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-ink text-sm font-medium" placeholder="John Doe" />
+                    <input type="text" name="name" value={resumeData.personal.name} onChange={handlePersonalChange} className="w-full px-4 py-3 bg-paper-raised border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-ink text-sm font-medium" placeholder="Aarav Sharma" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-ink-soft uppercase mb-2 tracking-widest">Email</label>
-                    <input type="email" name="email" value={resumeData.personal.email} onChange={handlePersonalChange} className="w-full px-4 py-3 bg-paper-raised border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-ink text-sm font-medium" placeholder="john@example.com" />
+                    <input type="email" name="email" value={resumeData.personal.email} onChange={handlePersonalChange} className="w-full px-4 py-3 bg-paper-raised border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-ink text-sm font-medium" placeholder="aarav.sharma@gmail.com" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-ink-soft uppercase mb-2 tracking-widest">Phone</label>
@@ -801,16 +812,16 @@ const ResumeBuilder = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-ink-soft uppercase mb-2 tracking-widest">LinkedIn</label>
-                      <input type="text" name="linkedin" value={resumeData.personal.linkedin} onChange={handlePersonalChange} className="w-full px-4 py-3 bg-paper-raised border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-ink text-sm font-medium" placeholder="in/johndoe" />
+                      <input type="text" name="linkedin" value={resumeData.personal.linkedin} onChange={handlePersonalChange} className="w-full px-4 py-3 bg-paper-raised border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-ink text-sm font-medium" placeholder="in/aaravsharma" />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-ink-soft uppercase mb-2 tracking-widest">GitHub</label>
-                      <input type="text" name="github" value={resumeData.personal.github} onChange={handlePersonalChange} className="w-full px-4 py-3 bg-paper-raised border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-ink text-sm font-medium" placeholder="github/johndoe" />
+                      <input type="text" name="github" value={resumeData.personal.github} onChange={handlePersonalChange} className="w-full px-4 py-3 bg-paper-raised border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-ink text-sm font-medium" placeholder="github/aaravsharma" />
                     </div>
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-ink-soft uppercase mb-2 tracking-widest">Portfolio / Website</label>
-                    <input type="text" name="portfolio" value={resumeData.personal.portfolio} onChange={handlePersonalChange} className="w-full px-4 py-3 bg-paper-raised border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-ink text-sm font-medium" placeholder="johndoe.com" />
+                    <input type="text" name="portfolio" value={resumeData.personal.portfolio} onChange={handlePersonalChange} className="w-full px-4 py-3 bg-paper-raised border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-ink text-sm font-medium" placeholder="aaravsharma.dev" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-ink-soft uppercase mb-2 tracking-widest">Professional Summary</label>

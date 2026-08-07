@@ -35,6 +35,13 @@ exports.chat = async (req, res) => {
             } else {
                 return res.status(400).json({ success: false, message: "Unsupported file type. Please upload a PDF or DOCX file." });
             }
+
+            if (!fileText || fileText.trim().length < 10) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: "Could not extract readable text from the uploaded file. Please make sure your file is not a scanned image and contains selectable text." 
+                });
+            }
         }
 
         const formattedHistory = messages.map(msg => {
@@ -158,13 +165,15 @@ exports.generateExam = async (req, res) => {
 
         const prompt = `Generate exactly ${limit} multiple choice questions for the category "${category}" at a "${difficulty}" difficulty level.
 The questions should be relevant for a placement or interview preparation exam.
-CRITICAL: If the category involves Mathematics, Quantitative Aptitude, or Logical Reasoning, you MUST ensure that the question is mathematically sound, the numbers make logical sense, and exactly one of the provided options is the unequivocally correct answer. Double-check your calculations step-by-step internally before finalizing the output.
+CRITICAL RULES:
+1. Every question MUST be entirely self-contained. Provide all necessary context, numbers, names, and background information within the "question" text itself. NEVER reference a scenario or previous information that is not explicitly stated in the question.
+2. If the category involves Mathematics, Quantitative Aptitude, or Logical Reasoning, you MUST ensure that the question is mathematically sound, the numbers make logical sense, and exactly one of the provided options is the unequivocally correct answer. Double-check your calculations step-by-step.
 Respond ONLY with a valid JSON array of objects. Each object MUST have the following structure:
 {
-  "question": "The question text",
+  "question": "The fully detailed question text containing all necessary context and information",
   "options": ["Option A", "Option B", "Option C", "Option D"], // Exactly 4 options
   "correctAnswer": 0, // Integer 0-3 representing the index of the correct option
-  "explanation": "Step-by-step explanation for the correct answer to prove it is mathematically correct."
+  "explanation": "Step-by-step explanation for the correct answer."
 }`;
 
         let responseText = "";
@@ -356,8 +365,18 @@ exports.atsCheck = async (req, res) => {
             return res.status(400).json({ success: false, message: "Unsupported file type. Please upload a PDF or DOCX file." });
         }
 
+        if (!fileText || fileText.trim().length < 10) {
+            return res.status(400).json({ 
+                success: false, 
+                message: "Could not extract readable text from the uploaded file. Please make sure your file is not a scanned image and contains selectable text." 
+            });
+        }
+
         const prompt = `You are a strict but helpful ATS (Applicant Tracking System) used by top-tier tech companies like Google and Meta. 
-Evaluate the following resume against the given job description. 
+First, analyze the uploaded document to determine if it is actually a resume or CV. If the document is clearly not a resume (e.g., it's a random article, syllabus, story, or unrelated document), you MUST reject it and respond ONLY with this exact message:
+"❌ **Invalid Document:** The uploaded file does not appear to be a resume. Please upload a valid resume for ATS evaluation."
+
+If the document IS a resume, evaluate it against the given job description. 
 You MUST provide your response in highly professional, structured, and visually appealing Markdown format. Do NOT write long blocky paragraphs. Use bullet points, bold text for emphasis, blockquotes for important notes, and relevant emojis.
 
 Structure your response EXACTLY like this:
@@ -423,11 +442,21 @@ ${fileText}
     }
 };
 
+const companyPrepCache = {};
+
 exports.companyPrep = async (req, res) => {
     try {
         const { companyName } = req.params;
         if (!companyName) {
             return res.status(400).json({ success: false, message: "Company name is required." });
+        }
+
+        const normalizedName = companyName.toLowerCase().trim();
+        if (companyPrepCache[normalizedName]) {
+            return res.status(200).json({ 
+                success: true, 
+                data: companyPrepCache[normalizedName] 
+            });
         }
 
         const prompt = `You are an expert technical interviewer and career coach.
@@ -486,6 +515,7 @@ Provide around 6 most asked topics and 10 top questions specifically tailored to
         }
 
         const data = JSON.parse(responseText);
+        companyPrepCache[normalizedName] = data;
 
         return res.status(200).json({ 
             success: true, 

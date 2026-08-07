@@ -209,7 +209,7 @@ const Dashboard = () => {
         </div>
 
         {/* 3. Stats Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {/* Stat Cards Row */}
           <div onClick={() => setActiveStatModal('tests')} className="bg-white/90 backdrop-blur-xl border border-white rounded-3xl p-6 shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer group flex flex-col justify-between">
             <div className="flex justify-between items-start mb-4">
@@ -237,18 +237,6 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div onClick={() => navigate('/career/resume')} className="bg-white/90 backdrop-blur-xl border border-white rounded-3xl p-6 shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer group flex flex-col justify-between">
-            <div className="flex justify-between items-start mb-2">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
-                <Target size={22} strokeWidth={2.5} />
-              </div>
-              {renderRing(atsScore, atsScore < 70 ? "#ef4444" : "#10b981")}
-            </div>
-            <div>
-              <h4 className="font-display font-black text-2xl text-slate-800 tracking-tight leading-none mb-1">ATS Score</h4>
-              <p className={`text-sm font-semibold ${atsScore < 70 ? "text-red-500" : "text-emerald-500"}`}>{atsScore < 70 ? "Needs improvement" : "Good to go"}</p>
-            </div>
-          </div>
 
           <div onClick={() => setActiveStatModal('weak')} className="bg-white/90 backdrop-blur-xl border border-white rounded-3xl p-6 shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer group flex flex-col justify-between">
             <div className="flex justify-between items-start mb-4">
@@ -258,8 +246,8 @@ const Dashboard = () => {
               <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50 px-2 py-1 rounded-lg">Weak Topic</div>
             </div>
             <div>
-              <h4 className="font-display font-black text-2xl text-slate-800 tracking-tight truncate pr-2">{hasWeakAreas ? weakestArea : "None! 🎉"}</h4>
-              <p className={`text-sm font-semibold mt-1 ${hasWeakAreas ? "text-rose-500" : "text-emerald-500"}`}>{hasWeakAreas ? "Focus practice here" : "All areas strong!"}</p>
+              <h4 className="font-display font-black text-2xl text-slate-800 tracking-tight truncate pr-2">{hasWeakAreas ? weakestArea : hasData ? "None! 🎉" : "No tests yet"}</h4>
+              <p className={`text-sm font-semibold mt-1 ${hasWeakAreas ? "text-rose-500" : hasData ? "text-emerald-500" : "text-slate-400"}`}>{hasWeakAreas ? "Focus practice here" : hasData ? "All areas strong!" : "Take a test to find out"}</p>
             </div>
           </div>
 
@@ -480,7 +468,7 @@ const Dashboard = () => {
                  <p className="text-4xl font-black text-slate-900 tracking-tight">#{globalRank} <span className="text-xl text-slate-400 font-bold tracking-normal">of {totalUsersCount}</span></p>
                </div>
              </div>
-             <p className="text-[15px] text-slate-600 leading-relaxed font-semibold mb-8">Keep practicing mock tests, update your ATS resume, and participate in interview prep to improve your readiness score and climb the leaderboard!</p>
+             <p className="text-[15px] text-slate-600 leading-relaxed font-semibold mb-8">Keep practicing mock tests, update your resume, and participate in interview prep to improve your readiness score and climb the leaderboard!</p>
              <button onClick={() => setActiveStatModal(null)} className="w-full py-4 rounded-2xl font-bold text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">Close</button>
           </div>
         </div>

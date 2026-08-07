@@ -9,12 +9,15 @@ import {
   FiCpu,
   FiRefreshCw,
   FiCheckCircle,
-  FiArrowRight
+  FiArrowRight,
+  FiArrowLeft
 } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { getCareerAdvice } from "../services/api";
 
 const CareerAdvisor = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [advice, setAdvice] = useState(null);
   const [stats, setStats] = useState(null);
@@ -67,7 +70,14 @@ const CareerAdvisor = () => {
         animate={{ opacity: 1, y: 0 }}
         className="flex items-center gap-5 mb-10"
       >
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center shadow-lg shadow-indigo-200">
+        <button
+          onClick={() => navigate(-1)}
+          className="w-10 h-10 rounded-xl bg-white border border-line text-slate-500 hover:text-ink hover:border-slate-300 flex items-center justify-center transition-all shrink-0 shadow-sm"
+          title="Go Back"
+        >
+          <FiArrowLeft size={18} strokeWidth={2.5} />
+        </button>
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center shadow-lg shadow-indigo-200 shrink-0">
           <FiTarget size={28} />
         </div>
         <div>

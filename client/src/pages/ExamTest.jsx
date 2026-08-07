@@ -147,6 +147,13 @@ const ExamTest = () => {
     return (
       <div className="max-w-4xl mx-auto px-4 py-12 animate-fade-in">
         <div className="text-center mb-10">
+          <button
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center gap-2 text-sm font-semibold text-muted hover:text-ink mb-6 transition-colors"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Back
+          </button>
           <h1 className="font-display font-bold text-3xl text-ink mb-3">{CATEGORY_LABELS[selectedCategory] || "Assessment Test"}</h1>
           <p className="font-body text-muted text-lg">
             AI will instantly generate unique questions for your exam.
@@ -250,6 +257,23 @@ const ExamTest = () => {
       {/* Top Bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-paper-raised border border-line rounded-2xl p-4 shadow-sm mb-6 shrink-0">
         <div className="flex items-center gap-4 w-full sm:w-auto">
+          <button
+            onClick={() => {
+              const confirmed = window.confirm(
+                answeredCount > 0
+                  ? `You have answered ${answeredCount}/${questions.length} questions. If you leave now, your progress will be lost. Are you sure you want to exit?`
+                  : "Your test is in progress. If you leave now, this attempt will be lost. Are you sure you want to exit?"
+              );
+              if (!confirmed) return;
+              clearInterval(timerRef.current);
+              navigate(-1);
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-coral bg-coral/10 border border-coral/20 hover:bg-coral/20 transition-all"
+            title="Exit Test"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Exit
+          </button>
           <span className="flex items-center gap-2 bg-ink/5 px-3 py-1.5 rounded-lg text-ink font-semibold text-sm">
             {CATEGORY_ICONS[selectedCategory]} {CATEGORY_LABELS[selectedCategory]}
           </span>

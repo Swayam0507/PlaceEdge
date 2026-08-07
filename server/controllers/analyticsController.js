@@ -104,8 +104,8 @@ const getDashboardAnalytics = async (req, res) => {
     ]);
 
     // ── 9. Journey stages computation ──
-    const aptitudeCategories = ["quantitative", "logical"];
-    const codingCategories = ["technical"];
+    const aptitudeCategories = ["quantitative", "logical", "aptitude"];
+    const codingCategories = ["technical", "dsa", "coding"];
 
     const aptitudeStats = categoryStats.filter((c) =>
       aptitudeCategories.includes(c._id?.toLowerCase())
@@ -163,6 +163,13 @@ const getDashboardAnalytics = async (req, res) => {
     const getStatus = (idx) => {
       if (stageCompleted[idx]) return "completed";
       if (idx === currentStageIndex) return "current";
+      
+      // Also mark as 'current' (in-progress) if they have started activity in that stage
+      if (idx === 0 && aptitudeCount > 0) return "current";
+      if (idx === 1 && codingCount > 0) return "current";
+      if (idx === 2 && (resumeCount > 0 || isProfileComplete)) return "completed";
+      if (idx === 3 && interviewPracticeCount > 0) return "current";
+
       return "locked";
     };
 
@@ -195,7 +202,7 @@ const getDashboardAnalytics = async (req, res) => {
       stages: [
         { key: "aptitude", label: "Aptitude", status: getStatus(0), sublabel: getSublabel(0) },
         { key: "coding", label: "Coding Test", status: getStatus(1), sublabel: getSublabel(1) },
-        { key: "resume", label: "Resume + ATS", status: getStatus(2), sublabel: getSublabel(2) },
+        { key: "resume", label: "Resume", status: getStatus(2), sublabel: getSublabel(2) },
         { key: "interview", label: "Mock Interview", status: getStatus(3), sublabel: getSublabel(3) },
         { key: "placed", label: "Placed", status: getStatus(4), sublabel: getSublabel(4) },
       ],
@@ -253,7 +260,7 @@ const getDashboardAnalytics = async (req, res) => {
         focusRecommendation = `Spend more time practicing your weak area: ${displayCategory}.`;
       }
     } else if (!resumeDone) {
-      focusRecommendation = "You haven't uploaded a resume. Get your ATS score to stand out.";
+      focusRecommendation = "You haven't uploaded a resume. Upload one to stand out.";
     } else if (currentStageIndex === 4) {
       focusRecommendation = "You're placement ready! Start applying for companies in Career Hub.";
     }

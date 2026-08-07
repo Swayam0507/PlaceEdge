@@ -245,7 +245,7 @@ ${fileText}`;
     console.error("Complete Onboarding Error:", error);
     res.status(500).json({
       success: false,
-      message: "Failed to complete onboarding."
+      message: error.message || "Failed to complete onboarding."
     });
   }
 };

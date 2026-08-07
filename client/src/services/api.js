@@ -55,7 +55,9 @@ export const toggleRoadmapTask = (taskId, completed) => API.put("/profile/roadma
 // ---------- Resume API ----------
 export const uploadResume = (formData) =>
   API.post("/resume/upload", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
   });
 export const getMyResumes = () => API.get("/resume/my-resumes");
 export const deleteResume = (id) => API.delete(`/resume/${id}`);
@@ -146,7 +148,11 @@ export const bulkImportQuestions = (questions) =>
 // ---------- AI Chat & Exam API ----------
 export const chatWithAI = (data) => {
   if (data instanceof FormData) {
-    return API.post("/ai/chat", data);
+    return API.post("/ai/chat", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   }
   return API.post("/ai/chat", { messages: data });
 };

@@ -91,6 +91,14 @@ export const AuthProvider = ({ children }) => {
 
   const clearError = () => setError(null);
 
+  const updateUserContext = (updatedFields) => {
+    setUser((prev) => {
+      const merged = { ...prev, ...updatedFields };
+      localStorage.setItem("user", JSON.stringify(merged));
+      return merged;
+    });
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -102,6 +110,7 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         clearError,
+        updateUserContext,
         isAuthenticated: !!user,
         isAdmin: user?.role === "admin",
       }}

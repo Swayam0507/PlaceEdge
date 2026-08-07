@@ -14,9 +14,6 @@ const AdminUsers = () => {
   const [pagination, setPagination] = useState({});
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({ search: "", page: 1 });
-  const [editingUser, setEditingUser] = useState(null);
-  const [editForm, setEditForm] = useState({ name: "", email: "", role: "", branch: "", semester: 1, cgpa: 0 });
-  const [saving, setSaving] = useState(false);
   const [sortField, setSortField] = useState("name");
   const [sortDir, setSortDir] = useState("asc");
   const [detailUser, setDetailUser] = useState(null);
@@ -49,33 +46,6 @@ const AdminUsers = () => {
     e.preventDefault();
     setFilters((prev) => ({ ...prev, page: 1 }));
     fetchUsers();
-  };
-
-  const openEditModal = (user) => {
-    setEditingUser(user);
-    setEditForm({ 
-      name: user.name || "",
-      email: user.email || "",
-      role: user.role || "student", 
-      branch: user.branch || "", 
-      semester: user.semester || 1,
-      cgpa: user.cgpa || 0
-    });
-  };
-
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    setSaving(true);
-    try {
-      await updateAdminUser(editingUser._id, editForm);
-      setEditingUser(null);
-      fetchUsers();
-      toast.success("Student updated successfully!");
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to update user.");
-    } finally {
-      setSaving(false);
-    }
   };
 
   const handleDelete = async (id, name) => {
@@ -246,13 +216,6 @@ const AdminUsers = () => {
                               <Eye size={15} />
                             </button>
                             <button 
-                              className="p-2 text-amber-deep border border-slate-100 hover:bg-amber-50 hover:border-amber-200 rounded-xl transition-all" 
-                              onClick={() => openEditModal(user)} 
-                              title="Edit"
-                            >
-                              <Edit2 size={15} />
-                            </button>
-                            <button 
                               className="p-2 text-coral border border-slate-100 hover:bg-coral/10 hover:border-coral/20 rounded-xl transition-all" 
                               onClick={() => handleDelete(user._id, user.name)} 
                               title="Delete"
@@ -303,121 +266,6 @@ const AdminUsers = () => {
           </>
         )}
 
-        {/* Edit User Modal */}
-        {editingUser && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in" onClick={() => setEditingUser(null)}>
-            <div className="bg-white rounded-3xl border border-slate-100 shadow-floating w-full max-w-md overflow-hidden" onClick={(e) => e.stopPropagation()}>
-              <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                <h2 className="font-display font-black text-lg text-slate-800 flex items-center gap-2">
-                  <Edit2 className="text-amber-500" /> Edit Student
-                </h2>
-                <button className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-all" onClick={() => setEditingUser(null)}>
-                  <X size={20} />
-                </button>
-              </div>
-              
-              <form onSubmit={handleUpdate} className="p-6 space-y-4">
-                <div>
-                  <label htmlFor="edit-name" className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Name</label>
-                  <input 
-                    id="edit-name" 
-                    type="text" 
-                    value={editForm.name} 
-                    onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} 
-                    placeholder="Student Name" 
-                    required 
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-100 bg-slate-50 text-slate-800 focus:outline-none focus:bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all text-sm font-medium" 
-                  />
-                </div>
-                
-                <div>
-                  <label htmlFor="edit-email" className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Email</label>
-                  <input 
-                    id="edit-email" 
-                    type="email" 
-                    value={editForm.email} 
-                    onChange={(e) => setEditForm({ ...editForm, email: e.target.value })} 
-                    placeholder="Student Email" 
-                    required 
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-100 bg-slate-50 text-slate-800 focus:outline-none focus:bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all text-sm font-medium" 
-                  />
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="edit-branch" className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Branch</label>
-                    <input 
-                      id="edit-branch" 
-                      type="text" 
-                      value={editForm.branch} 
-                      onChange={(e) => setEditForm({ ...editForm, branch: e.target.value })} 
-                      placeholder="e.g., Computer Science" 
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-100 bg-slate-50 text-slate-800 focus:outline-none focus:bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all text-sm font-medium" 
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="edit-semester" className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Semester</label>
-                    <input 
-                      id="edit-semester" 
-                      type="number" 
-                      min="1" 
-                      max="8" 
-                      value={editForm.semester} 
-                      onChange={(e) => setEditForm({ ...editForm, semester: parseInt(e.target.value) || 1 })} 
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-100 bg-slate-50 text-slate-800 focus:outline-none focus:bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all text-sm font-medium" 
-                    />
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="edit-cgpa" className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">CGPA</label>
-                    <input 
-                      id="edit-cgpa" 
-                      type="number" 
-                      step="0.01" 
-                      min="0" 
-                      max="10" 
-                      value={editForm.cgpa} 
-                      onChange={(e) => setEditForm({ ...editForm, cgpa: parseFloat(e.target.value) || 0 })} 
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-100 bg-slate-50 text-slate-800 focus:outline-none focus:bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all text-sm font-medium" 
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="edit-role" className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Role</label>
-                    <select 
-                      id="edit-role" 
-                      value={editForm.role} 
-                      onChange={(e) => setEditForm({ ...editForm, role: e.target.value })} 
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-100 bg-slate-50 text-slate-800 focus:outline-none focus:bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all text-sm font-medium cursor-pointer"
-                    >
-                      <option value="student">Student</option>
-                      <option value="admin">Admin</option>
-                    </select>
-                  </div>
-                </div>
-                
-                <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100 mt-6">
-                  <button 
-                    type="button" 
-                    className="px-5 py-2.5 text-xs font-bold text-slate-600 bg-slate-50 hover:bg-slate-100 border border-slate-100 rounded-xl transition-all" 
-                    onClick={() => setEditingUser(null)}
-                  >
-                    Cancel
-                  </button>
-                  <button 
-                    type="submit" 
-                    className="px-5 py-2.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-all shadow-md shadow-indigo-500/10 disabled:opacity-75" 
-                    disabled={saving}
-                  >
-                    {saving ? "Saving..." : "Update Student"}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-
         {/* Student Detail Modal */}
         {detailUser && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in" onClick={() => setDetailUser(null)}>
@@ -444,11 +292,12 @@ const AdminUsers = () => {
                 </div>
 
                 {/* Quick Stats */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
                   {[
                     { label: 'Branch', value: detailUser.branch || '—', icon: BookOpen, colorClass: "text-slate-800" },
+                    { label: 'Semester', value: detailUser.semester || '—', icon: BookOpen, colorClass: "text-slate-800" },
                     { label: 'CGPA', value: detailUser.cgpa || '—', icon: TrendingUp, colorClass: "text-slate-800" },
-                    { label: 'Tests Completed', value: detailUser.totalTests, icon: Calendar, colorClass: "text-slate-850" },
+                    { label: 'Tests', value: detailUser.totalTests, icon: Calendar, colorClass: "text-slate-850" },
                     { 
                       label: 'Avg Score', 
                       value: `${detailUser.avgScore}%`, 
@@ -456,9 +305,14 @@ const AdminUsers = () => {
                       colorClass: detailUser.avgScore >= 70 ? "text-emerald" : detailUser.avgScore >= 40 ? "text-amber" : "text-coral"
                     },
                   ].map((s, i) => (
-                    <div key={i} className="p-4 bg-white border border-slate-100 rounded-2xl text-center shadow-card">
-                      <div className={`text-2xl font-black mb-1 ${s.colorClass}`}>{s.value}</div>
-                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{s.label}</div>
+                    <div key={i} className="p-3 sm:p-4 bg-white border border-slate-100 rounded-2xl text-center shadow-card flex flex-col justify-center items-center h-full min-h-[90px]">
+                      <div 
+                        className={`font-black mb-1 ${s.colorClass} ${String(s.value).length > 8 ? 'text-base sm:text-lg leading-tight line-clamp-2' : 'text-2xl'}`}
+                        title={String(s.value)}
+                      >
+                        {s.value}
+                      </div>
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-auto pt-1">{s.label}</div>
                     </div>
                   ))}
                 </div>

@@ -5,7 +5,7 @@ const JourneyMap = ({ journeyData }) => {
   const stages = journeyData?.stages || [
     { key: "aptitude", label: "Aptitude", status: "current", sublabel: "Start here" },
     { key: "coding", label: "Coding", status: "locked", sublabel: "Next up" },
-    { key: "resume", label: "Resume", status: "locked", sublabel: "ATS Check" },
+    { key: "resume", label: "Resume", status: "locked", sublabel: "Upload" },
     { key: "interview", label: "Interview", status: "locked", sublabel: "Mock prep" },
     { key: "placed", label: "Placed", status: "locked", sublabel: "Goal" },
   ];

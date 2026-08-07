@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Lightbulb, Target, Sparkles, BrainCircuit, Activity, BookOpen, Clock, Users, GraduationCap, CheckCircle2, AlertTriangle, Loader2, UserCheck, Settings, ChevronDown, Code, FileText, Building2, ArrowRight } from "lucide-react";
+import { Lightbulb, Target, Sparkles, BrainCircuit, Activity, BookOpen, Clock, Users, GraduationCap, CheckCircle2, AlertTriangle, Loader2, UserCheck, Settings, ChevronDown, Code, FileText, Building2, ArrowRight, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { predictPlacement, getProfile } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 
 const PlacementPredictor = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
     cgpa: 7.5,
@@ -255,7 +257,17 @@ const PlacementPredictor = () => {
         <div className="absolute top-0 left-0 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2"></div>
         <div className="absolute bottom-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl translate-y-1/3 translate-x-1/4"></div>
         
-        <div className="max-w-4xl mx-auto relative z-10 flex flex-col items-center text-center">
+        <div className="max-w-4xl mx-auto relative z-10">
+          <div className="flex justify-start mb-6">
+            <button
+              onClick={() => navigate(-1)}
+              className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 text-white/80 hover:text-white hover:bg-white/20 flex items-center justify-center transition-all backdrop-blur-md"
+              title="Go Back"
+            >
+              <ArrowLeft size={20} strokeWidth={2.5} />
+            </button>
+          </div>
+          <div className="flex flex-col items-center text-center">
           <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-white/10 border border-white/10 backdrop-blur-md mb-6 shadow-lg text-emerald-400">
             <Sparkles size={32} strokeWidth={2.5} />
           </div>
@@ -265,6 +277,7 @@ const PlacementPredictor = () => {
           <p className="text-indigo-200/80 font-medium text-lg max-w-2xl">
             We've auto-synced your profile data. Adjust the sliders to run "What-If" scenarios and get AI-driven actionable insights.
           </p>
+          </div>
         </div>
       </div>
 

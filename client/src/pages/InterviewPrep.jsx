@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { generateInterviewQuestions } from "../services/api";
 import api from "../services/api";
-import { FiMic, FiTerminal, FiChevronRight, FiCheckCircle, FiRefreshCw, FiCpu, FiAward, FiMessageSquare, FiMicOff } from "react-icons/fi";
+import { FiMic, FiTerminal, FiChevronRight, FiCheckCircle, FiRefreshCw, FiCpu, FiAward, FiMessageSquare, FiMicOff, FiArrowLeft } from "react-icons/fi";
 import { BiBuildingHouse } from "react-icons/bi";
 import ReactMarkdown from "react-markdown";
 
@@ -16,6 +17,7 @@ const TOP_COMPANIES = [
 ];
 
 const InterviewPrep = () => {
+  const navigate = useNavigate();
   const [step, setStep] = useState("setup"); // 'setup', 'generating', 'interview', 'summary'
   const [companies, setCompanies] = useState(TOP_COMPANIES);
   const [filters, setFilters] = useState({ company: "", category: "technical", role: "Software Engineer" });
@@ -118,7 +120,14 @@ const InterviewPrep = () => {
   };
 
   const renderSetup = () => (
-    <div className="max-w-2xl mx-auto bg-white rounded-3xl p-8 sm:p-10 shadow-sm border border-line mt-10">
+    <div className="max-w-2xl mx-auto bg-white rounded-3xl p-8 sm:p-10 shadow-sm border border-line mt-10 relative">
+      <button
+        onClick={() => navigate(-1)}
+        className="absolute left-6 top-6 p-2 text-slate-400 hover:text-ink hover:bg-slate-50 rounded-xl transition-colors flex items-center justify-center"
+        title="Go Back"
+      >
+        <FiArrowLeft size={20} />
+      </button>
       <div className="text-center mb-8">
         <div className="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
           <FiMic size={32} />
@@ -184,9 +193,32 @@ const InterviewPrep = () => {
   const renderInterview = () => {
     const q = questions[currentIdx];
     return (
-      <div className="max-w-4xl mx-auto mt-6">
+      <div className="max-w-4xl mx-auto mt-6 relative">
+        <button
+          onClick={() => {
+            if (window.confirm("Are you sure you want to exit the interview? Your progress will be lost.")) {
+              if (recognitionObj) recognitionObj.stop();
+              navigate(-1);
+            }
+          }}
+          className="absolute -left-16 top-0 p-2 text-slate-400 hover:text-coral hover:bg-coral/5 rounded-xl transition-colors hidden lg:flex items-center justify-center"
+          title="Exit Interview"
+        >
+          <FiArrowLeft size={20} />
+        </button>
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                if (window.confirm("Are you sure you want to exit the interview? Your progress will be lost.")) {
+                  if (recognitionObj) recognitionObj.stop();
+                  navigate(-1);
+                }
+              }}
+              className="lg:hidden mr-2 p-2 text-slate-400 hover:text-coral hover:bg-coral/5 rounded-xl transition-colors flex items-center justify-center"
+            >
+              <FiArrowLeft size={18} />
+            </button>
             <span className="px-3 py-1 bg-indigo-100 text-indigo-700 text-sm font-bold rounded-full">
               Question {currentIdx + 1} of {questions.length}
             </span>

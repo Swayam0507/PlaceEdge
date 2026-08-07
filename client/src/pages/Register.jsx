@@ -31,6 +31,8 @@ const Register = () => {
     if (!formData.email.trim()) return "Email is required";
     if (!formData.password) return "Password is required";
     if (formData.password.length < 6) return "Password must be at least 6 characters";
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
+    if (!passwordRegex.test(formData.password)) return "Password must contain at least one uppercase letter, one lowercase letter, and one number";
     if (formData.password !== formData.confirmPassword) return "Passwords do not match";
     return null;
   };
@@ -145,7 +147,7 @@ const Register = () => {
                         type="text"
                         id="name"
                         name="name"
-                        placeholder="Enter your full name"
+                        placeholder="e.g. Aarav Sharma"
                         value={formData.name}
                         onChange={handleChange}
                         required
@@ -167,7 +169,7 @@ const Register = () => {
                         type="email"
                         id="email"
                         name="email"
-                        placeholder="you@example.com"
+                        placeholder="aarav.sharma@gmail.com"
                         value={formData.email}
                         onChange={handleChange}
                         required

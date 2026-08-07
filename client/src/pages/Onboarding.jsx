@@ -46,9 +46,7 @@ const Onboarding = () => {
       if (targetCompany) formData.append("targetCompany", targetCompany);
       if (resumeFile) formData.append("resume", resumeFile);
 
-      const res = await api.post("/profile/onboarding", formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
+      const res = await api.post("/profile/onboarding", formData);
 
       if (res.data.success) {
         updateUserContext(res.data.user);
@@ -58,8 +56,11 @@ const Onboarding = () => {
         setStep(2); // Go back if failed
       }
     } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.message || "An error occurred during onboarding.");
+      console.error("Onboarding Error:", err);
+      if (err.response) {
+        console.error("Response data:", err.response.data);
+      }
+      setError(err.response?.data?.message || err.message || "An error occurred during onboarding.");
       setStep(2);
     } finally {
       setLoading(false);

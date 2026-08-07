@@ -32,6 +32,7 @@ import CareerAdvisor from "./pages/CareerAdvisor";
 import PracticeHub from "./pages/PracticeHub";
 import CareerHub from "./pages/CareerHub";
 import CommunityHub from "./pages/CommunityHub";
+import NotFound from "./pages/NotFound";
 import AIChatbot from "./components/AIChatbot";
 
 // Redirect authenticated users away from auth pages
@@ -168,8 +169,8 @@ const AppContent = () => {
         <Route path="/admin/forum" element={<AdminRoute><AdminForum /></AdminRoute>} />
         <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
 
-        {/* Default redirect */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        {/* 404 Not Found */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
 
       {/* Floating AI Chatbot for authenticated students */}

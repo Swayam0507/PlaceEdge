@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Loader2, ExternalLink, TrendingUp, Target, Map, CheckCircle2, Lightbulb, PlayCircle, BookOpen } from "lucide-react";
 import api from "../services/api";
 import MockAnswerForm from "../components/MockAnswerForm";
 
 const CompanyPrepDetail = () => {
   const { companyName } = useParams();
+  const navigate = useNavigate();
   const [prepData, setPrepData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -70,9 +71,9 @@ const CompanyPrepDetail = () => {
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         
         {/* Back Button */}
-        <Link to="/company-prep" className="inline-flex items-center gap-2 text-sm font-bold text-ink-soft hover:text-indigo-600 mb-6 transition-colors group">
+        <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-sm font-bold text-ink-soft hover:text-indigo-600 mb-6 transition-colors group">
           <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back to all companies
-        </Link>
+        </button>
 
         {/* Header Section */}
         <div className="mb-10 overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-900 to-indigo-950 shadow-2xl relative border border-indigo-900/50">

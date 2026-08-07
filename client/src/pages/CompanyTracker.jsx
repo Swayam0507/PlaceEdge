@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import { getCompanies, checkEligibility, createCompany, deleteCompanyApi, searchStudentsForPlacement, getCompanyPlacements, addCompanyPlacement, removeCompanyPlacement } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { formatDate } from "../utils/helpers";
-import { Building2, IndianRupee, Calendar, GraduationCap, Target, ChevronRight, Plus, Trash2, Globe, CheckCircle2, XCircle, AlertTriangle, Users, Search, X, UserPlus, Eye } from "lucide-react";
+import { Building2, IndianRupee, Calendar, GraduationCap, Target, ChevronRight, Plus, Trash2, Globe, CheckCircle2, XCircle, AlertTriangle, Users, Search, X, UserPlus, Eye, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const CompanyTracker = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const isAdmin = user?.role === "admin";
   const [companies, setCompanies] = useState([]);
@@ -190,7 +192,16 @@ const CompanyTracker = () => {
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/10 text-blue-200 text-xs font-bold uppercase tracking-wider mb-4 backdrop-blur-md">
               <Building2 size={14} className="text-blue-300" /> company management
             </div>
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-2">Company Tracker</h1>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate(-1)}
+                className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 text-white/80 hover:text-white hover:bg-white/20 flex items-center justify-center transition-all shrink-0 backdrop-blur-md"
+                title="Go Back"
+              >
+                <ArrowLeft size={20} strokeWidth={2.5} />
+              </button>
+              <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-2">Company Tracker</h1>
+            </div>
             <p className="text-slate-400 max-w-xl">Track placement drives, check eligibility, and stay informed.</p>
           </div>
           
@@ -228,15 +239,15 @@ const CompanyTracker = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 <div>
                   <label className="block text-sm font-medium text-ink mb-1">Min Package (LPA)</label>
-                  <input type="number" className="w-full px-4 py-2.5 rounded-xl border border-line bg-paper focus:outline-none focus:border-ink transition-all" value={newCompany.package.min} onChange={(e) => setNewCompany({...newCompany, package: {...newCompany.package, min: Number(e.target.value)}})} />
+                  <input type="number" min="0" className="w-full px-4 py-2.5 rounded-xl border border-line bg-paper focus:outline-none focus:border-ink transition-all" value={newCompany.package.min} onChange={(e) => setNewCompany({...newCompany, package: {...newCompany.package, min: Number(e.target.value)}})} />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-ink mb-1">Max Package (LPA)</label>
-                  <input type="number" className="w-full px-4 py-2.5 rounded-xl border border-line bg-paper focus:outline-none focus:border-ink transition-all" value={newCompany.package.max} onChange={(e) => setNewCompany({...newCompany, package: {...newCompany.package, max: Number(e.target.value)}})} />
+                  <input type="number" min="0" className="w-full px-4 py-2.5 rounded-xl border border-line bg-paper focus:outline-none focus:border-ink transition-all" value={newCompany.package.max} onChange={(e) => setNewCompany({...newCompany, package: {...newCompany.package, max: Number(e.target.value)}})} />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-ink mb-1">Min CGPA</label>
-                  <input type="number" step="0.1" className="w-full px-4 py-2.5 rounded-xl border border-line bg-paper focus:outline-none focus:border-ink transition-all" value={newCompany.eligibility.minCGPA} onChange={(e) => setNewCompany({...newCompany, eligibility: {...newCompany.eligibility, minCGPA: Number(e.target.value)}})} />
+                  <input type="number" min="0" step="0.1" className="w-full px-4 py-2.5 rounded-xl border border-line bg-paper focus:outline-none focus:border-ink transition-all" value={newCompany.eligibility.minCGPA} onChange={(e) => setNewCompany({...newCompany, eligibility: {...newCompany.eligibility, minCGPA: Number(e.target.value)}})} />
                 </div>
               </div>
 
@@ -386,16 +397,25 @@ const CompanyTracker = () => {
                   {/* Student: Check Eligibility | Admin: Add Placement + View */}
                   {!isAdmin ? (
                     <div className="flex-1 mr-4">
-                      <button 
-                        className={`w-full py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2 ${
-                          eligibility[company._id] 
-                            ? (eligibility[company._id].eligible ? "bg-emerald/10 text-emerald border border-emerald/20" : "bg-coral/10 text-coral border border-coral/20") 
-                            : "bg-paper border border-line text-ink hover:bg-surface"
-                        }`}
-                        onClick={() => handleCheckEligibility(company._id)}
-                      >
-                        {eligibility[company._id] ? (eligibility[company._id].eligible ? <><CheckCircle2 size={18} /> Eligible</> : <><XCircle size={18} /> Not Eligible</>) : "Check Eligibility"}
-                      </button>
+                      {company.status === "completed" || company.status === "cancelled" ? (
+                        <button 
+                          className="w-full py-2.5 rounded-xl text-sm font-bold bg-slate-100 text-slate-500 border border-slate-200 cursor-not-allowed flex items-center justify-center gap-2"
+                          disabled
+                        >
+                          {company.status === "completed" ? "Drive Closed" : "Cancelled"}
+                        </button>
+                      ) : (
+                        <button 
+                          className={`w-full py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2 ${
+                            eligibility[company._id] 
+                              ? (eligibility[company._id].eligible ? "bg-emerald/10 text-emerald border border-emerald/20" : "bg-coral/10 text-coral border border-coral/20") 
+                              : "bg-paper border border-line text-ink hover:bg-surface"
+                          }`}
+                          onClick={() => handleCheckEligibility(company._id)}
+                        >
+                          {eligibility[company._id] ? (eligibility[company._id].eligible ? <><CheckCircle2 size={18} /> Eligible</> : <><XCircle size={18} /> Not Eligible</>) : "Check Eligibility"}
+                        </button>
+                      )}
                     </div>
                   ) : (
                     <div className="flex-1 flex gap-2">
@@ -539,6 +559,7 @@ const CompanyTracker = () => {
               <label className="block text-sm font-medium text-ink mb-1">Package Offered (LPA)</label>
               <input
                 type="number"
+                min="0"
                 step="0.1"
                 className="w-full px-4 py-2.5 rounded-xl border border-line bg-paper focus:outline-none focus:border-ink transition-all"
                 placeholder="e.g. 8.5"

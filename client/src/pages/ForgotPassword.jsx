@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { forgotPassword } from "../services/api";
 
@@ -40,7 +40,7 @@ const ForgotPassword = () => {
             <label className="block text-sm font-bold text-ink mb-2">Email Address</label>
             <input
               type="email"
-              placeholder="you@example.com"
+              placeholder="aarav.sharma@gmail.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

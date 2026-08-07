@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { getBookmarks, toggleBookmark } from "../services/api";
-import { Bookmark, BookmarkMinus, Eye, EyeOff, Lightbulb, CheckCircle2 } from "lucide-react";
+import { Bookmark, BookmarkMinus, Eye, EyeOff, Lightbulb, CheckCircle2, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Bookmarks = () => {
+  const navigate = useNavigate();
   const [bookmarks, setBookmarks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [revealedAnswers, setRevealedAnswers] = useState({});
@@ -42,7 +44,17 @@ const Bookmarks = () => {
         <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4"></div>
         
-        <div className="max-w-4xl mx-auto relative z-10 flex flex-col items-center text-center">
+        <div className="max-w-4xl mx-auto relative z-10">
+          <div className="flex justify-start mb-6">
+            <button
+              onClick={() => navigate(-1)}
+              className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 text-white/80 hover:text-white hover:bg-white/20 flex items-center justify-center transition-all backdrop-blur-md"
+              title="Go Back"
+            >
+              <ArrowLeft size={20} strokeWidth={2.5} />
+            </button>
+          </div>
+          <div className="flex flex-col items-center text-center">
           <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-white/10 border border-white/10 backdrop-blur-md mb-6 shadow-lg text-pink-400">
             <Bookmark size={32} strokeWidth={2.5} />
           </div>
@@ -54,6 +66,7 @@ const Bookmarks = () => {
           </p>
           <div className="mt-6 inline-flex items-center px-4 py-2 rounded-full bg-white/5 border border-white/10 text-indigo-100 text-sm font-semibold shadow-inner">
             {bookmarks.length} {bookmarks.length === 1 ? 'bookmark' : 'bookmarks'} saved
+          </div>
           </div>
         </div>
       </div>

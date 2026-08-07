@@ -1,18 +1,20 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getTestHistory, getTestAttempt } from "../services/api";
 import { formatDate } from "../utils/helpers";
 
 import { FiPieChart, FiBox, FiTerminal, FiTarget, FiBarChart2, FiCheckCircle, FiXCircle, FiClock, FiChevronDown, FiChevronUp } from "react-icons/fi";
 
 const CATEGORY_ICONS = {
-  quantitative: <FiPieChart />,
-  logical: <FiBox />,
-  technical: <FiTerminal />,
+  aptitude: <FiPieChart />,
+  dsa: <FiTerminal />,
+  soft_skills: <FiBox />,
+  career: <FiTarget />,
   mixed: <FiTarget />,
 };
 
 const TestHistory = () => {
+  const navigate = useNavigate();
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
@@ -77,10 +79,17 @@ const TestHistory = () => {
     <div className="max-w-5xl mx-auto px-4 py-10 animate-fade-in">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
         <div>
+          <button
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center gap-2 text-sm font-semibold text-muted hover:text-ink mb-4 transition-colors"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Back
+          </button>
           <h1 className="font-display font-bold text-3xl text-ink">Test History</h1>
           <p className="font-body text-muted mt-2">Review your past test attempts and track progress.</p>
         </div>
-        <Link to="/exam/aptitude" className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold bg-ink text-paper shadow-sm hover:bg-ink-soft transition-colors whitespace-nowrap">
+        <Link to={`/exam/${filter === 'all' ? 'mixed' : filter}`} className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold bg-ink text-paper shadow-sm hover:bg-ink-soft transition-colors whitespace-nowrap">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
           </svg>
@@ -90,13 +99,17 @@ const TestHistory = () => {
 
       {/* Filters */}
       <div className="flex flex-wrap gap-2 mb-8 bg-paper-raised p-2 rounded-2xl border border-line shadow-sm w-fit">
-        {["all", "quantitative", "logical", "technical", "mixed"].map((cat) => (
+        {["all", "aptitude", "dsa", "soft_skills", "career", "mixed"].map((cat) => (
           <button
             key={cat}
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${filter === cat ? "bg-ink text-paper shadow-sm" : "text-ink-soft hover:bg-gray-100"}`}
             onClick={() => setFilter(cat)}
           >
-            {cat !== "all" && CATEGORY_ICONS[cat]} {cat === "all" ? "All Tests" : cat.charAt(0).toUpperCase() + cat.slice(1)}
+            {cat !== "all" && CATEGORY_ICONS[cat]} 
+            {cat === "all" ? "All Tests" 
+              : cat === "dsa" ? "DSA"
+              : cat === "soft_skills" ? "Soft Skills"
+              : cat.charAt(0).toUpperCase() + cat.slice(1)}
           </button>
         ))}
       </div>
@@ -113,7 +126,7 @@ const TestHistory = () => {
           </div>
           <h3 className="font-display font-bold text-xl text-ink mb-2">No test attempts found</h3>
           <p className="text-muted mb-6">Take your first test to start building your history.</p>
-          <Link to="/exam/aptitude" className="inline-flex items-center justify-center px-6 py-2.5 rounded-xl font-semibold bg-white border border-line text-ink hover:bg-gray-50 transition-colors shadow-sm">
+          <Link to={`/exam/${filter === 'all' ? 'mixed' : filter}`} className="inline-flex items-center justify-center px-6 py-2.5 rounded-xl font-semibold bg-white border border-line text-ink hover:bg-gray-50 transition-colors shadow-sm">
             Start a Test
           </Link>
         </div>
@@ -131,7 +144,7 @@ const TestHistory = () => {
                   </div>
                   <div>
                     <h4 className="font-display font-semibold text-ink text-lg mb-1">
-                      {attempt.category.charAt(0).toUpperCase() + attempt.category.slice(1)} Test
+                      {attempt.category === "dsa" ? "DSA" : attempt.category === "soft_skills" ? "Soft Skills" : attempt.category.charAt(0).toUpperCase() + attempt.category.slice(1)} Test
                     </h4>
                     <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted font-medium">
                       <span className="flex items-center gap-1.5"><FiClock size={14}/> {formatDate(attempt.createdAt)}</span>

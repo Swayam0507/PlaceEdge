@@ -1,14 +1,12 @@
 import { useState, useEffect } from "react";
-import { getForumPosts, createForumPost, upvoteForumPost, addForumReply, deleteForumPost } from "../services/api";
+import { getForumPosts, getForumPost, createForumPost, upvoteForumPost, addForumReply, deleteForumPost } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { formatDate } from "../utils/helpers";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import LinkPreview from "../components/common/LinkPreview";
-import { 
-  ClipboardList, Target, Building2, HelpCircle, BookOpen, 
-  MessageSquare, Edit3, Send, Search, Eye, Pin, ChevronUp, Trash2, X, Hash
-} from "lucide-react";
+import { MessageSquare, ThumbsUp, Eye, Clock, Hash, Search, Plus, Filter, Pin, Image as ImageIcon, Link as LinkIcon, Paperclip, CheckCircle2, ChevronRight, X, Edit3, Loader2, LogIn, ChevronDown, Reply, ArrowLeft, ClipboardList, Target, Building2, HelpCircle, BookOpen, Send, ChevronUp, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 // Updated Categories with Lucide Icons
 const CATEGORIES = [
@@ -21,6 +19,7 @@ const CATEGORIES = [
 ];
 
 const Forum = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [posts, setPosts] = useState([]);
   const [pagination, setPagination] = useState({});
@@ -86,14 +85,39 @@ const Forum = () => {
     fetchPosts();
   };
 
+  const handleExpandPost = async (id, isExpanded) => {
+    if (isExpanded) {
+      setExpandedId(null);
+    } else {
+      setExpandedId(id);
+      try {
+        const { data } = await getForumPost(id);
+        if (data.success && data.post) {
+          setPosts(prevPosts => prevPosts.map(p => p._id === id ? data.post : p));
+        }
+      } catch (err) { 
+        console.error("Error fetching post details:", err); 
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-surface pb-20 animate-fade-in">
       <div className="max-w-[1440px] mx-auto px-4 py-8">
         
         {/* Header Section */}
-        <div className="mb-10 text-center md:text-left">
-          <h1 className="font-bold text-3xl md:text-4xl text-ink tracking-tight mb-2">Discussion Forum</h1>
-          <p className="text-ink-soft text-lg font-medium max-w-2xl">Share interview experiences, ask doubts, and collaborate with your peers.</p>
+        <div className="mb-10 text-center md:text-left flex flex-col md:flex-row md:items-center gap-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="w-10 h-10 rounded-xl bg-white border border-line text-slate-500 hover:text-ink hover:border-slate-300 flex items-center justify-center transition-all shrink-0 shadow-sm"
+            title="Go Back"
+          >
+            <ArrowLeft size={18} strokeWidth={2.5} />
+          </button>
+          <div>
+            <h1 className="font-bold text-3xl md:text-4xl text-ink tracking-tight mb-2">Discussion Forum</h1>
+            <p className="text-ink-soft text-lg font-medium max-w-2xl">Share interview experiences, ask doubts, and collaborate with your peers.</p>
+          </div>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8 items-start">
@@ -197,7 +221,7 @@ const Forum = () => {
 
                       {/* Post Content */}
                       <div className="mb-6">
-                        <h3 className="font-bold text-xl sm:text-2xl text-ink tracking-tight mb-3 cursor-pointer hover:text-indigo-600 transition-colors" onClick={() => setExpandedId(isExpanded ? null : post._id)}>
+                        <h3 className="font-bold text-xl sm:text-2xl text-ink tracking-tight mb-3 cursor-pointer hover:text-indigo-600 transition-colors" onClick={() => handleExpandPost(post._id, isExpanded)}>
                           {post.title}
                         </h3>
                         
@@ -216,7 +240,7 @@ const Forum = () => {
                         {/* Collapsed view snippet or Expanded content */}
                         <div 
                           className={`text-ink-soft text-[15px] font-medium leading-relaxed transition-all ${!isExpanded ? "line-clamp-3 overflow-hidden cursor-pointer hover:text-ink group-hover:text-ink" : ""}`}
-                          onClick={() => !isExpanded && setExpandedId(post._id)}
+                          onClick={() => !isExpanded && handleExpandPost(post._id, false)}
                         >
                           <div className={`prose prose-sm sm:prose-base max-w-none prose-indigo prose-a:text-indigo-600 hover:prose-a:text-indigo-800 prose-img:rounded-xl ${!isExpanded ? "prose-p:m-0 prose-pre:m-0 prose-headings:m-0 pointer-events-none" : ""}`}>
                             <ReactMarkdown 
@@ -247,7 +271,7 @@ const Forum = () => {
                         
                         <button 
                           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 ${isExpanded ? "bg-slate-200 text-ink" : "bg-surface text-ink-soft hover:bg-slate-200 hover:text-ink"}`} 
-                          onClick={() => setExpandedId(isExpanded ? null : post._id)}
+                          onClick={() => handleExpandPost(post._id, isExpanded)}
                         >
                           <MessageSquare size={18} strokeWidth={2.5} /> {post.replies?.length || 0}
                         </button>

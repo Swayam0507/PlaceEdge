@@ -255,11 +255,11 @@ const ProfilePage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">LinkedIn URL</label>
-                    <input type="text" value={formData.linkedin} onChange={(e) => setFormData({...formData, linkedin: e.target.value})} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-semibold text-slate-700" placeholder="linkedin.com/in/username" />
+                    <input type="text" value={formData.linkedin} onChange={(e) => setFormData({...formData, linkedin: e.target.value})} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-semibold text-slate-700" placeholder="linkedin.com/in/aaravsharma" />
                   </div>
                   <div>
                     <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">GitHub URL</label>
-                    <input type="text" value={formData.github} onChange={(e) => setFormData({...formData, github: e.target.value})} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-semibold text-slate-700" placeholder="github.com/username" />
+                    <input type="text" value={formData.github} onChange={(e) => setFormData({...formData, github: e.target.value})} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-semibold text-slate-700" placeholder="github.com/aaravsharma" />
                   </div>
                 </div>
 

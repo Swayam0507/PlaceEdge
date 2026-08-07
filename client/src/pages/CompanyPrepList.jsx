@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { Link } from "react-router-dom";
-import { Search, Building2 } from 'lucide-react';
+import { Link, useNavigate } from "react-router-dom";
+import { Search, ArrowLeft } from 'lucide-react';
 
 const TOP_COMPANIES = [
   { name: "TCS", domain: "tcs.com", industry: "IT Services", count: 1200, easy: 40, medium: 40, hard: 20 },
@@ -47,6 +47,7 @@ const TOP_COMPANIES = [
 
 const CompanyPrepList = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
   const filteredCompanies = useMemo(() => {
     return TOP_COMPANIES.filter((company) =>
@@ -58,13 +59,22 @@ const CompanyPrepList = () => {
     <div className="mx-auto max-w-[1440px] px-4 py-8 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-            Company Preparation
-          </h1>
-          <p className="mt-2 text-sm text-slate-600">
-            AI-powered interview roadmaps and most asked questions for top tech companies.
-          </p>
+        <div className="flex items-start gap-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="mt-1 w-10 h-10 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-slate-900 hover:border-slate-300 flex items-center justify-center transition-all shrink-0 shadow-sm"
+            title="Go Back"
+          >
+            <ArrowLeft size={18} strokeWidth={2.5} />
+          </button>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+              Company Preparation
+            </h1>
+            <p className="mt-2 text-sm text-slate-600">
+              AI-powered interview roadmaps and most asked questions for top tech companies.
+            </p>
+          </div>
         </div>
         <div className="relative w-full max-w-xs">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">

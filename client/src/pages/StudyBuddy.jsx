@@ -7,7 +7,8 @@ import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 import { chatWithAI } from "../services/api";
 import { useAuth } from "../context/AuthContext";
-import { Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Loader2, ArrowLeft } from "lucide-react";
 
 const CATEGORIES = [
   { key: "dsa", label: "DSA & Coding", icon: FiCode, color: "text-indigo-500", bg: "bg-indigo-500/10", border: "border-indigo-500" },
@@ -29,6 +30,7 @@ const QUICK_PROMPTS = [
 
 const StudyBuddy = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [messages, setMessages] = useState([
     {
       role: "ai",
@@ -171,6 +173,13 @@ const StudyBuddy = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 shrink-0">
           <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="w-10 h-10 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-ink hover:border-slate-300 flex items-center justify-center transition-all shrink-0 shadow-sm"
+              title="Go Back"
+            >
+              <ArrowLeft size={18} strokeWidth={2.5} />
+            </button>
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20 shrink-0">
               <FiCpu size={28} />
             </div>

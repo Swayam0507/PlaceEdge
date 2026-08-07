@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
-import { FiBriefcase, FiMapPin, FiClock, FiExternalLink, FiBarChart2, FiSearch } from "react-icons/fi";
+import { FiSearch, FiMapPin, FiBriefcase, FiExternalLink, FiClock, FiStar, FiFilter, FiArrowLeft } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 import { BiBuildingHouse } from "react-icons/bi";
 import SkillGapAnalyzer from "../components/SkillGapAnalyzer";
 import { useAuth } from "../context/AuthContext";
@@ -49,6 +50,7 @@ const getRequiredSkills = (job) => {
 };
 
 const JobBoard = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -101,7 +103,13 @@ const JobBoard = () => {
       <div className="mx-auto max-w-[1440px]">
         
         {/* Header Section */}
-        <div className="mb-10 text-center">
+        <div className="mb-10 text-center relative">
+          <button
+            onClick={() => navigate(-1)}
+            className="absolute left-0 top-1/2 -translate-y-1/2 p-2 text-muted hover:text-ink hover:bg-ink/5 rounded-lg transition-colors hidden sm:flex items-center gap-2 font-medium"
+          >
+            <FiArrowLeft size={20} /> <span className="hidden md:inline">Back</span>
+          </button>
           <h1 className="mb-4 text-4xl font-extrabold tracking-tight text-ink md:text-5xl flex items-center justify-center gap-3 font-display">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber/10 text-amber-deep">
               <FiBriefcase className="h-7 w-7" />

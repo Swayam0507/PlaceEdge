@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 import { getLeaderboard } from "../services/api";
 import { FiAward, FiStar, FiFilter } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
-import { Trophy, Medal, Target, Activity } from "lucide-react";
+import { Trophy, Medal, Target, Activity, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Leaderboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({ period: "all", category: "all" });
@@ -45,9 +47,18 @@ const Leaderboard = () => {
               <Trophy size={16} className="text-amber-400" />
               <span className="text-xs font-bold text-white uppercase tracking-wider">Global Rankings</span>
             </div>
-            <h1 className="font-display text-4xl sm:text-5xl font-bold text-white tracking-tight flex items-center gap-4">
-              Leaderboard
-            </h1>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate(-1)}
+                className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 text-white/80 hover:text-white hover:bg-white/20 flex items-center justify-center transition-all shrink-0 backdrop-blur-md"
+                title="Go Back"
+              >
+                <ArrowLeft size={20} strokeWidth={2.5} />
+              </button>
+              <h1 className="font-display text-4xl sm:text-5xl font-bold text-white tracking-tight flex items-center gap-4">
+                Leaderboard
+              </h1>
+            </div>
             <p className="mt-3 text-indigo-200/80 font-medium text-lg">
               Top performers based on placement readiness scores
             </p>

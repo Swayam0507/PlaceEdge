@@ -12,6 +12,14 @@ const register = async (req, res) => {
   try {
     const { name, email, password, branch, semester, cgpa } = req.body;
 
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must contain at least one uppercase letter, one lowercase letter, and one number.",
+      });
+    }
+
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -322,6 +330,14 @@ const resetPassword = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Invalid or expired token",
+      });
+    }
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
+    if (!passwordRegex.test(req.body.password)) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must contain at least one uppercase letter, one lowercase letter, and one number.",
       });
     }
 
